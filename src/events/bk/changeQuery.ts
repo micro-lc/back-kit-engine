@@ -1,15 +1,8 @@
-import {Filter} from '../../schemas'
+import type {
+  ConfigurableFilter, Filter
+} from '../../schemas'
 import {factory} from '../factory'
 
-export type FilterOperator =
-  'equal' | 'notEqual' | 'greater' | 'greaterEqual' |
-  'less' | 'lessEqual' | 'regex' | 'includeSome' |
-  'includeAll' | 'includeExactly' | 'notIncludeAny'
-export interface ConfigurableFilter {
-    operator: FilterOperator
-    property: string
-    value: string | number | boolean | any[]
-}
 export type SortDirection = 'descend' | 'ascend' | null
 
 export type Characteristic = {
