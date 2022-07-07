@@ -1,0 +1,32 @@
+export type FiltersOptions = {
+  hidden?: boolean
+  availableOperators?: string[]
+}
+
+export type FilterOperator = |
+  'equal' |
+  'notEqual' |
+  'greater' |
+  'greaterEqual' |
+  'less' |
+  'lessEqual' |
+  'regex' |
+  'includeSome' |
+  'includeAll' |
+  'includeExactly' |
+  'notIncludeAny' |
+  'between' |
+  'hasLengthEqual' |
+  'hasLengthGreaterEqual' |
+  'hasLengthLessEqual'
+
+export interface ConfigurableFilter {
+  operator: FilterOperator
+  property: string
+  value: string | number | boolean | any[]
+}
+
+export interface Filter extends ConfigurableFilter {
+  applied?: boolean
+  name?: string
+}

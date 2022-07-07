@@ -1,7 +1,7 @@
 {
   "name": "@micro-lc/back-kit-engine",
   "version": "0.14.24",
-  "description": "engine capable of reducing boilerplate code when creating lit-based web-components",
+  "description": "engine to sync react over webcomponents scaffolding + backoffice utils and types/interfaces",
   "license": "SEE LICENSE IN LICENSE",
   "author": "Mia Platform Core Team <core@mia-platform.eu>",
   "contributors": [
@@ -14,21 +14,100 @@
     "type": "git",
     "url": "git@github.com:micro-lc/back-kit-engine.git"
   },
+  "packageManager": "yarn@3.2.1",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/es/index.js",
+  "types": "./dist/types/index.d.ts",
+  "files": [
+    "./dist",
+    "./package.json"
+  ],
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/es/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./engine": {
+      "require": "./dist/cjs/engine/index.js",
+      "import": "./dist/es/engine/index.js",
+      "types": "./dist/types/engine/index.d.ts"
+    },
+    "./events": {
+      "require": "./dist/cjs/events/index.js",
+      "import": "./dist/es/events/index.js",
+      "types": "./dist/types/events/index.d.ts"
+    },
+    "./schemas": {
+      "require": "./dist/cjs/schemas/index.js",
+      "import": "./dist/es/schemas/index.js",
+      "types": "./dist/types/schemas/index.d.ts"
+    },
+    "./utils": {
+      "require": "./dist/cjs/utils/index.js",
+      "import": "./dist/es/utils/index.js",
+      "types": "./dist/types/utils/index.d.ts"
+    },
+    "./west": {
+      "require": "./dist/cjs/west/index.js",
+      "import": "./dist/es/west/index.js",
+      "types": "./dist/types/west/index.d.ts"
+    }
+  },
   "scripts": {
     "clear": "rimraf node_modules dist coverage",
     "lint": "eslint --ext .js,.ts,.jsx,.tsx",
-    "test": "echo 'TODO'",
-    "coverage": "echo 'TODO'",
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "build:es": "tsc --project config/tsconfig.es.json",
+    "build:cjs": "tsc --project config/tsconfig.cjs.json",
+    "build:types": "tsc --project config/tsconfig.types.json",
+    "build": "run-p build:es build:cjs build:types",
     "postinstall": "husky install",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable"
   },
-  "packageManager": "yarn@3.2.1",
   "devDependencies": {
+    "@babel/core": "^7.18.6",
+    "@babel/plugin-transform-modules-commonjs": "^7.18.6",
+    "@babel/preset-env": "^7.18.6",
+    "@babel/preset-typescript": "^7.18.6",
+    "@jest/types": "^27.4.2",
+    "@open-wc/testing-helpers": "^2.1.2",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@types/jest": "^28.1.4",
+    "@types/json-schema": "^7.0.11",
+    "@types/react": "^18.0.15",
+    "@types/react-dom": "^18.0.6",
+    "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.30.5",
     "@typescript-eslint/parser": "^5.30.5",
+    "esbuild": "^0.14.48",
+    "esbuild-jest": "^0.5.0",
     "eslint": "^8.19.0",
     "husky": "^8.0.1",
+    "jest": "^28.1.2",
+    "jest-environment-jsdom": "^28.1.2",
+    "jest-fetch-mock": "^3.0.3",
+    "lit": "^2.2.7",
+    "npm-run-all": "^4.1.5",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "rxjs": "^7.5.5",
+    "ts-node": "^10.8.2",
     "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "handlebars": "^4.7.7",
+    "query-string": "^7.1.1",
+    "uuid": "^8.3.2"
+  },
+  "peerDependencies": {
+    "handlebars": "^4.7.7",
+    "jest": "*",
+    "lit": "*",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "rxjs": "^7.5.5"
   }
 }
