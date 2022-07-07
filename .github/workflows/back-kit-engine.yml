@@ -21,31 +21,31 @@ jobs:
           - 16.x
           - 17.x
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: yarn install --immutable
-    - run: yarn coverage
-    - name: Coveralls
-      uses: coverallsapp/github-action@master
-      continue-on-error: true
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: '${{ env.context }}coverage/lcov.info'
-        base-path: '${{ env.context }}'
-    - name: Compile file and build
-      if: ${{ (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main' || github.base_ref == 'main') && matrix.node-version == '16.x' }}
-      run: yarn build
-    - name: Cache build
-      if: ${{ (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main' || github.base_ref == 'main') && matrix.node-version == '16.x' }}
-      uses: actions/cache@v2
-      with:
-        path: |
-          ${{ env.context }}dist
-          ${{ env.context }}.yarn
-        key: ${{ runner.os }}-dist-${{ env.cache-name }}-${{ github.sha }}
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: yarn install --immutable
+      - run: yarn coverage
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: '${{ env.context }}coverage/lcov.info'
+          base-path: '${{ env.context }}'
+      - name: Compile file and build
+        if: ${{ (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main' || github.base_ref == 'main') && matrix.node-version == '16.x' }}
+        run: yarn build
+      - name: Cache build
+        if: ${{ (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main' || github.base_ref == 'main') && matrix.node-version == '16.x' }}
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ env.context }}dist
+            ${{ env.context }}.yarn
+          key: ${{ runner.os }}-install-cache-${{ env.cache-name }}-${{ github.sha }}
 
   release:
     needs: ['test']
@@ -53,20 +53,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 16.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 16.x
-    - name: Cache Pull
-      uses: actions/cache@v2
-      with:
-        path: |
-          ${{ env.context }}dist
-          ${{ env.context }}.yarn
-        key: ${{ runner.os }}-dist-${{ env.cache-name }}-${{ github.sha }}
-    - name: Release on NPM Registry
-      uses: JS-DevTools/npm-publish@v1
-      with:
-        access: 'public'
-        token: ${{ secrets.NPM_TOKEN }}
+      - uses: actions/checkout@v2
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+      - name: Cache Pull
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ env.context }}dist
+            ${{ env.context }}.yarn
+          key: ${{ runner.os }}-install-cache-${{ env.cache-name }}-${{ github.sha }}
+      - name: Release on NPM Registry
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          access: 'public'
+          token: ${{ secrets.NPM_TOKEN }}
