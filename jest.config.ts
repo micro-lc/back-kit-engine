@@ -7,21 +7,22 @@ export default {
   rootDir: './src',
   clearMocks: true,
   collectCoverage: false,
-  coverageDirectory: '../coverage',
-  coverageReporters: ['cobertura', 'lcov', 'text'],
+  coverageDirectory: '../coverage/bke',
+  coverageReporters: ['cobertura', 'text'],
   collectCoverageFrom: [
     '**/*.{ts,tsx}',
     '!**/index.ts',
     '!<rootDir>/bin/**/*.ts',
     '!<rootDir>/schemas/**/*.ts',
     '!<rootDir>/utils/docs/**/*.ts',
-    '!<rootDir>/events/bk/**/*.ts'
+    '!<rootDir>/events/bk/**/*.ts',
+    '!<rootDir>/west/**/*.ts'
   ],
   coverageThreshold: {global: {
-    branches: 100,
-    functions: 100,
-    lines: 100,
-    statements: 100
+    branches: 95,
+    functions: 95,
+    lines: 95,
+    statements: 95
   }},
   moduleNameMapper: {'^rxjs': ['rxjs']},
   testEnvironment: 'jsdom',
