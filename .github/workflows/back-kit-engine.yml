@@ -27,7 +27,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: yarn install --immutable
-    - run: yarn run test
+    - run: yarn coverage
     - name: Coveralls
       uses: coverallsapp/github-action@master
       continue-on-error: true
