@@ -8,7 +8,7 @@ export default {
   clearMocks: true,
   collectCoverage: false,
   coverageDirectory: '../coverage/bke',
-  coverageReporters: ['cobertura', 'text'],
+  coverageReporters: ['cobertura', 'text', 'lcov'],
   collectCoverageFrom: [
     '**/*.{ts,tsx}',
     '!**/index.ts',
