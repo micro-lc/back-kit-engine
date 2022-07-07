@@ -1,0 +1,34 @@
+{
+  "name": "@micro-lc/back-kit-engine",
+  "version": "0.14.24",
+  "description": "engine capable of reducing boilerplate code when creating lit-based web-components",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": "Mia Platform Core Team <core@mia-platform.eu>",
+  "contributors": [
+    "Umberto Toniolo <umberto.toniolo@mia-platform.eu>",
+    "Leonardo Romano <leonardo.romano@mia-platform.eu>",
+    "Fabio Stabile <fabio.stabile@mia-platform.eu>",
+    "Claudio Benedetti <claudio.benedetti@mia-platform.eu>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:micro-lc/back-kit-engine.git"
+  },
+  "scripts": {
+    "clear": "rimraf node_modules dist coverage",
+    "lint": "eslint --ext .js,.ts,.jsx,.tsx",
+    "test": "echo 'TODO'",
+    "coverage": "echo 'TODO'",
+    "postinstall": "husky install",
+    "prepack": "pinst --disable",
+    "postpack": "pinst --enable"
+  },
+  "packageManager": "yarn@3.2.1",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.30.5",
+    "@typescript-eslint/parser": "^5.30.5",
+    "eslint": "^8.19.0",
+    "husky": "^8.0.1",
+    "typescript": "^4.7.4"
+  }
+}
