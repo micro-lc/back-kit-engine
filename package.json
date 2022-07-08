@@ -1,6 +1,6 @@
 {
   "name": "@micro-lc/back-kit-engine",
-  "version": "0.15.0-rc1",
+  "version": "0.15.0",
   "description": "engine to sync react over webcomponents scaffolding + backoffice utils and types/interfaces",
   "license": "SEE LICENSE IN LICENSE",
   "author": "Mia Platform Core Team <core@mia-platform.eu>",
@@ -60,7 +60,7 @@
     "coverage:bke": "jest --coverage",
     "coverage:west": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' nyc ts-mocha 'test/**/*.test.ts'",
     "coverage:cobertura:merge": "cobertura-merge -o coverage/cobertura-coverage.xml package1=coverage/bke/cobertura-coverage.xml package2=coverage/west/cobertura-coverage.xml",
-    "coverage:lcov:merge": "lcov-result-merger 'coverage/*/lcov.info' coverage/lcov.info",
+    "coverage:lcov:merge": "yarn dlx lcov-result-merger 'coverage/*/lcov.info' coverage/lcov.info",
     "coverage:lib": "run-p coverage:bke coverage:west",
     "coverage": "run-s coverage:lib coverage:lcov:merge coverage:cobertura:merge",
     "build:es": "tsc --project scripts/tsconfig.es.json",
@@ -111,7 +111,6 @@
     "jest": "^28.1.2",
     "jest-environment-jsdom": "^28.1.2",
     "jest-fetch-mock": "^3.0.3",
-    "lcov-result-merger": "^3.3.0",
     "lit": "^2.2.7",
     "mkdirp": "^1.0.4",
     "mocha": "^10.0.0",
@@ -143,6 +142,5 @@
     "react": "^17",
     "react-dom": "^17",
     "rxjs": "^7.5.5"
-  },
-  "stableVersion": "0.14.24"
+  }
 }
