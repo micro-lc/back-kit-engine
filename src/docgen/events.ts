@@ -7,9 +7,6 @@ import mkdirp from 'mkdirp'
 import {
   format, Options
 } from 'prettier'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import removeHtmlComments from 'remove-html-comments'
 import type {
   ProjectReflection, CommentTag
 } from 'typedoc'
@@ -25,6 +22,21 @@ type EventBookmark = {
   meta?: string
   payload?: string
 }
+
+function removeHtmlComments (d: any): {data: string, comments: string[]} {
+  let data = String(d)
+  const comments: string[] = []
+  data = data.replace(/<!--([\s\S]*?)-->/g, function(match) {
+    comments.push(match)
+    return ''
+  })
+
+  return {
+    data: data,
+    comments: comments
+  }
+}
+
 
 export type EventDocs = Record<string, CommentTag[]>
 
