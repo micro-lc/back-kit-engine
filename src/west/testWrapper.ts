@@ -52,11 +52,12 @@ export type LitRuntimeHelpers<E extends Element> = {
   completeAndCount: () => Promise<number>
   domMocks: DomMocks
   eventBus: EventBus
-  nthCall: (mock: jest.Mock | any, index?: number) => any
+  nthCall: <T = any, Y extends any[] = any[]>(mock: jest.Mock<T, Y> | any, index?: number) => Y
+  nthResult: <T = any, Y extends any[] = any[]> (mock: jest.Mock<T, Y> | any, index?: number) => jest.MockResult<T>
+  nthInstance: <T = any, Y extends any[] = any[]> (mock: jest.Mock<T, Y> | any, index?: number) => T
   mocks: MocksMap
   react?: MockReact
   sub: Subscription
-  nthInstance: (mock: jest.Mock | any, index?: number) => E
 }
 
 export type LitWestTestFn<E extends Element> =
@@ -87,6 +88,30 @@ export type OpenWCPageOptions = FixtureOptions & {
 
 const DEFAULT_BOOTSTRAP_TIMEOUT = 2000
 
+function makeNthMethod (prop: keyof jest.MockContext<any, any>) {
+  function nth <
+    T = any,
+    Y extends any[] = any[],
+    Z extends number | Y | T | jest.MockResult<T> = number | Y | T | jest.MockResult<T>
+  > (mock: jest.Mock<T, Y> | any, index?: number): Z {
+    if (!mock._isMockFunction) {
+      throw new Error(`function [${mock.name}] is not mocked`)
+    }
+
+    const m = mock as jest.Mock<T, Y>
+    const len = m.mock[prop].length
+    let r = m.mock[prop][len - 1]
+    if (index !== undefined && index >= 0) {
+      r = m.mock[prop][index]
+    } else if (index !== undefined && index < 0) {
+      r = m.mock[prop][len + index]
+    }
+
+    return r as Z
+  }
+  return nth
+}
+
 function makeTemplate<E extends Element> (
   template: OpenWCPageOptions['template'],
   mocks?: DomMocks,
@@ -105,9 +130,8 @@ function makeTemplate<E extends Element> (
       Object.defineProperty(navigator, 'language', {
         writable: true, value: mocks.getNavigatorLanguage()
       })
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      window.FormData = mocks.formData
+
+      window.FormData = mocks.formData as unknown as typeof window.FormData
     }
 
     return el
@@ -119,7 +143,7 @@ export function test<E extends Element = Element> (
     defaultLanguage = 'en',
     mocks = {},
     fakeTimers = true,
-    useDomMocks = true
+    useDomMocks = false
   }: LitRuntimeOptions = {}
 ) {
   return async () => {
@@ -186,35 +210,10 @@ export function test<E extends Element = Element> (
       domMocks,
       mocks: sandboxMocks,
       calls: (mock: jest.Mock) => mock.mock.calls,
-      nthCall: (mock: jest.Mock | any, index?: number): any => {
-        if (!mock._isMockFunction) {
-          throw new Error(`function [${mock.name}] is not mocked`)
-        }
-        const len = mock.mock.calls.length
-        let rCall = mock.mock.calls[len - 1]
-        if (index !== undefined && index >= 0) {
-          rCall = mock.mock.calls[index]
-        } else if (index !== undefined && index < 0) {
-          rCall = mock.mock.calls[len + index]
-        }
-
-        return rCall
-      },
-      sub,
-      nthInstance: (mock: jest.Mock | any, index?: number): E => {
-        if (!mock._isMockFunction) {
-          throw new Error(`function [${mock.name}] is not mocked`)
-        }
-        const len = mock.mock.instances.length
-        let instance = mock.mock.instances[len - 1]
-        if (index !== undefined && index >= 0) {
-          instance = mock.mock.instances[index]
-        } else if (index !== undefined && index < 0) {
-          instance = mock.mock.instances[len + index]
-        }
-
-        return instance
-      }
+      nthCall: makeNthMethod('calls'),
+      nthInstance: makeNthMethod('instances'),
+      nthResult: makeNthMethod('results'),
+      sub
     }).catch((err) => {
       throw new Error(`helpers threw in test runtime: ${err}`)
     }).finally(() => {

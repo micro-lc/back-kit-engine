@@ -103,7 +103,13 @@
 
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
-    "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
+    "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
+    "baseUrl": ".",
+    "paths": {
+      "./engine": ["src/engine/index"],
+      "./utils": ["src/utils/index"],
+      "./west": ["src/west/index"]
+    }
   },
   "include": ["src"]
 }
