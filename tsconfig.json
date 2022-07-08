@@ -110,6 +110,5 @@
       "./utils": ["src/utils/index"],
       "./west": ["src/west/index"]
     }
-  },
-  "include": ["src"]
+  }
 }

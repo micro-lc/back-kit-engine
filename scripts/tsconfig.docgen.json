@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "outDir": "../dist/bin/docgen",
+  },
+  "include": ["../src/docgen"],
+  "exclude": ["../src/docgen/__tests__/**/*.test.ts"]
+}
