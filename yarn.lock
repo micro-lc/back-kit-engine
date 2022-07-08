@@ -1762,6 +1762,7 @@ __metadata:
     "@types/json-schema": ^7.0.11
     "@types/mkdirp": ^1
     "@types/mock-require": ^2.0.1
+    "@types/node": ^18.0.3
     "@types/prettier": ^2
     "@types/react": ^18.0.15
     "@types/react-dom": ^18.0.6
@@ -2147,7 +2148,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*":
+"@types/node@npm:*, @types/node@npm:^18.0.3":
   version: 18.0.3
   resolution: "@types/node@npm:18.0.3"
   checksum: 5dec59fbbc1186c808b53df1ca717dad034dbd6a901c75f5b052c845618b531b05f27217122c6254db99529a68618e4cfc534ae3dbf4e88754e9e572df80defa
