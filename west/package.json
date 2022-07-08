@@ -1,0 +1,6 @@
+{
+  "name": "@micro-lc/back-kit-engine/west",
+  "main": "../dist/cjs/west/index.js",
+  "module": "../dist/es/west/index.js",
+  "types": "../dist/types/west/index.d.ts"
+}

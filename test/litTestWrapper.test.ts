@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import chai, {expect} from 'chai'
 import chaiAsPromised from 'chai-as-promised'
+import {TemplateResult} from 'lit'
 import sinon from 'sinon'
 import sinonChai from 'sinon-chai'
 
@@ -100,22 +100,25 @@ describe('testWrapper tests', () => {
   it('should unwrap helpers', async () => {
     async function runner (helpers: LitRuntimeHelpers<Element>) {
       const {
-        calls, nthCall, nthInstance
+        calls, nthCall, nthInstance, nthResult
       } = helpers
       let mockedFn = fn.returns({mock: {
         calls: [],
-        instances: []
+        instances: [],
+        results: []
       }})
 
       expect(calls(mockedFn())).to.have.length(0)
 
       const arg1 = randomString()
       const arg2 = randomString()
+      const r1 = randomString()
       mockedFn = fn.returns({
         _isMockFunction: true,
         mock: {
           calls: [arg1, arg2],
-          instances: [arg1, arg2]
+          instances: [arg1, arg2],
+          results: [r1]
         }
       })
 
@@ -125,6 +128,7 @@ describe('testWrapper tests', () => {
       expect(nthInstance(mockedFn())).to.equal(arg2)
       expect(nthInstance(mockedFn(), -2)).to.equal(arg1)
       expect(nthInstance(mockedFn(), 0)).to.equal(arg1)
+      expect(nthResult(mockedFn(), 0)).to.equal(r1)
     }
 
     await test(runner)()
@@ -133,9 +137,8 @@ describe('testWrapper tests', () => {
   it('should create a lit page', async () => {
     async function runner (helpers: LitRuntimeHelpers<Element>) {
       const {create} = helpers
-      const template = randomString()
+      const template = randomString() as unknown as TemplateResult
 
-      // @ts-ignore
       await create({template})
 
       expect(fixture).to.be.calledWith(template)
@@ -145,15 +148,16 @@ describe('testWrapper tests', () => {
       expect(navigator).to.have.property('language')
     }
 
-    await test(runner, {fakeTimers: false})()
+    await test(runner, {
+      fakeTimers: false, useDomMocks: true
+    })()
   })
 
   it('should create a lit page with timers', async () => {
     async function runner (helpers: LitRuntimeHelpers<Element>) {
       const {create} = helpers
-      const template = randomString()
+      const template = randomString() as unknown as TemplateResult
 
-      // @ts-ignore
       await create({template})
 
       expect(fixture).to.be.calledWith(template)
@@ -166,10 +170,9 @@ describe('testWrapper tests', () => {
   it('should override timers', async () => {
     async function runner (helpers: LitRuntimeHelpers<Element>) {
       const {create} = helpers
-      const template = randomString()
+      const template = randomString() as unknown as TemplateResult
 
       await create({
-      // @ts-ignore
         template, advanceTimerByTime: 1
       })
 
@@ -183,33 +186,35 @@ describe('testWrapper tests', () => {
   it('should test formData', async () => {
     async function runner (helpers: LitRuntimeHelpers<Element>) {
       const {create} = helpers
-      const template = randomString()
+      const template = randomString() as unknown as TemplateResult
       const str1 = randomString()
       const str2 = randomString()
       const str3 = randomString()
       const str4 = randomString()
       const str5 = randomString()
 
-      // @ts-ignore
-      await create(template)
+      await create({template})
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       window.FormData()
       expect(window).to.have.property('append')
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       window.append(str1, str2, str3)
       expect(window).to.have.property('name', str1)
       expect(window).to.have.property('value', str2)
       expect(window).to.have.property('fileName', str3)
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       window.append(str4, str5)
       expect(window).to.have.property('name', str4)
       expect(window).to.have.property('value', str5)
     }
 
-    await test(runner, {})()
+    await test(runner, {useDomMocks: true})()
   })
 
   it('should eject bus', async () => {

@@ -1,4 +1,6 @@
-import {fixture, html} from '@open-wc/testing-helpers'
+import {
+  fixture, html
+} from '@open-wc/testing-helpers'
 import fetchMock from 'jest-fetch-mock'
 
 import {createFetchHttpClient} from '../../utils'
@@ -42,7 +44,9 @@ describe('bk-base tests', () => {
     fetchMock.mockOnceIf(/\/$/, (req) => {
       const {headers} = req
       if (headers) {
-        expect(headers).toEqual(new Headers({...defaultHeaders, ...base.headers}))
+        expect(headers).toEqual(new Headers({
+          ...defaultHeaders, ...base.headers
+        }))
         return Promise.resolve(returnedData)
       }
 
@@ -55,9 +59,9 @@ describe('bk-base tests', () => {
 
   it('should disconnect', async () => {
     const el = await fixture(html`<bk-http-base-test-tag></bk-http-base-test-tag>`)
-    expect(document.body).toContainHTML('<body><div><!----><bk-http-base-test-tag /></div></body>')
+    expect(document.body.outerHTML).toEqual('<body><div><!----><bk-http-base-test-tag></bk-http-base-test-tag></div></body>')
     expect(createFetchHttpClient).toBeCalled()
     el.remove()
-    expect(document.body).toContainHTML('<body><div><!----></div></body>')
+    expect(document.body.outerHTML).toEqual('<body><div><!----></div></body>')
   })
 })

@@ -1,0 +1,6 @@
+{
+  "name": "@micro-lc/back-kit-engine/utils",
+  "main": "../dist/cjs/utils/index.js",
+  "module": "../dist/es/utils/index.js",
+  "types": "../dist/types/utils/index.d.ts"
+}

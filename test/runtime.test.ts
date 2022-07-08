@@ -40,4 +40,40 @@ describe('it tests', () => {
       writable: true, value: thisIt
     })
   })
+
+  it('should run multiple only/skip tests', () => {
+    Object.defineProperty(global, 'it', {
+      writable: true, value: jestIt
+    })
+    runtime.describe('describe 1', () => {
+      runtime.it('test 1', async () => {})
+      runtime.it.only('test 2', async () => {})
+      runtime.it.only('test 2', async () => {})
+      runtime.it.only('test 2', async () => {})
+      runtime.it.only('test 2', async () => {})
+      runtime.it.skip('test 2', async () => {})
+      runtime.it.skip('test 2', async () => {})
+    })
+
+    expect(jestIt.callCount).to.be.equal(1)
+    expect(jestIt.only.callCount).to.be.equal(4)
+    expect(jestIt.skip.callCount).to.be.equal(2)
+    Object.defineProperty(global, 'it', {
+      writable: true, value: thisIt
+    })
+  })
+
+  it('should run options tests', () => {
+    Object.defineProperty(global, 'it', {
+      writable: true, value: jestIt
+    })
+    runtime.describe('describe 1', () => {
+      runtime.options({}).it('test 1', async () => {})
+    })
+
+    expect(jestIt.callCount).to.be.equal(1)
+    Object.defineProperty(global, 'it', {
+      writable: true, value: thisIt
+    })
+  })
 })

@@ -1,12 +1,11 @@
 import 'jest'
-import {
-  it, options
-} from './options'
+import * as options from './options'
 
 const {
   describe, afterAll, afterEach, beforeAll, beforeEach
 } = global
 const runtime = {
-  it, options, describe, afterAll, afterEach, beforeAll, beforeEach
+  describe, afterAll, afterEach, beforeAll, beforeEach, ...options
 }
+
 export {runtime}

@@ -16,7 +16,9 @@ export default {
     '!<rootDir>/schemas/**/*.ts',
     '!<rootDir>/utils/docs/**/*.ts',
     '!<rootDir>/events/bk/**/*.ts',
-    '!<rootDir>/west/**/*.ts'
+    '!<rootDir>/west/**/*.ts',
+    '!<rootDir>/docgen/components.ts',
+    '!<rootDir>/docgen/events.ts'
   ],
   coverageThreshold: {global: {
     branches: 95,

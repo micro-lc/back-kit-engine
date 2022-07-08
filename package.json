@@ -15,44 +15,41 @@
     "url": "git@github.com:micro-lc/back-kit-engine.git"
   },
   "packageManager": "yarn@3.2.1",
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/es/index.js",
-  "types": "./dist/types/index.d.ts",
   "files": [
     "./dist",
-    "./package.json"
+    "./engine",
+    "./utils",
+    "./west",
+    "./package.json",
+    "./tsconfig.json"
   ],
   "exports": {
     ".": {
+      "types": "./dist/types/index.d.ts",
       "require": "./dist/cjs/index.js",
-      "import": "./dist/es/index.js",
-      "types": "./dist/types/index.d.ts"
+      "import": "./dist/es/index.js"
     },
     "./engine": {
+      "types": "./dist/types/engine/index.d.ts",
       "require": "./dist/cjs/engine/index.js",
-      "import": "./dist/es/engine/index.js",
-      "types": "./dist/types/engine/index.d.ts"
-    },
-    "./events": {
-      "require": "./dist/cjs/events/index.js",
-      "import": "./dist/es/events/index.js",
-      "types": "./dist/types/events/index.d.ts"
-    },
-    "./schemas": {
-      "require": "./dist/cjs/schemas/index.js",
-      "import": "./dist/es/schemas/index.js",
-      "types": "./dist/types/schemas/index.d.ts"
+      "import": "./dist/es/engine/index.js"
     },
     "./utils": {
+      "types": "./dist/types/utils/index.d.ts",
       "require": "./dist/cjs/utils/index.js",
-      "import": "./dist/es/utils/index.js",
-      "types": "./dist/types/utils/index.d.ts"
+      "import": "./dist/es/utils/index.js"
     },
     "./west": {
+      "types": "./dist/types/west/index.d.ts",
       "require": "./dist/cjs/west/index.js",
-      "import": "./dist/es/west/index.js",
-      "types": "./dist/types/west/index.d.ts"
+      "import": "./dist/es/west/index.js"
     }
+  },
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/es/index.js",
+  "types": "./dist/types/index.d.ts",
+  "bin": {
+    "docgen": "./dist/bin/docgen/index.js"
   },
   "scripts": {
     "clear": "rimraf node_modules dist coverage",
@@ -69,7 +66,12 @@
     "build:es": "tsc --project scripts/tsconfig.es.json",
     "build:cjs": "tsc --project scripts/tsconfig.cjs.json",
     "build:types": "tsc --project scripts/tsconfig.types.json",
-    "build": "run-p build:es build:cjs build:types",
+    "build:docgen": "tsc --project scripts/tsconfig.docgen.json",
+    "build": "run-p build:es build:cjs build:types build:docgen",
+    "docs:clear": "rimraf docs",
+    "docs:events": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' ts-node src/docgen --entryPoints src/events/bk/index.ts --type events",
+    "docs:components": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' ts-node src/docgen --entryPoints src/base/index.ts --type components",
+    "docs": "run-p docs:events docs:components",
     "postinstall": "husky install",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable"
@@ -86,10 +88,16 @@
     "@types/chai-as-promised": "^7",
     "@types/jest": "^28.1.4",
     "@types/json-schema": "^7.0.11",
+    "@types/mkdirp": "^1",
+    "@types/mock-require": "^2.0.1",
+    "@types/prettier": "^2",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
+    "@types/rimraf": "^3",
+    "@types/sinon": "^10.0.12",
     "@types/sinon-chai": "^3",
     "@types/uuid": "^8.3.4",
+    "@types/yargs": "^17",
     "@typescript-eslint/eslint-plugin": "^5.30.5",
     "@typescript-eslint/parser": "^5.30.5",
     "chai": "^4.3.6",
@@ -98,18 +106,23 @@
     "esbuild": "^0.14.48",
     "esbuild-jest": "^0.5.0",
     "eslint": "^8.19.0",
+    "handlebars": "^4.7.7",
     "husky": "^8.0.1",
     "jest": "^28.1.2",
     "jest-environment-jsdom": "^28.1.2",
     "jest-fetch-mock": "^3.0.3",
     "lcov-result-merger": "^3.3.0",
     "lit": "^2.2.7",
+    "mkdirp": "^1.0.4",
     "mocha": "^10.0.0",
     "mock-require": "^3.0.3",
     "npm-run-all": "^4.1.5",
     "nyc": "^15.1.0",
+    "prettier": "^2.7.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "remove-html-comments": "^1.0.2",
+    "rimraf": "^3.0.2",
     "rxjs": "^7.5.5",
     "sinon": "^14.0.0",
     "sinon-chai": "^3.7.0",
@@ -118,16 +131,17 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "handlebars": "^4.7.7",
     "query-string": "^7.1.1",
-    "uuid": "^8.3.2"
+    "typedoc": "0.22.11",
+    "uuid": "^8.3.2",
+    "yargs": "^17.5.1"
   },
   "peerDependencies": {
-    "handlebars": "^4.7.7",
-    "jest": "*",
-    "lit": "*",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "handlebars": "^4",
+    "jest": ">=26.6.3",
+    "lit": "^2",
+    "react": "^17",
+    "react-dom": "^17",
     "rxjs": "^7.5.5"
   },
   "stableVersion": "0.14.24"
