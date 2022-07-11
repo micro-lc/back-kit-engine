@@ -1,6 +1,6 @@
 {
   "name": "@micro-lc/back-kit-engine",
-  "version": "0.15.3",
+  "version": "0.16.0",
   "description": "engine to sync react over webcomponents scaffolding + backoffice utils and types/interfaces",
   "license": "SEE LICENSE IN LICENSE",
   "author": "Mia Platform Core Team <core@mia-platform.eu>",
@@ -28,6 +28,11 @@
       "types": "./dist/types/index.d.ts",
       "require": "./dist/cjs/index.js",
       "import": "./dist/es/index.js"
+    },
+    "./base": {
+      "types": "./dist/types/base/index.d.ts",
+      "require": "./dist/cjs/base/index.js",
+      "import": "./dist/es/base/index.js"
     },
     "./engine": {
       "types": "./dist/types/engine/index.d.ts",

@@ -106,6 +106,7 @@
     "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
     "baseUrl": ".",
     "paths": {
+      "./base": ["src/base/index"],
       "./engine": ["src/engine/index"],
       "./utils": ["src/utils/index"],
       "./west": ["src/west/index"]

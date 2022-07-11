@@ -1,0 +1,6 @@
+{
+  "name": "@micro-lc/back-kit-engine/base",
+  "main": "../dist/cjs/base/index.js",
+  "module": "../dist/es/base/index.js",
+  "types": "../dist/types/base/index.d.ts"
+}
