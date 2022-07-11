@@ -8,7 +8,7 @@ import sinonChai from 'sinon-chai'
 import {
   actOnEvents, completeAndCount
 } from '../src/west/asyncEvents'
-import type {Event} from '../src/west/asyncEvents'
+import type {Event} from '../src/events'
 import {randomString} from './setupTests'
 
 chai.use(sinonChai)

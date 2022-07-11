@@ -48,9 +48,7 @@ export type HttpClientInstance = {
 const defaultInputTransform = JSON.stringify
 
 const defaultOutputTransform = (response: Response) => {
-  const {
-    headers
-  } = response
+  const {headers} = response
 
   const contentType = headers.get('Content-Type')
   if (contentType !== null) {
@@ -70,7 +68,9 @@ function initParams (path: string, basePath = '', config: HttpClientConfig & {me
   const url = new URL(`${basePath}${path}`, window.location.origin)
   let fetchConfig: HttpClientConfig = config
   if (config.params) {
-    const {params, ...rest} = config
+    const {
+      params, ...rest
+    } = config
     url.search = new URLSearchParams(params).toString()
     fetchConfig = rest
   }
@@ -80,7 +80,9 @@ function initParams (path: string, basePath = '', config: HttpClientConfig & {me
 
 function resolveHeaders (headers?: HeadersInit, configHeaders?: HeadersInit) {
   const defaultHeaders = {'Content-Type': 'application/json'}
-  return {...defaultHeaders, ...headers ?? {}, ...configHeaders ?? {}}
+  return {
+    ...defaultHeaders, ...headers ?? {}, ...configHeaders ?? {}
+  }
 }
 
 async function processResponse (fetchPromise: Promise<Response>, outputTransform?: ((body: Body) => Promise<any>) | undefined): Promise<Response> {
@@ -118,7 +120,9 @@ async function get (
   config?: HttpClientConfig
 ): Promise<HttpClientResponse<any>> {
   try {
-    const [url, {outputTransform, ...fetchConfig}] = initParams(path, this.basePath, config)
+    const [url, {
+      outputTransform, ...fetchConfig
+    }] = initParams(path, this.basePath, config)
 
     const fetchPromise = fetch(url.toString(), {
       ...fetchConfig,
@@ -160,7 +164,9 @@ const withBody = (method: 'POST' | 'DELETE' | 'PUT') =>
     config?: HttpClientConfig
   ): Promise<HttpClientResponse<any>> {
     try {
-      const [url, {outputTransform, ...fetchConfig}] = initParams(path, this.basePath, config)
+      const [url, {
+        outputTransform, ...fetchConfig
+      }] = initParams(path, this.basePath, config)
 
       const transform = fetchConfig.inputTransform?.(data) ?? defaultInputTransform(data)
       const fetchPromise = fetch(url.toString(), {
@@ -187,13 +193,17 @@ async function postMultipart (
   config?: HttpClientConfig
 ): Promise<HttpClientResponse<any>> {
   try {
-    const [url, {outputTransform, ...fetchConfig}] = initParams(path, this.basePath, config)
+    const [url, {
+      outputTransform, ...fetchConfig
+    }] = initParams(path, this.basePath, config)
 
     const fetchPromise = fetch(url.toString(), {
       ...fetchConfig,
       method: 'POST',
       body: data,
-      headers: {...this.headers ?? {}, ...fetchConfig.headers ?? {}}
+      headers: {
+        ...this.headers ?? {}, ...fetchConfig.headers ?? {}
+      }
     })
 
     if (fetchConfig.raw) {
@@ -212,7 +222,9 @@ async function _fetch (
   config?: HttpClientConfig & {method?: HttpMethods}
 ): Promise<Response> {
   try {
-    const [url, {method = 'GET', body, ...fetchConfig}] = initParams(path, this.basePath, config)
+    const [url, {
+      method = 'GET', body, ...fetchConfig
+    }] = initParams(path, this.basePath, config)
 
     delete fetchConfig.outputTransform
     delete fetchConfig.inputTransform

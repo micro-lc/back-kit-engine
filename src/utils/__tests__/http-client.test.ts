@@ -1,6 +1,8 @@
 import fetchMock from 'jest-fetch-mock'
 
-import {createFetchHttpClient, HttpClientInstance, HttpClientSupport} from '../http-client'
+import {
+  createFetchHttpClient, HttpClientInstance, HttpClientSupport
+} from '../http-client'
 import {downloadFile} from '../url'
 
 jest.mock('../url', () => ({
@@ -14,18 +16,24 @@ const support = fakeElement as HttpClientSupport
 describe('http-client tests', () => {
   it('should default error handler on get fetch catch', async () => {
     const {console} = global
-    Object.defineProperty(global, 'console', {writable: true, value: {error: jest.fn()}})
+    Object.defineProperty(global, 'console', {
+      writable: true, value: {error: jest.fn()}
+    })
     fetchMock.mockRejectOnce(() => Promise.reject(new Error('Not found')))
 
     await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/').catch(() => {
       expect(global.console.error).toBeCalledWith('httpclient - Error: Not found')
     })
-    Object.defineProperty(global, 'console', {writable: true, value: console})
+    Object.defineProperty(global, 'console', {
+      writable: true, value: console
+    })
   })
 
   it.each([500, 503, 400, 404])('get should handle error status codes', async (errorStatusCode) => {
     const {console} = global
-    Object.defineProperty(global, 'console', {writable: true, value: {error: jest.fn()}})
+    Object.defineProperty(global, 'console', {
+      writable: true, value: {error: jest.fn()}
+    })
     fetchMock.mockOnceIf(/\/$/, () => {
       return Promise.resolve({
         status: errorStatusCode,
@@ -39,23 +47,31 @@ describe('http-client tests', () => {
         expect(await error.json()).toHaveProperty('error', 'something went wrong')
         expect(global.console.error).toBeCalledTimes(1)
       })
-    Object.defineProperty(global, 'console', {writable: true, value: console})
+    Object.defineProperty(global, 'console', {
+      writable: true, value: console
+    })
   })
 
   it('should default error handler on post fetch catch', async () => {
     const {console} = global
-    Object.defineProperty(global, 'console', {writable: true, value: {error: jest.fn()}})
+    Object.defineProperty(global, 'console', {
+      writable: true, value: {error: jest.fn()}
+    })
     fetchMock.mockRejectOnce(() => Promise.reject(new Error('Not found')))
 
     await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post('/', {}).catch(() => {
       expect(global.console.error).toBeCalledWith('httpclient - Error: Not found')
     })
-    Object.defineProperty(global, 'console', {writable: true, value: console})
+    Object.defineProperty(global, 'console', {
+      writable: true, value: console
+    })
   })
 
   it.each([500, 503, 400, 404])('post should handle error status codes', async (errorStatusCode) => {
     const {console} = global
-    Object.defineProperty(global, 'console', {writable: true, value: {error: jest.fn()}})
+    Object.defineProperty(global, 'console', {
+      writable: true, value: {error: jest.fn()}
+    })
     fetchMock.mockOnceIf(/\/$/, () => {
       return Promise.resolve({
         status: errorStatusCode,
@@ -70,12 +86,16 @@ describe('http-client tests', () => {
         expect(global.console.error).toBeCalledTimes(1)
       })
 
-    Object.defineProperty(global, 'console', {writable: true, value: console})
+    Object.defineProperty(global, 'console', {
+      writable: true, value: console
+    })
   })
 
   it.each([500, 503, 400, 404])('post multipart should handle error status codes', async (errorStatusCode) => {
     const {console} = global
-    Object.defineProperty(global, 'console', {writable: true, value: {error: jest.fn()}})
+    Object.defineProperty(global, 'console', {
+      writable: true, value: {error: jest.fn()}
+    })
     fetchMock.mockOnceIf(/\/$/, () => {
       return Promise.resolve({
         status: errorStatusCode,
@@ -90,7 +110,9 @@ describe('http-client tests', () => {
         expect(global.console.error).toBeCalledTimes(1)
       })
 
-    Object.defineProperty(global, 'console', {writable: true, value: console})
+    Object.defineProperty(global, 'console', {
+      writable: true, value: console
+    })
   })
 
   it('should fetch a get method', async () => {
@@ -98,13 +120,13 @@ describe('http-client tests', () => {
       return Promise.resolve({
         status: 200,
         body: '{"key":"value"}',
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: {'Content-Type': 'application/json'}
       })
     })
 
-    const {data, headers, status} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/')
+    const {
+      data, headers, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/')
 
     expect(status).toBe(200)
     expect(headers.get('Content-Type')).toBe('application/json')
@@ -116,13 +138,13 @@ describe('http-client tests', () => {
       return Promise.resolve({
         status: 200,
         body: '{"key":"value"}',
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: {'Content-Type': 'application/json'}
       })
     })
 
-    const {data, headers, status} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/', {params: {_q: 'value'}})
+    const {
+      data, headers, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/', {params: {_q: 'value'}})
 
     expect(status).toBe(200)
     expect(headers.get('Content-Type')).toBe('application/json')
@@ -134,13 +156,13 @@ describe('http-client tests', () => {
       return Promise.resolve({
         status: 200,
         body: 'text',
-        headers: {
-          'Content-Type': 'text/plain'
-        }
+        headers: {'Content-Type': 'text/plain'}
       })
     })
 
-    const {data, headers, status} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/', {params: {_q: 'value'}})
+    const {
+      data, headers, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/', {params: {_q: 'value'}})
 
     expect(status).toBe(200)
     expect(headers.get('Content-Type')).toBe('text/plain')
@@ -159,7 +181,11 @@ describe('http-client tests', () => {
       })
     })
 
-    const {headers, status} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/', {params: {_q: 'value'}, downloadAsFile: true})
+    const {
+      headers, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/', {
+      params: {_q: 'value'}, downloadAsFile: true
+    })
 
     expect(downloadFile).toBeCalled()
     expect(status).toBe(200)
@@ -172,13 +198,15 @@ describe('http-client tests', () => {
       return Promise.resolve({
         status: 200,
         body: 'text',
-        headers: {
-          'Content-Type': 'text/plain'
-        }
+        headers: {'Content-Type': 'text/plain'}
       })
     })
 
-    const {headers, status} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/', {params: {_q: 'value'}, downloadAsFile: true})
+    const {
+      headers, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/', {
+      params: {_q: 'value'}, downloadAsFile: true
+    })
 
     expect(downloadFile).toBeCalledWith(expect.any(Object), undefined)
     expect(status).toBe(200)
@@ -190,13 +218,13 @@ describe('http-client tests', () => {
       return Promise.resolve({
         status: 200,
         body: '',
-        headers: {
-          'Content-Type': 'img/gif'
-        }
+        headers: {'Content-Type': 'img/gif'}
       })
     })
 
-    const {data, headers, status} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/', {params: {_q: 'value'}})
+    const {
+      data, headers, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/', {params: {_q: 'value'}})
 
     expect(status).toBe(200)
     expect(headers.get('Content-Type')).toBe('img/gif')
@@ -208,13 +236,15 @@ describe('http-client tests', () => {
       return Promise.resolve({
         status: 200,
         body: '',
-        headers: {
-          'Content-Type': 'img/gif'
-        }
+        headers: {'Content-Type': 'img/gif'}
       })
     })
 
-    const {data, headers, status} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/', {params: {_q: 'value'}, raw: true})
+    const {
+      data, headers, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/', {
+      params: {_q: 'value'}, raw: true
+    })
 
     expect(status).toBe(200)
     expect(headers.get('Content-Type')).toBe('img/gif')
@@ -229,7 +259,9 @@ describe('http-client tests', () => {
       })
     })
 
-    const {data, status} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/', {outputTransform: (body: Body) => body.text()})
+    const {
+      data, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/', {outputTransform: (body: Body) => body.text()})
 
     expect(status).toBe(200)
     expect(data).toStrictEqual('ok')
@@ -251,7 +283,9 @@ describe('http-client tests', () => {
       return Promise.reject(new Error('Not found'))
     })
 
-    const {data, status} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post('/', body)
+    const {
+      data, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post('/', body)
 
     expect(status).toBe(200)
     expect(data).toStrictEqual('ok')
@@ -273,7 +307,9 @@ describe('http-client tests', () => {
       return Promise.reject(new Error('Not found'))
     })
 
-    const {data, status} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post('/', body)
+    const {
+      data, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post('/', body)
 
     expect(status).toBe(200)
     expect(data).toHaveLength(1)
@@ -296,7 +332,9 @@ describe('http-client tests', () => {
       return Promise.reject(new Error('Not found'))
     })
 
-    const {data, status} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post<any, Blob>('/', body)
+    const {
+      data, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post<any, Blob>('/', body)
 
     expect(status).toBe(200)
     expect(await data?.text()).toStrictEqual('ok')
@@ -318,13 +356,13 @@ describe('http-client tests', () => {
       return Promise.reject(new Error('Not found'))
     })
 
-    const {data, status} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)()
-      .post('/', body, {
-        inputTransform: (data: Record<string, string>) => {
-          expect(data).toHaveProperty('key', 'value')
-          return JSON.stringify(modBody)
-        }
-      })
+    const {
+      data, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)()
+      .post('/', body, {inputTransform: (data: Record<string, string>) => {
+        expect(data).toHaveProperty('key', 'value')
+        return JSON.stringify(modBody)
+      }})
 
     expect(status).toBe(200)
     expect(data).toStrictEqual('ok')
@@ -374,15 +412,15 @@ describe('http-client tests', () => {
     fetchMock.mockOnceIf(/\/$/, async (req) => {
       if (req.body) {
         expect(await req.json()).toStrictEqual(body)
-        return Promise.resolve({
-          status: 204
-        })
+        return Promise.resolve({status: 204})
       }
 
       return Promise.reject(new Error('Not found'))
     })
 
-    const {data, status} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post('/', body)
+    const {
+      data, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post('/', body)
 
     expect(status).toBe(204)
     expect(data).toBeUndefined()
@@ -406,7 +444,9 @@ describe('http-client tests', () => {
       return Promise.reject(new Error('Not found'))
     })
 
-    const {data, status} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().postMultipart('/', body)
+    const {
+      data, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().postMultipart('/', body)
 
     expect(status).toBe(200)
     expect(data).toStrictEqual('ok')
@@ -429,7 +469,9 @@ describe('http-client tests', () => {
       return Promise.reject(new Error('Not found'))
     })
 
-    const {data, status} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().postMultipart('/', body)
+    const {
+      data, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().postMultipart('/', body)
 
     expect(status).toBe(200)
     expect(data).toHaveLength(1)
@@ -453,7 +495,9 @@ describe('http-client tests', () => {
       return Promise.reject(new Error('Not found'))
     })
 
-    const {data, status} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().postMultipart('/', body)
+    const {
+      data, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().postMultipart('/', body)
 
     expect(status).toBe(200)
     expect(await data?.text()).toStrictEqual('ok')
@@ -476,7 +520,11 @@ describe('http-client tests', () => {
       return Promise.reject(new Error('Not found'))
     })
 
-    const {data, status} = await createFetchHttpClient.bind<() => HttpClientInstance>({...support, headers: {Connection: 'keep-alive'}})()
+    const {
+      data, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>({
+      ...support, headers: {Connection: 'keep-alive'}
+    })()
       .postMultipart('/', body)
 
     expect(status).toBe(200)
@@ -500,7 +548,9 @@ describe('http-client tests', () => {
       return Promise.reject(new Error('Not found'))
     })
 
-    const {data, status} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)()
+    const {
+      data, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)()
       .postMultipart('/', body, {headers: {Connection: 'keep-alive'}})
 
     expect(status).toBe(200)
@@ -587,7 +637,9 @@ describe('http-client tests', () => {
     [{}, {}, defaultHeaders],
     [{'Content-Type': 'text/plain'}, {}, {'Content-Type': 'text/plain'}],
     [{'Content-Type': 'text/plain'}, {'Content-Type': 'img/svg'}, {'Content-Type': 'img/svg'}],
-    [{'Content-Type': 'text/plain'}, {Authentication: 'Bearer 1'}, {'Content-Type': 'text/plain', Authentication: 'Bearer 1'}]
+    [{'Content-Type': 'text/plain'}, {Authentication: 'Bearer 1'}, {
+      'Content-Type': 'text/plain', Authentication: 'Bearer 1'
+    }]
   ])('should resolve this.headers %s and config headers %s', async (thisHeaders, configHeaders, expected) => {
     fetchMock.mockOnceIf(/\/$/, async (req) => {
       const {headers} = req
@@ -597,7 +649,9 @@ describe('http-client tests', () => {
         body: JSON.stringify({})
       })
     })
-    const customSupport = {...support, headers: thisHeaders}
+    const customSupport = {
+      ...support, headers: thisHeaders
+    }
 
     const {data} = await createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)().get('/', {headers: configHeaders})
     expect(data).toBeDefined()
