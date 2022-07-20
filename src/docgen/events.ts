@@ -114,12 +114,6 @@ const writeCapitalSections = (
 }
 
 export const generateEventBuffer = (eventDocs: EventDocs, readme = ''): Buffer => {
-  const header = `---
-id: events
-title: Events
-sidebar_level: Events
----`
-
   const bookmarks = Object.entries(eventDocs).map(
     ([key, tags]) => registerEvent(key, tags)
   )
@@ -140,7 +134,7 @@ sidebar_level: Events
   const text = Object.entries(alphabeth).reduce(writeCapitalSections, '')
 
   const parsedReadme = removeHtmlComments(readme).data as string ?? ''
-  return Buffer.from([header, parsedReadme, text].join(BLANK_LINE).concat(BLANK_LINE))
+  return Buffer.from([parsedReadme, text].join(BLANK_LINE).concat(BLANK_LINE))
 }
 
 export const buildEventLinks = (evRelative: string, docs: EventDocs): EventReg => {

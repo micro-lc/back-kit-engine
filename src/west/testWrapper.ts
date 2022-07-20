@@ -14,16 +14,15 @@ import {
 } from 'rxjs'
 
 import type {
-  EventWithHandler,
   Event,
   EventBus
-} from './asyncEvents'
+} from '../events'
+
+import type {EventWithHandler} from './asyncEvents'
 import {
   actOnEvents, completeAndCount
 } from './asyncEvents'
-import Sandbox, {
-  MockReact, MocksMap
-} from './sandbox'
+import Sandbox, {MocksMap} from './sandbox'
 
 export type DomMocks = {
   getNavigatorLanguage: jest.Mock<string, void[]>
@@ -56,7 +55,6 @@ export type LitRuntimeHelpers<E extends Element> = {
   nthResult: <T = any, Y extends any[] = any[]> (mock: jest.Mock<T, Y> | any, index?: number) => jest.MockResult<T>
   nthInstance: <T = any, Y extends any[] = any[]> (mock: jest.Mock<T, Y> | any, index?: number) => T
   mocks: MocksMap
-  react?: MockReact
   sub: Subscription
 }
 

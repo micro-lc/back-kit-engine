@@ -1,3 +1,10 @@
+import type {
+  Labelled,
+  Payload,
+  Meta,
+  Event,
+  EventBus
+} from '../events'
 import {
   EMPTY,
   identity,
@@ -15,46 +22,11 @@ import {
   count, filter, reduce, skip, take, timeout, catchError
 } from 'rxjs/operators'
 
-export interface Labelled {
-  label: string
-}
-
-export interface Payload {
-  [key: string]: any
-}
-
-export interface Meta {
-  [key: string]: any
-}
-
-export interface Event<P extends Payload = Payload, M extends Meta = Meta> extends Labelled {
-  payload: P
-  meta?: M
-}
-
 export interface Factory<P extends Payload = Payload, M extends Meta = Meta> extends Labelled {
   (payload: P, meta?: M): Event<P, M>
   is: <S, A extends S, T = Meta, B extends T = T>(event: Event<S, T>) => event is Event<A, B>
   registered?: boolean
 }
-
-export interface WithFilePropertyMeta extends Meta {
-  property: string | string[]
-}
-
-export interface CustomActionIdMeta extends Meta {
-  actionId: string
-}
-
-export interface WithTriggeringLabelMeta extends Meta {
-  triggeredBy: string
-}
-
-export interface TransactionMeta extends Meta {
-  transactionId: string
-}
-
-export type EventBus = ReplaySubject<Event<Payload, Meta>>
 
 export type ErrorLabelledEvent<T extends Event> = Pick<Event, 'label'> & {
   error: any

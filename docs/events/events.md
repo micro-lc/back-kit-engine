@@ -1,9 +1,3 @@
----
-id: events
-title: Events
-sidebar_level: Events
----
-
 # Back-Kit Events
 
 `Events` are data structures sent into a communication channel to enable `event-driven` component behavior.
@@ -115,6 +109,10 @@ delivers data to add a new filter
     | "includeAll"
     | "includeExactly"
     | "notIncludeAny"
+    | "between"
+    | "hasLengthEqual"
+    | "hasLengthGreaterEqual"
+    | "hasLengthLessEqual"
   property: string
   value: string | number | boolean | any[]
   applied?: boolean
@@ -194,6 +192,10 @@ delivers data on an edited filter
     | "includeAll"
     | "includeExactly"
     | "notIncludeAny"
+    | "between"
+    | "hasLengthEqual"
+    | "hasLengthGreaterEqual"
+    | "hasLengthLessEqual"
   property: string
   value: string | number | boolean | any[]
   applied?: boolean
@@ -230,6 +232,10 @@ requires a modification of the currently viewed dataset (filtering, sorting, pag
       | "includeAll"
       | "includeExactly"
       | "notIncludeAny"
+      | "between"
+      | "hasLengthEqual"
+      | "hasLengthGreaterEqual"
+      | "hasLengthLessEqual"
     property: string
     value: string | number | boolean | any[]
     applied?: boolean

@@ -54,11 +54,15 @@ export const factoryRegister = new Register<Labelled>()
 export function factory<P extends Payload = Payload, M extends Meta = Meta> (
   label: string, options: FactoryOptions = {}
 ): Factory<P, M> {
-  const {scope, divider = '/', aliases = []} = options
+  const {
+    scope, divider = '/', aliases = []
+  } = options
   const scopedLabel = scope ? `${scope}${divider}${label}` : label
 
   const currentFactory = function currentFactory (payload: P, meta?: M): Event<P, M> {
-    return {label: scopedLabel, payload, meta}
+    return {
+      label: scopedLabel, payload, meta
+    }
   } as Factory<P, M>
 
   currentFactory.label = scopedLabel

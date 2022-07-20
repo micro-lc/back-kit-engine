@@ -25,3 +25,11 @@ export function getLocalizedText (
 export function getNavigatorLanguage (): string {
   return navigator.language.substring(0, 2)
 }
+
+export function localize(input?: LocalizedText | undefined): string {
+  if(input) {
+    return getLocalizedText(input, getNavigatorLanguage())
+  }
+
+  return ''
+}

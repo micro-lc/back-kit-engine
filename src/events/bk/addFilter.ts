@@ -8,17 +8,21 @@ export type AddFilterPayload = Filter
  * @title Add Filter
  * @description delivers data to add a new filter
  * @payload {
- *    operator: 'equal' |
- *           'notEqual' |
- *            'greater' |
- *       'greaterEqual' |
- *               'less' |
- *          'lessEqual' |
- *              'regex' |
- *        'includeSome' |
- *         'includeAll' |
- *     'includeExactly' |
- *      'notIncludeAny';
+ *      operator: 'equal' |
+ *             'notEqual' |
+ *              'greater' |
+ *         'greaterEqual' |
+ *                 'less' |
+ *            'lessEqual' |
+ *                'regex' |
+ *          'includeSome' |
+ *           'includeAll' |
+ *       'includeExactly' |
+ *        'notIncludeAny' |
+ *              'between' |
+ *       'hasLengthEqual' |
+ *'hasLengthGreaterEqual' |
+ *   'hasLengthLessEqual';
  *    property: string;
  *    value: string | number | boolean | any[];
  *    applied?: boolean;
