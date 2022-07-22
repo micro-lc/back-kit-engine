@@ -21,12 +21,14 @@ export default {
     '!<rootDir>/docgen/events.ts'
   ],
   coverageThreshold: {global: {
-    branches: 95,
+    branches: 90,
     functions: 95,
     lines: 95,
     statements: 95
   }},
-  moduleNameMapper: {'^rxjs': ['rxjs']},
+  moduleNameMapper: {
+    '^rxjs': ['rxjs']
+  },
   testEnvironment: 'jsdom',
   transform: {'^.+\\.[jt]sx?$': [
     'esbuild-jest',

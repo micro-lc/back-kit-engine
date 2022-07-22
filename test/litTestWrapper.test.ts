@@ -1,11 +1,12 @@
 import chai, {expect} from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import {TemplateResult} from 'lit'
-import sinon from 'sinon'
+import {stub} from 'sinon'
 import sinonChai from 'sinon-chai'
 
 import type {LitRuntimeHelpers} from '../src/west/testWrapper'
 import {test} from '../src/west/testWrapper'
+
 import {
   jest, openWC, randomString, resetStubs
 } from './setupTests'
@@ -13,7 +14,6 @@ import {
 chai.use(sinonChai)
 chai.use(chaiAsPromised)
 
-// const {requireActual, fn, useFakeTimers, useRealTimers, clearAllTimers, clearAllMocks} = jest
 const {
   fn, useFakeTimers, clearAllTimers, clearAllMocks, useRealTimers, advanceTimersByTime
 } = jest
@@ -25,9 +25,9 @@ describe('testWrapper tests', () => {
   beforeEach(() => {
     resetStubs()
     fn.callsFake(() => {
-      const callable = sinon.stub()
-      Object.defineProperty(callable, 'mockImplementation', {value: sinon.stub().callsFake((impl: any) => impl)})
-      Object.defineProperty(callable, 'mockReturnValue', {value: () => sinon.stub().callsFake(() => 'en-US')})
+      const callable = stub()
+      Object.defineProperty(callable, 'mockImplementation', {value: stub().callsFake((impl: any) => impl)})
+      Object.defineProperty(callable, 'mockReturnValue', {value: () => stub().callsFake(() => 'en-US')})
       return callable
     })
 

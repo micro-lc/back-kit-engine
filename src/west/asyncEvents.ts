@@ -1,10 +1,3 @@
-import type {
-  Labelled,
-  Payload,
-  Meta,
-  Event,
-  EventBus
-} from '../events'
 import {
   EMPTY,
   identity,
@@ -21,6 +14,14 @@ import type {
 import {
   count, filter, reduce, skip, take, timeout, catchError
 } from 'rxjs/operators'
+
+import type {
+  Labelled,
+  Payload,
+  Meta,
+  Event,
+  EventBus
+} from '../events'
 
 export interface Factory<P extends Payload = Payload, M extends Meta = Meta> extends Labelled {
   (payload: P, meta?: M): Event<P, M>

@@ -1,11 +1,14 @@
 {
   "env": {
-    "es2021": true,
-    "node": true
+    "es2022": true,
+    "node": true,
+    "browser": true
   },
   "extends": [
     "eslint:recommended",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -19,9 +22,19 @@
     "linebreak-style": ["error", "unix"],
     "quotes": ["error", "single"],
     "semi": ["error", "never"],
-    "object-curly-spacing": "error",
-    "object-curly-newline": ["error", { "minProperties": 2 }],
+    "object-curly-spacing": ["error", "never"],
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-empty-function": "off"
+    "@typescript-eslint/no-empty-function": "off",
+    "import/order": [
+      "error",
+      {
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ]
   }
 }

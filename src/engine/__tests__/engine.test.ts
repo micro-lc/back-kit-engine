@@ -1,7 +1,5 @@
-import {createElement} from 'react'
-import {
-  render, unmountComponentAtNode
-} from 'react-dom'
+import React from 'react'
+import ReactDOM from 'react-dom'
 
 import type {LitCreatable} from '../engine'
 import {
@@ -11,12 +9,14 @@ import {
 jest.requireActual('../engine')
 jest.mock('react-dom', () => ({
   __esModule: true,
-  render: jest.fn(),
-  unmountComponentAtNode: jest.fn()
+  default: {
+    render: jest.fn(),
+    unmountComponentAtNode: jest.fn()
+  }
 }))
 jest.mock('react', () => ({
   __esModule: true,
-  createElement: jest.fn()
+  default: {createElement: jest.fn()}
 }))
 
 describe('reactRender tests', () => {
@@ -30,8 +30,8 @@ describe('reactRender tests', () => {
       create: () => ({})
     } as unknown as LitCreatable<unknown>)()
 
-    expect(createElement).toBeCalledTimes(1)
-    expect(render).toBeCalledTimes(1)
+    expect(React.createElement).toBeCalledTimes(1)
+    expect(ReactDOM.render).toBeCalledTimes(1)
   })
 
   it('should not render when conditional rendering is false', () => {
@@ -41,8 +41,8 @@ describe('reactRender tests', () => {
       create: () => ({})
     } as unknown as LitCreatable<unknown>)(false)
 
-    expect(createElement).not.toBeCalled()
-    expect(render).not.toBeCalled()
+    expect(React.createElement).not.toBeCalled()
+    expect(ReactDOM.render).not.toBeCalled()
   })
 
   it('should not render an element created without props mapping', () => {
@@ -51,8 +51,8 @@ describe('reactRender tests', () => {
       renderRoot: document.body
     } as unknown as LitCreatable<unknown>)()
 
-    expect(createElement).not.toBeCalled()
-    expect(render).not.toBeCalled()
+    expect(React.createElement).not.toBeCalled()
+    expect(ReactDOM.render).not.toBeCalled()
   })
 })
 
@@ -62,6 +62,6 @@ describe('unmount tests', () => {
   })
   it('should call react unmount', () => {
     unmount.bind({} as LitCreatable<unknown>)()
-    expect(unmountComponentAtNode).toBeCalled()
+    expect(ReactDOM.unmountComponentAtNode).toBeCalled()
   })
 })

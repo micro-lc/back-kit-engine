@@ -1,8 +1,9 @@
 import chai, {expect} from 'chai'
-import sinon from 'sinon'
+import {stub} from 'sinon'
 import sinonChai from 'sinon-chai'
 
 import Sandbox from '../src/west/sandbox'
+
 import {
   jest, randomString, resetStubs
 } from './setupTests'
@@ -20,7 +21,7 @@ describe('sandbox tests', () => {
 
   it('should create a sandbox with given imports', () => {
     requireActual.callsFake(() => ({
-      method1: sinon.stub(), method2: sinon.stub()
+      method1: stub(), method2: stub()
     }))
     function sandbox () { return new Sandbox({module: ['method1', 'method2']}) }
 
@@ -38,7 +39,7 @@ describe('sandbox tests', () => {
 
   it('should create a sandbox with given imports and then mock them', () => {
     requireActual.callsFake(() => ({
-      method1: sinon.stub(), method2: sinon.stub()
+      method1: stub(), method2: stub()
     }))
     const sandbox = new Sandbox({module: ['method1', 'method2']})
 
@@ -53,7 +54,7 @@ describe('sandbox tests', () => {
 
   it('should throw while mocking', () => {
     requireActual.callsFake(() => ({
-      method1: sinon.stub(), method2: sinon.stub()
+      method1: stub(), method2: stub()
     }))
     const sandbox = new Sandbox({module: ['method1', 'method2']})
 
@@ -64,7 +65,7 @@ describe('sandbox tests', () => {
 
   it('should clear sandbox', () => {
     requireActual.callsFake(() => ({
-      method1: sinon.stub(), method2: sinon.stub()
+      method1: stub(), method2: stub()
     }))
     const sandbox = new Sandbox({module: ['method1', 'method2']})
     sandbox.mock()
@@ -75,7 +76,7 @@ describe('sandbox tests', () => {
 
   it('should throw on clear sandbox', () => {
     requireActual.callsFake(() => ({
-      method1: sinon.stub(), method2: sinon.stub()
+      method1: stub(), method2: stub()
     }))
     const sandbox = new Sandbox({module: ['method1', 'method2']})
     sandbox.mock()

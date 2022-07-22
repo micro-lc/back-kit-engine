@@ -2,6 +2,7 @@ import chai, {expect} from 'chai'
 import sinonChai from 'sinon-chai'
 
 import {runtime} from '../src/west'
+
 import {resetStubs} from './setupTests'
 chai.use(sinonChai)
 

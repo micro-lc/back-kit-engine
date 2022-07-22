@@ -1,4 +1,5 @@
 import type {Comment} from 'typedoc'
+
 import {
   commentToTag, emph, getAttribute, kebabCase, lineUp
 } from '../utils'

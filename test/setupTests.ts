@@ -4,7 +4,7 @@ import type {
   EachTestFn
 } from '@jest/types/build/Global'
 import mock from 'mock-require'
-import sinon from 'sinon'
+import {stub} from 'sinon'
 
 /**
  * Utils
@@ -26,16 +26,16 @@ export function randomString (length = 12): string {
 type JestArgs = [string, TestFn, number | undefined]
 type Each<C extends TestFn> = ((table: EachTable, ...taggedTemplateData: Array<unknown>) => (title: string, test: EachTestFn<C>, timeout?: number) => void) | (() => () => void);
 
-const only = sinon.stub<JestArgs, void>()
-const eachOnly = sinon.stub<[EachTable, Array<unknown>], ReturnType<Each<TestFn>>>()
+const only = stub<JestArgs, void>()
+const eachOnly = stub<[EachTable, Array<unknown>], ReturnType<Each<TestFn>>>()
 Object.defineProperty(only, 'each', {value: eachOnly})
-const skip = sinon.stub<JestArgs, void>()
-const eachSkip = sinon.stub<[EachTable, Array<unknown>], ReturnType<Each<TestFn>>>()
+const skip = stub<JestArgs, void>()
+const eachSkip = stub<[EachTable, Array<unknown>], ReturnType<Each<TestFn>>>()
 Object.defineProperty(skip, 'each', {value: eachSkip})
 
-const it = sinon.stub<JestArgs, void>()
-const each = sinon.stub<[EachTable, Array<unknown>], ReturnType<Each<TestFn>>>()
-const todo = sinon.stub<[string], void>()
+const it = stub<JestArgs, void>()
+const each = stub<[EachTable, Array<unknown>], ReturnType<Each<TestFn>>>()
+const todo = stub<[string], void>()
 Object.defineProperty(it, 'each', {value: each})
 Object.defineProperty(it, 'only', {value: only})
 Object.defineProperty(it, 'skip', {value: skip})
@@ -43,21 +43,21 @@ Object.defineProperty(it, 'todo', {value: todo})
 
 export const jest = {
   it,
-  requireActual: sinon.stub(),
-  fn: sinon.stub(),
-  useFakeTimers: sinon.stub(),
-  clearAllTimers: sinon.stub(),
-  clearAllMocks: sinon.stub(),
-  useRealTimers: sinon.stub(),
-  advanceTimersByTime: sinon.stub()
+  requireActual: stub(),
+  fn: stub(),
+  useFakeTimers: stub(),
+  clearAllTimers: stub(),
+  clearAllMocks: stub(),
+  useRealTimers: stub(),
+  advanceTimersByTime: stub()
 }
 
 /**
  * open-wc stubs
  */
 export const openWC = {
-  fixture: sinon.stub(),
-  fixtureCleanup: sinon.stub()
+  fixture: stub(),
+  fixtureCleanup: stub()
 }
 
 export function resetStubs () {
