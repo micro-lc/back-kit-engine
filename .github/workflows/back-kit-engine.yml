@@ -37,7 +37,7 @@ jobs:
       - uses: microsoft/playwright-github-action@v1
       - run: npx playwright install-deps
       - run: yarn install --immutable
-      - run: yarn coverage
+      - run: yarn coverage:ci
     
       - name: Coveralls
         uses: coverallsapp/github-action@master
