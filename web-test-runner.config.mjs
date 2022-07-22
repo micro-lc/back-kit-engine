@@ -23,7 +23,7 @@ export default {
   coverageConfig: {
     report: true,
     reportDir: 'coverage/e2e',
-    reporters: ['cobertura', 'lcovonly', 'text-summary'],
+    reporters: ['cobertura', 'lcovonly', 'text'],
     include: ['src/**/*.ts']
   }
 }
