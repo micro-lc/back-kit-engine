@@ -26,7 +26,16 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Cache build
+        if: ${{ (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main' || github.base_ref == 'main') && matrix.node-version == '16.x' }}
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ env.context }}dist
+            ${{ env.context }}.yarn
+          key: ${{ runner.os }}-install-cache-${{ env.cache-name }}-${{ github.sha }}
       - uses: microsoft/playwright-github-action@v1
+      - run: npx playwright install-deps
       - run: yarn install --immutable
       - run: yarn coverage
     
@@ -40,14 +49,6 @@ jobs:
       - name: Compile file and build
         if: ${{ (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main' || github.base_ref == 'main') && matrix.node-version == '16.x' }}
         run: yarn build
-      - name: Cache build
-        if: ${{ (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main' || github.base_ref == 'main') && matrix.node-version == '16.x' }}
-        uses: actions/cache@v3
-        with:
-          path: |
-            ${{ env.context }}dist
-            ${{ env.context }}.yarn
-          key: ${{ runner.os }}-install-cache-${{ env.cache-name }}-${{ github.sha }}
 
   release:
     needs: ['test']
