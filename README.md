@@ -1,4 +1,11 @@
+<div align="center">
+
 # back-kit-engine 🦦️
+
+[![Coverage Status](https://coveralls.io/repos/github/micro-lc/back-kit-engine/badge.svg)](https://coveralls.io/github/micro-lc/back-kit-engine)
+[![Mia-Platform](https://img.shields.io/badge/Supported%20by-Mia--Platform-green?style=for-the-badge&link=https://mia-platform.eu/&color=DE0D92&labelColor=214147)](https://mia-platform.eu/?utm_source=referral&utm_medium=github&utm_campaign=micro-lc)
+
+</div>
 
 This library allows the interplay between React components and web components.
 Arisen from R&D development on mia-platform [Backoffice][BO] library,
