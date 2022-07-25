@@ -1,5 +1,5 @@
-import {runtime} from '../../west'
 import type {Event} from '../../events'
+import {runtime} from '../../west'
 import {
   compileObjectKeys, parseEvents
 } from '../properties-manipulation'

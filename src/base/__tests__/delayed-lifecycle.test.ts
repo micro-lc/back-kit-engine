@@ -1,9 +1,7 @@
 import {randomUUID} from 'crypto'
 
-import {skipUntil} from 'rxjs/internal/operators/skipUntil'
-import {ReplaySubject} from 'rxjs/internal/ReplaySubject'
-
 import {html, fixture} from '@open-wc/testing-helpers'
+import {skipUntil,ReplaySubject} from 'rxjs'
 import type {Observable, Subscription} from 'rxjs'
 
 import type {EventBus, Event} from '../../events/factory'

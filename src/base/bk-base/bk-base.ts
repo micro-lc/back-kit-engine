@@ -1,8 +1,6 @@
-import {ReplaySubject} from 'rxjs/internal/ReplaySubject'
-import {Subscription} from 'rxjs/internal/Subscription'
-
 import {LitElement} from 'lit'
 import {property} from 'lit/decorators.js'
+import {Subscription,ReplaySubject} from 'rxjs'
 import type {Observable} from 'rxjs'
 
 import type {EventBus} from '../../events'

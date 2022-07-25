@@ -26,8 +26,24 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+      - uses: actions/cache@v3
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ env.context }}dist
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - uses: microsoft/playwright-github-action@v1
+      - run: npx playwright install-deps
       - run: yarn install --immutable
-      - run: yarn coverage
+      - run: yarn coverage:ci
+    
       - name: Coveralls
         uses: coverallsapp/github-action@master
         continue-on-error: true
@@ -38,14 +54,6 @@ jobs:
       - name: Compile file and build
         if: ${{ (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main' || github.base_ref == 'main') && matrix.node-version == '16.x' }}
         run: yarn build
-      - name: Cache build
-        if: ${{ (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main' || github.base_ref == 'main') && matrix.node-version == '16.x' }}
-        uses: actions/cache@v3
-        with:
-          path: |
-            ${{ env.context }}dist
-            ${{ env.context }}.yarn
-          key: ${{ runner.os }}-install-cache-${{ env.cache-name }}-${{ github.sha }}
 
   release:
     needs: ['test']
@@ -58,13 +66,16 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16.x
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
       - name: Cache Pull
         uses: actions/cache@v3
         with:
           path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ${{ env.context }}dist
-            ${{ env.context }}.yarn
-          key: ${{ runner.os }}-install-cache-${{ env.cache-name }}-${{ github.sha }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - name: Release on NPM Registry
         uses: JS-DevTools/npm-publish@v1
         with:

@@ -26,7 +26,7 @@ describe('bk-component tests', () => {
   it('should render bk-component shadow root with relative class', async () => {
     const el = await fixture(html`<bk-component-test-tag></bk-component-test-tag>`)
 
-    expect(el.shadowRoot?.innerHTML).toBe('<!----><slot></slot>')
+    expect(el.shadowRoot?.innerHTML).toBe('<!---->')
 
     /**
      * on `updated` is called with implicit `true`

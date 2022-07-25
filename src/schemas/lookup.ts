@@ -1,4 +1,5 @@
 import type {JSONSchema7TypeName} from 'json-schema'
+
 import type {ConfigurableFilter} from './filter'
 
 export interface LookupDeps {

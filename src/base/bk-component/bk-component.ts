@@ -1,5 +1,13 @@
-import {html} from 'lit'
+import {
+  adoptStyles,
+  CSSResult,
+  CSSResultOrNative,
+  PropertyValueMap,
+  unsafeCSS
+} from 'lit'
+import {property} from 'lit/decorators.js'
 import type {FunctionComponent} from 'react'
+import React from 'react'
 
 import {
   reactRender,
@@ -16,31 +24,56 @@ import type {
  * @description BackOffice library react-rendering component superclass
  * for Lit-based webcomponents. Extends `BkBase` and its properties
  */
-export class BkComponent<P = Record<string, never>> extends BkBase implements LitCreatable<P> {
+export class BkComponent<P = {children?: React.ReactNode}> extends BkBase implements LitCreatable<P> {
+  protected _adoptedStyleSheets: CSSResultOrNative[] = []
+  #dynamicStylesheet?: string
+  
+  @property()
+  set stylesheet(s: string | undefined) {
+    this.#dynamicStylesheet = s
+    this._adoptedStyleSheets.push(unsafeCSS(s))
+  }
+
+  get stylesheet(): string | undefined {
+    return this.#dynamicStylesheet
+  }
+  
   Component: FunctionComponent<P>
 
-  create: () => P
+  create?: () => P
 
   constructor (
-    Component: FunctionComponent<P>,
-    create: () => P,
+    Component: FunctionComponent<P> = React.Fragment,
+    create?: () => P,
     listeners?: Listener | Listener[],
     bootstrap?: Bootstrapper | Bootstrapper[]
   ) {
     super(listeners, bootstrap)
     this.Component = Component
-    this.create = create.bind(this)
+    create && (this.create = create.bind(this))
+
+    const {elementStyles = []} = this.constructor as unknown as {elementStyles: CSSResult[] | undefined}
+    this._adoptedStyleSheets.push(
+      ...elementStyles.reduce((sh, {styleSheet}) => {
+        styleSheet && sh.push(styleSheet)
+        return sh
+      }, [] as CSSResultOrNative[])
+    )
+    this._adoptedStyleSheets.push(unsafeCSS(this.style.cssText))
   }
 
   private _shouldRenderWhenConnected = false
 
+  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    super.firstUpdated(_changedProperties)
+    if(typeof this.stylesheet === 'string' && this.renderRoot instanceof ShadowRoot) {
+      adoptStyles(this.renderRoot, this._adoptedStyleSheets)
+    }
+  }
+
   protected updated (changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties)
     reactRender.bind<(conditionalRender?: boolean) => void>(this)()
-  }
-
-  protected render () {
-    return html`<slot></slot>`
   }
 
   connectedCallback (): void {

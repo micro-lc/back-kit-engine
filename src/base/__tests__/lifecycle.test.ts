@@ -1,9 +1,9 @@
 import {randomUUID} from 'crypto'
 
-import {ReplaySubject} from 'rxjs/internal/ReplaySubject'
 
 import {html, fixture} from '@open-wc/testing-helpers'
 import {html as lithtml} from 'lit'
+import {ReplaySubject} from 'rxjs'
 import type {Subscription} from 'rxjs'
 
 import type {EventBus, Event} from '../../events/factory'

@@ -5,10 +5,11 @@ import {
 } from 'rxjs'
 import sinonChai from 'sinon-chai'
 
+import type {Event} from '../src/events'
 import {
   actOnEvents, completeAndCount
 } from '../src/west/asyncEvents'
-import type {Event} from '../src/events'
+
 import {randomString} from './setupTests'
 
 chai.use(sinonChai)
