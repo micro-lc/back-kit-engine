@@ -2,7 +2,7 @@ import type {FunctionComponent} from 'react'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-export interface LitCreatable<P = Record<string, never>> {
+export interface LitCreatable<P = {children?: React.ReactNode}> {
   container?: HTMLElement | null
   renderRoot: HTMLElement | ShadowRoot
   Component: FunctionComponent<P>
