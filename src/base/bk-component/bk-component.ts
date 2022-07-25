@@ -1,13 +1,10 @@
 import {
-  adoptStyles,
-  CSSResult,
   CSSResultOrNative,
   PropertyValueMap,
   unsafeCSS
 } from 'lit'
 import {property} from 'lit/decorators.js'
 import type {FunctionComponent} from 'react'
-import React from 'react'
 
 import {
   reactRender,
@@ -18,24 +15,30 @@ import {BkBase} from '../bk-base'
 import type {
   Bootstrapper, Listener
 } from '../bk-base'
+import {
+  adoptStylesheet,
+  adoptStylesOnShadowRoot,
+  StyledComponent
+} from '../styled-components'
 
 /**
  * @superclass
  * @description BackOffice library react-rendering component superclass
  * for Lit-based webcomponents. Extends `BkBase` and its properties
  */
-export class BkComponent<P = {children?: React.ReactNode}> extends BkBase implements LitCreatable<P> {
-  protected _adoptedStyleSheets: CSSResultOrNative[] = []
-  #dynamicStylesheet?: string
-  
+export class BkComponent<P = {children?: React.ReactNode}>
+  extends BkBase implements LitCreatable<P>, StyledComponent {
+  protected dynamicStyleSheet?: string
+  _adoptedStyleSheets: CSSResultOrNative[] = []
+
   @property()
   set stylesheet(s: string | undefined) {
-    this.#dynamicStylesheet = s
+    this.dynamicStyleSheet = s
     this._adoptedStyleSheets.push(unsafeCSS(s))
   }
 
   get stylesheet(): string | undefined {
-    return this.#dynamicStylesheet
+    return this.dynamicStyleSheet
   }
   
   Component: FunctionComponent<P>
@@ -43,7 +46,7 @@ export class BkComponent<P = {children?: React.ReactNode}> extends BkBase implem
   create?: () => P
 
   constructor (
-    Component: FunctionComponent<P> = React.Fragment,
+    Component: FunctionComponent<P>,
     create?: () => P,
     listeners?: Listener | Listener[],
     bootstrap?: Bootstrapper | Bootstrapper[]
@@ -52,23 +55,14 @@ export class BkComponent<P = {children?: React.ReactNode}> extends BkBase implem
     this.Component = Component
     create && (this.create = create.bind(this))
 
-    const {elementStyles = []} = this.constructor as unknown as {elementStyles: CSSResult[] | undefined}
-    this._adoptedStyleSheets.push(
-      ...elementStyles.reduce((sh, {styleSheet}) => {
-        styleSheet && sh.push(styleSheet)
-        return sh
-      }, [] as CSSResultOrNative[])
-    )
-    this._adoptedStyleSheets.push(unsafeCSS(this.style.cssText))
+    adoptStylesheet.call(this)
   }
 
   private _shouldRenderWhenConnected = false
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
     super.firstUpdated(_changedProperties)
-    if(typeof this.stylesheet === 'string' && this.renderRoot instanceof ShadowRoot) {
-      adoptStyles(this.renderRoot, this._adoptedStyleSheets)
-    }
+    adoptStylesOnShadowRoot.call(this)
   }
 
   protected updated (changedProperties: Map<string | number | symbol, unknown>): void {
@@ -81,6 +75,7 @@ export class BkComponent<P = {children?: React.ReactNode}> extends BkBase implem
       reactRender.bind<(conditionalRender?: boolean) => void>(this)()
       this._shouldRenderWhenConnected = false
     }
+
     super.connectedCallback()
   }
 

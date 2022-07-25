@@ -1,4 +1,9 @@
-import {html} from 'lit'
+import {
+  CSSResultOrNative,
+  PropertyValueMap,
+  unsafeCSS
+} from 'lit'
+import {property} from 'lit/decorators.js'
 import type {FunctionComponent} from 'react'
 
 import {
@@ -10,36 +15,59 @@ import type {
   Bootstrapper, Listener
 } from '../bk-base'
 import {BkHttpBase} from '../bk-http-base'
+import {
+  adoptStylesheet,
+  adoptStylesOnShadowRoot,
+  StyledComponent
+} from '../styled-components'
 
 /**
  * @superclass
- * @description embeds an http client instance in a webcomponent which renders a React component
+ * @description embeds an http client instance in a webcomponent
+ * which renders a React component
  */
-export class BkHttpComponent<P = Record<string, never>> extends BkHttpBase implements LitCreatable<P> {
+export class BkHttpComponent<P = Record<string, never>>
+  extends BkHttpBase implements LitCreatable<P>, StyledComponent {
+  protected dynamicStyleSheet?: string
+  _adoptedStyleSheets: CSSResultOrNative[] = []
+
+  @property()
+  set stylesheet(s: string | undefined) {
+    this.dynamicStyleSheet = s
+    this._adoptedStyleSheets.push(unsafeCSS(s))
+  }
+
+  get stylesheet(): string | undefined {
+    return this.dynamicStyleSheet
+  }
+
   Component: FunctionComponent<P>
 
-  create: () => P
+  create?: () => P
 
   constructor (
     Component: FunctionComponent<P>,
-    create: () => P,
+    create?: () => P,
     listeners?: Listener | Listener[],
     bootstrap?: Bootstrapper | Bootstrapper[]
   ) {
     super(listeners, bootstrap)
     this.Component = Component
-    this.create = create.bind(this)
+    create && (this.create = create.bind(this))
+
+    adoptStylesheet.call(this)
   }
 
   private _shouldRenderWhenConnected = false
 
+  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    super.firstUpdated(_changedProperties)
+    adoptStylesOnShadowRoot.call(this)
+  }
+
   protected updated (changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties)
     reactRender.bind<(conditionalRender?: boolean) => void>(this)()
-  }
-
-  protected render () {
-    return html`<slot></slot>`
   }
 
   connectedCallback (): void {
@@ -47,6 +75,7 @@ export class BkHttpComponent<P = Record<string, never>> extends BkHttpBase imple
       reactRender.bind<(conditionalRender?: boolean) => void>(this)()
       this._shouldRenderWhenConnected = false
     }
+
     super.connectedCallback()
   }
 

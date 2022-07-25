@@ -18,7 +18,8 @@ export class BkHttpBase extends BkBase {
 
   _headers?: HeadersInit
 
-  @state() _httpClient: HttpClientInstance = createFetchHttpClient.bind(this)()
+  @state() _httpClient: HttpClientInstance =
+    createFetchHttpClient.call(this)
 
   /**
    * @description http client base path
@@ -30,7 +31,7 @@ export class BkHttpBase extends BkBase {
 
   set basePath (path: string | undefined) {
     this._basePath = path
-    this._httpClient = createFetchHttpClient.bind(this)()
+    this._httpClient = createFetchHttpClient.call(this)
   }
 
   /**
@@ -43,6 +44,6 @@ export class BkHttpBase extends BkBase {
 
   set headers (h: HeadersInit | undefined) {
     this._headers = h
-    this._httpClient = createFetchHttpClient.bind(this)()
+    this._httpClient = createFetchHttpClient.call(this)
   }
 }

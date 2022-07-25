@@ -41,7 +41,6 @@ describe('bk-component tests', () => {
     const el = await fixture(html`<bk-http-component-test-tag></bk-http-component-test-tag>`)
     expect(createFetchHttpClient).toBeCalled()
 
-    expect(el.shadowRoot?.innerHTML).toBe('<!----><slot></slot>')
     expect(reactRender).toBeCalledTimes(1)
 
     el.remove()
@@ -51,15 +50,11 @@ describe('bk-component tests', () => {
   it('should render bk-component again after disconnection and renewed connection', async () => {
     const el = await fixture(html`<bk-http-component-test-tag></bk-http-component-test-tag>`)
 
-    expect(el.shadowRoot?.innerHTML).toBe('<!----><slot></slot>')
-
     expect(reactRender).toBeCalledTimes(1)
 
     const {parentElement} = el
     el.remove()
     expect(unmount).toBeCalledTimes(1)
-
-    expect(el.shadowRoot?.innerHTML).toBe('<!----><slot></slot>')
 
     parentElement?.appendChild(el)
     expect(reactRender).toBeCalledTimes(2)
