@@ -1,7 +1,7 @@
 import {fixture, html, waitUntil, fixtureCleanup, expect} from '@open-wc/testing'
 import {ReplaySubject} from 'rxjs'
 
-import type {CustomForm, CustomFormModal} from '../../pages/custom-form-modal'
+import type {CustomForm, CustomFormModal, CustomModal} from '../../pages/custom-form-modal'
 import type {EventBus} from '../../src/events'
 
 import '../../pages/custom-form-modal'
@@ -30,8 +30,11 @@ describe('modal with slotted child tests', () => {
     `)
 
     const customForm = formModal.shadowRoot?.querySelector('custom-form') as CustomForm
-    customForm.shadowRoot?.querySelector('button')?.click()
+    const customModal = formModal.shadowRoot?.querySelector('custom-modal') as CustomModal
+    const slot = customModal.shadowRoot?.querySelector('slot')
+    expect(slot?.assignedNodes()).to.be.an('array').that.does.include(customForm)
 
+    customForm.shadowRoot?.querySelector('button')?.click()
     await waitUntil(() => !formModal.visible, 'modal should be turned off')
   })
 })

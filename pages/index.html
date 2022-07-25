@@ -5,7 +5,7 @@
   <script type="module" src="/pages/custom-form-modal.ts"></script>
 </head>
 <body>
-  <button onclick="$.next({label: 'open-modal'})">Open modal</button>
+  <button onclick="$.next({label: 'open-modal', payload: {}})">Open modal</button>
   <custom-form-modal></custom-form-modal>
   <script>
     const eventBus = new rxjs.ReplaySubject()

@@ -15,7 +15,7 @@ type ModalProps = AntdModalProps
 type FormProps = AntdFormProps
 
 function Modal ({children, ...props}: ModalProps): JSX.Element {
-  return React.createElement(AntdModal, props, children)
+  return React.createElement('div', null, React.createElement(AntdModal, props, children))
 }
 
 function Form ({children, ...props}: FormProps): JSX.Element {
@@ -46,7 +46,10 @@ function createModalProps (this: CustomModal): ModalProps {
     visible: this._visible,
     onCancel: close,
     onOk: close,
-    getContainer: () => this.container.firstElementChild as HTMLDivElement,
+    getContainer: () =>
+      // ant somehow modifies the most external div adding a style class
+      // and after that ReactDOM wouldn't recognize it as its own root
+      this.container.firstElementChild as HTMLDivElement,
     children: React.createElement('slot')
   }
 }
@@ -90,7 +93,7 @@ export class CustomModal extends BkComponent<ModalProps> {
   }
 
   protected render(): unknown {
-    return html`<div id="modal-container"><div></div></div>`
+    return html`<div id="modal-container"></div>`
   }
 }
 
