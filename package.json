@@ -1,6 +1,6 @@
 {
   "name": "@micro-lc/back-kit-engine",
-  "version": "0.17.1",
+  "version": "0.17.2",
   "description": "engine to sync react over webcomponents scaffolding + backoffice utils and types/interfaces",
   "license": "SEE LICENSE IN LICENSE",
   "author": "Mia Platform Core Team <core@mia-platform.eu>",
@@ -85,7 +85,6 @@
     "docs:components": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' ts-node src/docgen --entryPoints src/base/index.ts --type components",
     "docs": "run-p docs:events",
     "postinstall": "husky install",
-    "prepublishOnly": "npx --yes pinst --disable",
     "prepublish": "pinst --disable"
   },
   "devDependencies": {
