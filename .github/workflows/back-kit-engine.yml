@@ -3,6 +3,7 @@ name: back-kit-engine CI
 env:
   context: ./
   cache-name: cache-build
+  NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 on:
   push:
@@ -96,10 +97,3 @@ jobs:
           key: ${{ runner.os }}-dist-${{ github.sha }}
       - run: yarn install --immutable
       - run: yarn npm publish
-        env:
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Release on NPM Registry
-        uses: JS-DevTools/npm-publish@v1
-        with:
-          access: 'public'
-          token: ${{ secrets.NPM_TOKEN }}
