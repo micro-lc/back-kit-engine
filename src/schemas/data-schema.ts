@@ -66,6 +66,7 @@ export interface DisabledOptions {
 }
 
 export interface FormOptions {
+  template?: LocalizedText
   disabled?: boolean
   hidden?: boolean
   placeholder?: LocalizedText
@@ -117,6 +118,7 @@ export interface ExtendedJSONSchema7Definition extends Omit<JSONSchema7, 'type' 
 
   /** Specific configuration for the filters components. */
   filtersOptions?: FiltersOptions
+
   /** Mark this field as unique or as unique key */
   unique?: boolean
 
