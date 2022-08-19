@@ -1,4 +1,4 @@
-import {factory} from '@micro-lc/back-kit-engine'
+import {factory} from '../factory'
 
 export type LayoutChangePayload = {
   layout: string

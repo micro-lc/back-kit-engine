@@ -1,5 +1,4 @@
-import type {Payload, TransactionMeta} from '@micro-lc/back-kit-engine'
-import {factory} from '@micro-lc/back-kit-engine'
+import {factory, Payload, TransactionMeta} from '../factory'
 
 /**
  * @registeredEvent
