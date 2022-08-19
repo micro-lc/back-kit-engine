@@ -1,6 +1,7 @@
 export * from './addFilter'
 export * from './addNew'
 export * from './addNewExternal'
+export * from './bulkUpdate'
 export * from './cancel'
 export * from './changeFilter'
 export * from './changeQuery'

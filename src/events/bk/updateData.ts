@@ -1,6 +1,6 @@
 import {factory, Payload} from '../factory'
 
-export type UpdateDataPayload = Payload | Payload[]
+export type UpdateDataPayload = Payload
 
 /**
  * @registeredEvent

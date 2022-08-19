@@ -193,6 +193,25 @@ goes back an arbitrary number of levels of nesting
 }
 ```
 
+### Boolean and Enums bulk update
+
+allows to modifies enums or boolean values from an array of items
+
+
+- Label: `bulk-update`
+- Payload:
+
+```typescript
+{
+  data: {
+    [key: string]: any
+  }[]
+  changes: {
+    [key: string]: string | boolean
+  }[]
+}
+```
+
 
 
 ## C
