@@ -1,6 +1,6 @@
 import {factory, Payload} from '../factory'
 
-export type UpdateDataPayload = Payload
+export type UpdateDataPayload = Payload | Payload[]
 
 /**
  * @registeredEvent
@@ -8,7 +8,9 @@ export type UpdateDataPayload = Payload
  * @description notifies the request for creation of a new item and carries its value
  * @payload {
  *  [key: string]: any
- * }
+ * } | {
+ *  [key: string]: any
+ * }[]
  * @meta {
  *    transactionId: string
  * }
