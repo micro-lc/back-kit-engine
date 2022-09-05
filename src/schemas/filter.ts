@@ -5,6 +5,7 @@ export type FiltersOptions = {
 
 export type FilterOperator = |
   'equal' |
+  'exists' |
   'notEqual' |
   'greater' |
   'greaterEqual' |
