@@ -1,5 +1,5 @@
 import type {Filter} from '../../schemas'
-import {factory} from '../factory'
+import {factory, WithHashMeta} from '../factory'
 
 export type AddFilterPayload = Filter
 
@@ -28,5 +28,8 @@ export type AddFilterPayload = Filter
  *    applied?: boolean;
  *    name: string;
  *}
+ * @meta {
+ *    hash: string
+ * }
  */
-export const addFilter = factory<AddFilterPayload>('add-filter')
+export const addFilter = factory<AddFilterPayload, WithHashMeta>('add-filter')

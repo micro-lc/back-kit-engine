@@ -41,6 +41,10 @@ export interface TransactionMeta extends Meta {
   transactionId: string
 }
 
+export interface WithHashMeta extends Meta {
+  hash: string
+}
+
 export type EventBus = ReplaySubject<Event<Payload, Meta>>
 
 export type FactoryOptions = {
