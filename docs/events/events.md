@@ -120,6 +120,14 @@ delivers data to add a new filter
 }
 ```
 
+- Meta:
+
+```typescript
+{
+  hash: string
+}
+```
+
 ### Add New
 
 notifies adding a new item
