@@ -22,7 +22,7 @@ export function unmount<P, T extends LitCreatable<P>> (this: T): boolean {
   return ReactDOM.unmountComponentAtNode(container as HTMLElement)
 }
 
-export function reactRender<P, T extends LitCreatable<P>> (
+export function reactRender<P extends Record<string, any>, T extends LitCreatable<P>> (
   this: T,
   conditionalRender = true,
   ...children: React.ReactNode[]

@@ -25,7 +25,7 @@ import type {
 
 export interface Factory<P extends Payload = Payload, M extends Meta = Meta> extends Labelled {
   (payload: P, meta?: M): Event<P, M>
-  is: <S, A extends S, T = Meta, B extends T = T>(event: Event<S, T>) => event is Event<A, B>
+  is: <S extends Payload, A extends S, T extends Meta = Meta, B extends T = T>(event: Event<S, T>) => event is Event<A, B>
   registered?: boolean
 }
 
