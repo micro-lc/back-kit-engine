@@ -132,7 +132,7 @@
     "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",
     "cobertura-merge": "^1.0.3",
-    "esbuild": "^0.14.50",
+    "esbuild": "^0.15.7",
     "esbuild-jest": "^0.5.0",
     "eslint": "^8.20.0",
     "eslint-plugin-import": "^2.26.0",
