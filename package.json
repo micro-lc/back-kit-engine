@@ -14,7 +14,7 @@
     "type": "git",
     "url": "git@github.com:micro-lc/back-kit-engine.git"
   },
-  "packageManager": "yarn@3.2.1",
+  "packageManager": "yarn@3.2.3",
   "files": [
     "./base",
     "./dist",
