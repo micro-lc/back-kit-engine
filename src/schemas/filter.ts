@@ -1,6 +1,7 @@
 export type FiltersOptions = {
   hidden?: boolean
   availableOperators?: string[]
+  ignoreCase?: boolean
 }
 
 export type FilterOperator = |
