@@ -180,6 +180,22 @@ const withBody = (method: 'POST' | 'DELETE' | 'PUT') =>
         return fetchPromise
       }
 
+      if (method === 'POST' && fetchConfig.downloadAsFile) {
+        return await fetchPromise.then(response => {
+          const filename = response.headers.get('Content-Disposition')?.match(/filename=([^;]+)/)?.[1]
+  
+          return Promise.all([
+            Promise.resolve(response),
+            Promise.resolve(filename),
+            response.blob()
+          ])
+        })
+          .then(([response, filename, blob]) => {
+            downloadFile.bind(this)(blob, filename)
+            return response
+          })
+      }
+
       return await processResponse(fetchPromise, outputTransform)
     } catch (err) {
       return Promise.reject(defaultErrorHandler(err))

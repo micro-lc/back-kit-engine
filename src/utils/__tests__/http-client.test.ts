@@ -340,6 +340,31 @@ describe('http-client tests', () => {
     expect(await data?.text()).toStrictEqual('ok')
   })
 
+  it('should fetch a post method with file download', async () => {
+    const body = {key: 'value'}
+    fetchMock.mockOnceIf(/\/$/, () => {
+      return Promise.resolve({
+        status: 200,
+        body: 'text',
+        headers: {
+          'Content-Type': 'text/plain',
+          'Content-Disposition': 'attachment; filename=file.csv'
+        }
+      })
+    })
+
+    const {
+      headers, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post('/', body, {
+      downloadAsFile: true
+    })
+
+    expect(downloadFile).toBeCalled()
+    expect(status).toBe(200)
+    expect(headers.get('Content-Type')).toStrictEqual('text/plain')
+    expect(headers.get('Content-Disposition')).toStrictEqual('attachment; filename=file.csv')
+  })
+
   it('should fetch post method with text response applying a transform', async () => {
     const body = {key: 'value'}
     const modBody = {key: 'value1'}
