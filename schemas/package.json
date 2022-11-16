@@ -1,0 +1,4 @@
+{
+  "name": "@micro-lc/back-kit-engine/schemas",
+  "types": "./index.d.ts"
+}

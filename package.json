@@ -1,6 +1,14 @@
 {
-  "name": "back-kit-engine",
+  "name": "@micro-lc/temp-back-kit-engine",
+  "version": "2.0.0-rc0",
   "packageManager": "yarn@3.3.0",
+  "files": [
+    "dist",
+    "schemas/*.json",
+    "schemas/*.d.ts",
+    "package.json",
+    "README.md"
+  ],
   "scripts": {
     "lint": "eslint . --ext .mjs,.js,.jsx,.ts,.tsx,.schema.json --resolve-plugins-relative-to .",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"CommonJS\" }' ts-mocha",
