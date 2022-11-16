@@ -1,3 +1,4 @@
+import { existsSync, readFileSync } from 'fs'
 import { writeFile } from 'fs/promises'
 import { resolve } from 'path'
 
@@ -14,7 +15,21 @@ const main = async () => {
 
   try {
     const compileProps: Partial<Options> = {
-      $refOptions: { resolve: { external: true } },
+      $refOptions: {
+        resolve: {
+          http: {
+            read({ url }) {
+              const fileNameMatch = url.match(/schemas\/(.+)(#\/.*)?$/)
+
+              if (fileNameMatch?.[1] !== undefined && existsSync(resolve(schemaDirPath, fileNameMatch[1]))) {
+                return readFileSync(resolve(schemaDirPath, fileNameMatch[1]))
+              }
+
+              throw new TypeError(`Cannot find locally a file for ${url} $ref`)
+            },
+          },
+        },
+      },
       bannerComment,
       style: { semi: false },
     }
