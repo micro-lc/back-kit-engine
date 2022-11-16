@@ -1,6 +1,6 @@
 {
   "name": "@micro-lc/temp-back-kit-engine",
-  "version": "2.0.0-rc0",
+  "version": "0.1.0",
   "packageManager": "yarn@3.3.0",
   "files": [
     "dist",
