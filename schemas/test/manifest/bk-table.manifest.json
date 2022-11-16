@@ -1,0 +1,71 @@
+{
+  "$schema": "../../manifest.schema.json",
+  "label": "Table",
+  "properties": {
+    "dataSchema": {
+      "__mia_configuration": { "shared-key": "back-kit/data-schema" }
+    },
+    "disableRowClick": {
+      "type": "boolean",
+      "default": false,
+      "description": "When set to `true`, clicking on a row does not trigger an event",
+      "__mia_configuration": { "attribute": "disable-row-click" }
+    },
+    "disableRowSelectionChange": {
+      "type": "boolean",
+      "default": false,
+      "description": "When set to `true`, selecting a row through the checkbox in the first column does not trigger an event",
+      "__mia_configuration": { "attribute": "disable-row-selection-change" }
+    },
+    "initialSortDirection": {
+      "type": "string",
+      "enum": ["descend", "ascend"],
+      "description": "Row initial sorting direction to use when component bootstraps",
+      "__mia_configuration": { "attribute": "initial-sort-direction" }
+    },
+    "initialSortProperty": {
+      "type": "string",
+      "description": "Initial column to sort on when component bootstraps",
+      "__mia_configuration": { "attribute": "initial-sort-property" }
+    },
+    "rowActions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": { "type": "string", "enum": ["httpPost", "event"] },
+          "icon": { "type": "string" },
+          "label": {
+            "__mia_configuration": { "schema-hint": "localized-text" }
+          },
+          "content": { "type": "string" },
+          "meta": { "type": "object" },
+          "requireConfirm": {
+            "oneOf": [
+              { "type": "boolean" },
+              {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "__mia_configuration": { "schema-hint": "localized-text" }
+                  },
+                  "content": {
+                    "__mia_configuration": { "schema-hint": "localized-text" }
+                  },
+                  "cancelText": {
+                    "__mia_configuration": { "schema-hint": "localized-text" }
+                  },
+                  "okText": {
+                    "__mia_configuration": { "schema-hint": "localized-text" }
+                  }
+                }
+              }
+            ],
+            "__mia_configuration": { "oneOfDefault": 0 }
+          },
+          "actions": {}
+        }
+      }
+    }
+  }
+}

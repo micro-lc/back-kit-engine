@@ -1,0 +1,237 @@
+{
+  "$schema": "../../manifest.schema.json",
+  "label": "Button",
+  "properties": {
+    "disabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Disables the button",
+      "__mia_configuration": { "attribute": true }
+    },
+    "loading": {
+      "type": "boolean",
+      "default": false,
+      "description": "Sets the button state to loading",
+      "__mia_configuration": { "attribute": true }
+    },
+    "disableOnAction": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Sets the button state to disabled while the action triggered by the click is in progress",
+      "__mia_configuration": { "attribute": "disable-on-action" }
+    },
+    "loadingOnAction": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Sets the button state to loading while the action triggered by the click is in progress",
+      "__mia_configuration": { "attribute": "loading-on-action" }
+    },
+    "listenToLoadingData": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Configures the button to be loading when trigger by a `loading-data` event",
+      "__mia_configuration": { "attribute": "listen-to-loading-data" }
+    },
+    "bulkAction": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Allows to use the button as a bulk button action trigger. If set to true, it listens to `selected-data-bulk` event"
+    },
+    "loadingDebounce": {
+      "type": "number",
+      "description": "Minimum time in milliseconds between loading changes of state",
+      "__mia_configuration": { "attribute": "loading-debounce" }
+    },
+    "stopPropagationClick": {
+      "type": "boolean",
+      "default": true,
+      "description": "Configures when click events bubble up from this button",
+      "__mia_configuration": { "attribute": "stop-propagation-click" }
+    },
+    "iconId": {
+      "type": "string",
+      "description": "Defines which icon should be rendered into the button, if this property is not defined or doesn't match a provided icon, no icon will be rendered",
+      "__mia_configuration": { "attribute": "icon-id" }
+    },
+    "iconPlacement": {
+      "type": "string",
+      "enum": ["default", "left", "right"],
+      "default": "default",
+      "description": "Defines where icon should be rendered, either left or right. It defaults on left",
+      "__mia_configuration": { "attribute": "icon-id" }
+    },
+    "type": {
+      "type": "string",
+      "enum": ["primary", "ghost", "dashed", "link", "text", "default"],
+      "default": "primary",
+      "description": "Chooses whether to render the button as a primary or secondary color regular button, a link, and so on...",
+      "__mia_configuration": { "attribute": true }
+    },
+    "shape": {
+      "type": "string",
+      "enum": ["default", "circle", "round"],
+      "default": "round",
+      "description": "Allows to choose a shaping of the button",
+      "__mia_configuration": { "attribute": true }
+    },
+    "danger": {
+      "type": "boolean",
+      "description": "Flags the button as `danger`. Most often used when the action it triggers is dangerous and the button color is tipically red",
+      "__mia_configuration": { "attribute": true }
+    },
+    "content": {
+      "title": "Label",
+      "description": "The label of the button",
+      "__mia_configuration": {
+        "schema-hint": "localized-text",
+        "priority": "high"
+      }
+    },
+    "fileFormKey": {
+      "type": "string",
+      "default": "file",
+      "description": "When `clickConfig` is of `type` `file-upload`, file is set to this key when appending values to the multipart/form-data that is sent",
+      "__mia_configuration": { "attribute": "file-form-key" }
+    },
+    "urlMask": {
+      "type": "string",
+      "default": "",
+      "description": "Url mask to apply to the current path to extract dynamic parameters",
+      "__mia_configuration": { "attribute": "url-mask" }
+    },
+    "pathnameParams": {
+      "type": "object",
+      "description": "When getting context form the URL, it represents the name of the property to inject as object-like source",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "searchParams": {
+      "type": "object",
+      "description": "Property to inject the object-like source from URL search params",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "context": {
+      "type": "object",
+      "description": "Button extra context to provide to click handler"
+    },
+    "navigationStrategy": {
+      "type": "string",
+      "description": "Chooses the button behavior upon navigating nested objects. Allowed values are 'disable' and 'hide'. By default, the button does not react to navigation events",
+      "enum": ["disable", "hide"],
+      "__mia_configuration": { "attribute": "navigation-strategy" }
+    },
+    "clickConfig": {
+      "__mia_configuration": { "priority": "medium", "oneOfGuard": "type" },
+      "type": "object",
+      "description": "Allows to choose the button behavior on user click action",
+      "oneOf": [
+        {
+          "properties": {
+            "type": { "const": "event" },
+            "actionConfig": {
+              "$ref": "../../../../sdk/manifest.schema.json#/definitions/event"
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": { "const": "href" },
+            "actionConfig": {
+              "type": "object",
+              "properties": {
+                "href": { "type": "string" },
+                "target": {
+                  "type": "string",
+                  "enum": ["_blank", "_parent", "_self", "_top"],
+                  "default": "_self"
+                },
+                "query": { "type": "object" }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": { "type": "string", "enum": ["push", "replace"] },
+            "actionConfig": {
+              "type": "object",
+              "properties": {
+                "state": {},
+                "title": { "type": "string" },
+                "url": { "type": "string" }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": { "const": "http" },
+            "actionConfig": {
+              "type": "object",
+              "required": ["url"],
+              "properties": {
+                "url": { "type": "string" },
+                "method": {
+                  "type": "string",
+                  "enum": ["GET", "POST", "DELETE"]
+                },
+                "body": {},
+                "config": {
+                  "type": "object",
+                  "properties": {
+                    "params": { "type": "string" },
+                    "raw": { "type": "boolean" },
+                    "downloadAsFile": { "type": "boolean" }
+                  }
+                },
+                "returnEvent": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "../../../../sdk/manifest.schema.json#/definitions/event"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["file-upload", "file-download"]
+            },
+            "actionConfig": {
+              "type": "object",
+              "required": ["url"],
+              "properties": {
+                "url": { "type": "string" },
+                "config": {
+                  "type": "object",
+                  "properties": {
+                    "params": { "type": "string" },
+                    "raw": { "type": "boolean" },
+                    "downloadAsFile": { "type": "boolean" }
+                  }
+                },
+                "returnEvent": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "../../../../sdk/manifest.schema.json#/definitions/event"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "type": { "const": "go-back" }
+          }
+        }
+      ]
+    }
+  }
+}

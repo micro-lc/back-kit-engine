@@ -1,0 +1,17 @@
+{
+  "$id": "https://raw.githubusercontent.com/micro-lc/back-kit-engine/v2/main/schemas/manifest.schema.json#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Manifest",
+  "type": "object",
+  "properties": {
+    "label": {
+      "$ref": "./mia.schema.json#/definitions/localized-text"
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "./mia.schema.json#"
+      }
+    }
+  }
+}
