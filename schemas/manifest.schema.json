@@ -5,12 +5,12 @@
   "type": "object",
   "properties": {
     "label": {
-      "$ref": "./mia.schema.json#/definitions/localized-text"
+      "$ref": "https://raw.githubusercontent.com/micro-lc/back-kit-engine/v2/main/schemas/mia.schema.json#/definitions/localized-text"
     },
     "properties": {
       "type": "object",
       "additionalProperties": {
-        "$ref": "./mia.schema.json#"
+        "$ref": "https://raw.githubusercontent.com/micro-lc/back-kit-engine/v2/main/schemas/mia.schema.json#"
       }
     }
   }
