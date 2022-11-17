@@ -8,9 +8,26 @@ import addFormats from 'ajv-formats'
 import { expect } from 'chai'
 import { glob } from 'glob'
 
+export type SchemaWithDefinitions = SchemaObject & { definitions?: Record<string, SchemaObject> }
+
+interface LoadedSchema {
+  absPath: string
+  id: string
+  schema: SchemaWithDefinitions
+}
+
 const loadJson = (schemaAbsPath: string): SchemaObject => {
   const fileBuffer = readFileSync(schemaAbsPath)
   return JSON.parse(fileBuffer.toString()) as SchemaObject
+}
+
+export const loadSchemas = (schemasPaths: string[]): LoadedSchema[] => {
+  const loadedSchemas: LoadedSchema[] = []
+
+  return schemasPaths.reduce((acc, currPath) => {
+    const schema = loadJson(currPath) as SchemaWithDefinitions
+    return [...acc, { absPath: currPath, id: schema.$id ?? currPath, schema }]
+  }, loadedSchemas)
 }
 
 describe('Test schemas', () => {
@@ -23,10 +40,17 @@ describe('Test schemas', () => {
     const schemaRelPath = schemaAbsPath.replace(schemasDirPath, '')
 
     describe(schemaRelPath, () => {
-      const schema = loadJson(schemaAbsPath)
+      const loadedSchemas = loadSchemas(schemasAbsPaths)
+      const configSchema = loadedSchemas.find(({ absPath }) => absPath === schemaAbsPath)?.schema
+
+      const auxiliarySchemas = loadedSchemas
+        .filter(({ absPath }) => absPath !== schemaAbsPath)
+        .map(({ schema: auxiliarySchema }) => auxiliarySchema)
 
       const ajv = addFormats(new Ajv())
-      const validate = ajv.compile(schema)
+      ajv.addSchema(auxiliarySchemas)
+
+      const validate = ajv.compile(configSchema as SchemaObject)
 
       const pathSegments = path.parse(schemaAbsPath)
       const [schemaName] = pathSegments.name.split('.')
