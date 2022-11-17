@@ -1,4 +1,7 @@
 {
   "name": "@micro-lc/back-kit-engine/schemas",
-  "types": "./index.d.ts"
+  "types": "./index.d.ts",
+  "engines": {
+    "node": ">=16.17.0"
+  }
 }
