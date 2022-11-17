@@ -37,6 +37,9 @@ export interface LookupOptions {
 
   /** List of dependencies to other fields in the form. */
   lookupDeps?: LookupDeps[]
+
+  /** Sorting option used when fetching lookup data. */
+  sortOption?: string
 }
 
 export type LookupData = Record<string, unknown>[]
