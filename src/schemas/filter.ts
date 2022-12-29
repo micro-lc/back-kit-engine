@@ -18,6 +18,7 @@ export type FilterOperator = |
   'includeExactly' |
   'notIncludeAny' |
   'between' |
+  'notBetween' |
   'hasLengthEqual' |
   'hasLengthGreaterEqual' |
   'hasLengthLessEqual'
