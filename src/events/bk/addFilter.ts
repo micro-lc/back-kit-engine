@@ -9,6 +9,7 @@ export type AddFilterPayload = Filter
  * @description delivers data to add a new filter
  * @payload {
  *      operator: 'equal' |
+ *               'exists' |
  *             'notEqual' |
  *              'greater' |
  *         'greaterEqual' |
@@ -20,6 +21,7 @@ export type AddFilterPayload = Filter
  *       'includeExactly' |
  *        'notIncludeAny' |
  *              'between' |
+ *           'notBetween' |
  *       'hasLengthEqual' |
  *'hasLengthGreaterEqual' |
  *   'hasLengthLessEqual';
