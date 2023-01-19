@@ -28,6 +28,7 @@ type PostMultipartHandler =
 export type HttpMethods = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'
 
 export interface HttpClientSupport extends Element {
+  proxyWindow?: Window
   basePath?: string
   headers?: HeadersInit
 }
@@ -120,11 +121,12 @@ async function get (
   config?: HttpClientConfig
 ): Promise<HttpClientResponse<any>> {
   try {
+    const {proxyWindow = window} = this
     const [url, {
       outputTransform, ...fetchConfig
     }] = initParams(path, this.basePath, config)
 
-    const fetchPromise = fetch(url.toString(), {
+    const fetchPromise = proxyWindow.fetch(url.toString(), {
       ...fetchConfig,
       method: 'GET',
       headers: resolveHeaders(this.headers, fetchConfig.headers)
@@ -164,12 +166,13 @@ const withBody = (method: 'POST' | 'DELETE' | 'PUT') =>
     config?: HttpClientConfig
   ): Promise<HttpClientResponse<any>> {
     try {
+      const {proxyWindow = window} = this
       const [url, {
         outputTransform, ...fetchConfig
       }] = initParams(path, this.basePath, config)
 
       const transform = fetchConfig.inputTransform?.(data) ?? defaultInputTransform(data)
-      const fetchPromise = fetch(url.toString(), {
+      const fetchPromise = proxyWindow.fetch(url.toString(), {
         ...fetchConfig,
         method,
         body: transform,
@@ -209,11 +212,12 @@ async function postMultipart (
   config?: HttpClientConfig
 ): Promise<HttpClientResponse<any>> {
   try {
+    const {proxyWindow = window} = this
     const [url, {
       outputTransform, ...fetchConfig
     }] = initParams(path, this.basePath, config)
 
-    const fetchPromise = fetch(url.toString(), {
+    const fetchPromise = proxyWindow.fetch(url.toString(), {
       ...fetchConfig,
       method: 'POST',
       body: data,
@@ -238,6 +242,7 @@ async function _fetch (
   config?: HttpClientConfig & {method?: HttpMethods}
 ): Promise<Response> {
   try {
+    const {proxyWindow = window} = this
     const [url, {
       method = 'GET', body, ...fetchConfig
     }] = initParams(path, this.basePath, config)
@@ -245,7 +250,7 @@ async function _fetch (
     delete fetchConfig.outputTransform
     delete fetchConfig.inputTransform
 
-    const fetchPromise = fetch(url.toString(), {
+    const fetchPromise = proxyWindow.fetch(url.toString(), {
       ...fetchConfig,
       method,
       body,
