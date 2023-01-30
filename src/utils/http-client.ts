@@ -137,15 +137,17 @@ async function get (
     }
 
     if (fetchConfig.downloadAsFile) {
-      return await fetchPromise.then(response => {
-        const filename = response.headers.get('Content-Disposition')?.match(/filename=([^;]+)/)?.[1]
+      return await fetchPromise
+        .then((response) => response.ok ? response : Promise.reject(response))
+        .then(response => {
+          const filename = response.headers.get('Content-Disposition')?.match(/filename=([^;]+)/)?.[1]
 
-        return Promise.all([
-          Promise.resolve(response),
-          Promise.resolve(filename),
-          response.blob()
-        ])
-      })
+          return Promise.all([
+            Promise.resolve(response),
+            Promise.resolve(filename),
+            response.blob()
+          ])
+        })
         .then(([response, filename, blob]) => {
           downloadFile.bind(this)(blob, filename)
           return response
@@ -184,15 +186,17 @@ const withBody = (method: 'POST' | 'DELETE' | 'PUT') =>
       }
 
       if (method === 'POST' && fetchConfig.downloadAsFile) {
-        return await fetchPromise.then(response => {
-          const filename = response.headers.get('Content-Disposition')?.match(/filename=([^;]+)/)?.[1]
+        return await fetchPromise
+          .then((response) => response.ok ? response : Promise.reject(response))
+          .then(response => {
+            const filename = response.headers.get('Content-Disposition')?.match(/filename=([^;]+)/)?.[1]
   
-          return Promise.all([
-            Promise.resolve(response),
-            Promise.resolve(filename),
-            response.blob()
-          ])
-        })
+            return Promise.all([
+              Promise.resolve(response),
+              Promise.resolve(filename),
+              response.blob()
+            ])
+          })
           .then(([response, filename, blob]) => {
             downloadFile.bind(this)(blob, filename)
             return response
