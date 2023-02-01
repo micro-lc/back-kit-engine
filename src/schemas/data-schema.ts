@@ -98,6 +98,12 @@ export interface ExtendedJSONSchema7Definition extends Omit<JSONSchema7, 'type' 
   label?: LocalizedText
 
   /**
+   * Human readable description of the property.
+   * It will be displayed in the form as info tooltip next to the label
+   */
+  description?: LocalizedText
+
+  /**
    * Options for lookups. Only applicable for type "string" and
    * format "lookup" or type "array" and format
    * "multilookup".
