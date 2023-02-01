@@ -74,7 +74,7 @@ export interface FormOptions {
   showFileInViewer?: boolean
 }
 
-export interface ExtendedJSONSchema7Definition extends Omit<JSONSchema7, 'type' | 'properties' | 'items'> {
+export interface ExtendedJSONSchema7Definition extends Omit<JSONSchema7, 'type' | 'properties' | 'items' | 'description'> {
   type?: PropertySchemaType
 
   properties?: {
