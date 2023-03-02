@@ -67,23 +67,46 @@ describe('http-client tests', () => {
     })
   })
 
-  it.each([500, 503, 400, 404])('post should handle error status codes', async (errorStatusCode) => {
+  it.each([500, 503, 400, 404])('post, patch, put, delete should handle error status codes', async (errorStatusCode) => {
     const {console} = global
     Object.defineProperty(global, 'console', {
       writable: true, value: {error: jest.fn()}
     })
-    fetchMock.mockOnceIf(/\/$/, () => {
+    const mock = () => {
       return Promise.resolve({
         status: errorStatusCode,
         body: '{"error":"something went wrong"}'
       })
-    })
+    }
+    fetchMock
+      .mockOnceIf(/\/$/, mock)
+      .mockOnceIf(/\/$/, mock)
+      .mockOnceIf(/\/$/, mock)
+      .mockOnceIf(/\/$/, mock)
 
     await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post('/', {})
       .catch(async error => {
         expect(error.status).toBe(errorStatusCode)
         expect(await error.json()).toHaveProperty('error', 'something went wrong')
         expect(global.console.error).toBeCalledTimes(1)
+      })
+    await createFetchHttpClient.bind<() => HttpClientInstance>(support)().patch('/', {})
+      .catch(async error => {
+        expect(error.status).toBe(errorStatusCode)
+        expect(await error.json()).toHaveProperty('error', 'something went wrong')
+        expect(global.console.error).toBeCalledTimes(2)
+      })
+    await createFetchHttpClient.bind<() => HttpClientInstance>(support)().put('/', {})
+      .catch(async error => {
+        expect(error.status).toBe(errorStatusCode)
+        expect(await error.json()).toHaveProperty('error', 'something went wrong')
+        expect(global.console.error).toBeCalledTimes(3)
+      })
+    await createFetchHttpClient.bind<() => HttpClientInstance>(support)().delete('/', {})
+      .catch(async error => {
+        expect(error.status).toBe(errorStatusCode)
+        expect(await error.json()).toHaveProperty('error', 'something went wrong')
+        expect(global.console.error).toBeCalledTimes(4)
       })
 
     Object.defineProperty(global, 'console', {
@@ -193,6 +216,22 @@ describe('http-client tests', () => {
     expect(headers.get('Content-Disposition')).toStrictEqual('attachment; filename=file.csv')
   })
 
+  it('should fetch a get method with file download and fail', async () => {
+    fetchMock.mockOnceIf(/\/$/, () => {
+      return Promise.resolve({
+        status: 404,
+        body: '{"error":"something went wrong"}'
+      })
+    })
+
+    await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/', {downloadAsFile: true})
+      .catch(async error => {
+        expect(downloadFile).not.toBeCalled()
+        expect(error.status).toBe(404)
+        expect(await error.json()).toHaveProperty('error', 'something went wrong')
+      })
+  })
+
   it('should fetch a get method with file download and without filename', async () => {
     fetchMock.mockOnceIf(/\/\?_q=value$/, () => {
       return Promise.resolve({
@@ -267,7 +306,13 @@ describe('http-client tests', () => {
     expect(data).toStrictEqual('ok')
   })
 
-  it('should fetch post method with text response', async () => {
+  const withBodyMtds = [
+    ['post', createFetchHttpClient.bind<() => HttpClientInstance>(support)().post],
+    ['put', createFetchHttpClient.bind<() => HttpClientInstance>(support)().put],
+    ['patch', createFetchHttpClient.bind<() => HttpClientInstance>(support)().patch],
+  ] as [string, HttpClientInstance['post']][]
+  
+  it.each(withBodyMtds)('should fetch %j method with text response', async (_, mtd) => {
     const body = {key: 'value'}
     const returnBody = 'ok'
     fetchMock.mockOnceIf(/\/$/, async (req) => {
@@ -285,13 +330,13 @@ describe('http-client tests', () => {
 
     const {
       data, status
-    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post('/', body)
+    } = await mtd('/', body)
 
     expect(status).toBe(200)
     expect(data).toStrictEqual('ok')
   })
 
-  it('should fetch post method as JSON', async () => {
+  it.each(withBodyMtds)('should fetch %j method as JSON', async (_, mtd) => {
     const body = {key: 'value'}
     const returnBody = '[{"key":"value"}]'
     fetchMock.mockOnceIf(/\/$/, async (req) => {
@@ -309,14 +354,14 @@ describe('http-client tests', () => {
 
     const {
       data, status
-    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post('/', body)
+    } = await mtd('/', body)
 
     expect(status).toBe(200)
     expect(data).toHaveLength(1)
     expect(data[0]).toHaveProperty('key', 'value')
   })
 
-  it('should fetch post method with weird header', async () => {
+  it.each(withBodyMtds)('should fetch %j method with weird header', async (_, mtd) => {
     const body = {key: 'value'}
     const returnBody = 'ok'
     fetchMock.mockOnceIf(/\/$/, async (req) => {
@@ -334,10 +379,115 @@ describe('http-client tests', () => {
 
     const {
       data, status
-    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post<any, Blob>('/', body)
+    } = await mtd<any, Blob>('/', body)
 
     expect(status).toBe(200)
     expect(await data?.text()).toStrictEqual('ok')
+  })
+
+  it.each(withBodyMtds)('should fetch %j method with text response applying a transform', async (_, mtd) => {
+    const body = {key: 'value'}
+    const modBody = {key: 'value1'}
+    const returnBody = 'ok'
+    fetchMock.mockOnceIf(/\/$/, async (req) => {
+      if (req.body) {
+        expect(await req.json()).toStrictEqual(modBody)
+        return Promise.resolve({
+          status: 200,
+          body: returnBody
+        })
+      }
+
+      return Promise.reject(new Error('Not found'))
+    })
+
+    const {
+      data, status
+    } = await mtd('/', body, {
+      inputTransform: (data: Record<string, string>) => {
+        expect(data).toHaveProperty('key', 'value')
+        return JSON.stringify(modBody)
+      }
+    })
+
+    expect(status).toBe(200)
+    expect(data).toStrictEqual('ok')
+  })
+
+  it.each(withBodyMtds)('should fetch %j method with json response', async (_, mtd) => {
+    const body = {key: 'value'}
+    const returnBody = JSON.stringify({key: 'response'})
+    fetchMock.mockOnceIf(/\/$/, async (req) => {
+      if (req.body) {
+        expect(await req.json()).toStrictEqual(body)
+        return Promise.resolve({
+          status: 200,
+          body: returnBody
+        })
+      }
+
+      return Promise.reject(new Error('Not found'))
+    })
+
+    const {data} = await mtd('/', body, {outputTransform: (body: Body) => body.json()})
+    expect(data).toHaveProperty('key', 'response')
+  })
+
+  it.each(withBodyMtds)('should fetch %j method as raw', async (_, mtd) => {
+    const body = {key: 'value'}
+    const returnBody = JSON.stringify({key: 'response'})
+    fetchMock.mockOnceIf(/\/$/, async (req) => {
+      if (req.body) {
+        expect(await req.json()).toStrictEqual(body)
+        return Promise.resolve({
+          status: 200,
+          body: returnBody
+        })
+      }
+
+      return Promise.reject(new Error('Not found'))
+    })
+
+    const {data} = await mtd('/', body, {raw: true})
+    expect(data).toBeUndefined()
+  })
+
+  it.each(withBodyMtds)('should fetch %j method with empty response', async (_, mtd) => {
+    const body = {key: 'value'}
+    fetchMock.mockOnceIf(/\/$/, async (req) => {
+      if (req.body) {
+        expect(await req.json()).toStrictEqual(body)
+        return Promise.resolve({status: 204})
+      }
+
+      return Promise.reject(new Error('Not found'))
+    })
+
+    const {
+      data, status
+    } = await mtd('/', body)
+
+    expect(status).toBe(204)
+    expect(data).toBeUndefined()
+  })
+
+  it('should fetch delete method with empty response', async () => {
+    const body = {key: 'value'}
+    fetchMock.mockOnceIf(/\/$/, async (req) => {
+      if (req.body) {
+        expect(await req.json()).toStrictEqual(body)
+        return Promise.resolve({status: 204})
+      }
+
+      return Promise.reject(new Error('Not found'))
+    })
+
+    const {
+      data, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().delete('/', body)
+
+    expect(status).toBe(204)
+    expect(data).toBeUndefined()
   })
 
   it('should fetch a post method with file download', async () => {
@@ -365,6 +515,23 @@ describe('http-client tests', () => {
     expect(headers.get('Content-Disposition')).toStrictEqual('attachment; filename=file.csv')
   })
 
+  it('should fetch a post method with file download and fail', async () => {
+    const body = {key: 'value'}
+    fetchMock.mockOnceIf(/\/$/, () => {
+      return Promise.resolve({
+        status: 404,
+        body: '{"error":"something went wrong"}'
+      })
+    })
+
+    await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post('/', body, {downloadAsFile: true})
+      .catch(async error => {
+        expect(downloadFile).not.toBeCalled()
+        expect(error.status).toBe(404)
+        expect(await error.json()).toHaveProperty('error', 'something went wrong')
+      })
+  })
+
   it('should fetch a post method with file download and without filename', async () => {
     const body = {key: 'value'}
     fetchMock.mockOnceIf(/\/$/, () => {
@@ -387,93 +554,6 @@ describe('http-client tests', () => {
     expect(status).toBe(200)
     expect(headers.get('Content-Type')).toStrictEqual('text/plain')
   })
-
-  it('should fetch post method with text response applying a transform', async () => {
-    const body = {key: 'value'}
-    const modBody = {key: 'value1'}
-    const returnBody = 'ok'
-    fetchMock.mockOnceIf(/\/$/, async (req) => {
-      if (req.body) {
-        expect(await req.json()).toStrictEqual(modBody)
-        return Promise.resolve({
-          status: 200,
-          body: returnBody
-        })
-      }
-
-      return Promise.reject(new Error('Not found'))
-    })
-
-    const {
-      data, status
-    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)()
-      .post('/', body, {inputTransform: (data: Record<string, string>) => {
-        expect(data).toHaveProperty('key', 'value')
-        return JSON.stringify(modBody)
-      }})
-
-    expect(status).toBe(200)
-    expect(data).toStrictEqual('ok')
-  })
-
-  it('should fetch post method with json response', async () => {
-    const body = {key: 'value'}
-    const returnBody = JSON.stringify({key: 'response'})
-    fetchMock.mockOnceIf(/\/$/, async (req) => {
-      if (req.body) {
-        expect(await req.json()).toStrictEqual(body)
-        return Promise.resolve({
-          status: 200,
-          body: returnBody
-        })
-      }
-
-      return Promise.reject(new Error('Not found'))
-    })
-
-    const {data} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post('/', body, {outputTransform: (body: Body) => body.json()})
-    expect(data).toHaveProperty('key', 'response')
-  })
-
-  it('should fetch post method as raw', async () => {
-    const body = {key: 'value'}
-    const returnBody = JSON.stringify({key: 'response'})
-    fetchMock.mockOnceIf(/\/$/, async (req) => {
-      if (req.body) {
-        expect(await req.json()).toStrictEqual(body)
-        return Promise.resolve({
-          status: 200,
-          body: returnBody
-        })
-      }
-
-      return Promise.reject(new Error('Not found'))
-    })
-
-    const {data} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post('/', body, {raw: true})
-    expect(data).toBeUndefined()
-  })
-
-  // delete
-  it('should delete post method with text response', async () => {
-    const body = {key: 'value'}
-    fetchMock.mockOnceIf(/\/$/, async (req) => {
-      if (req.body) {
-        expect(await req.json()).toStrictEqual(body)
-        return Promise.resolve({status: 204})
-      }
-
-      return Promise.reject(new Error('Not found'))
-    })
-
-    const {
-      data, status
-    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post('/', body)
-
-    expect(status).toBe(204)
-    expect(data).toBeUndefined()
-  })
-  //
 
   it('should fetch post method with multipart body and text response', async () => {
     const body = new window.FormData()
