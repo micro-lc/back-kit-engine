@@ -17,7 +17,7 @@ type FetchHandler =
   (url: string, config?: HttpClientConfig & {method?: HttpMethods}) =>
     Promise<Response>
 
-type PostHandler =
+type WithBodyHandler =
   <D = any, T = any>(url: string, data: D, config?: HttpClientConfig) =>
     Promise<HttpClientResponse<T>>
 
@@ -39,9 +39,10 @@ export type HttpClientResponse<T = any> = Response & {
 
 export type HttpClientInstance = {
   get: GetHandler
-  post: PostHandler
-  put: PostHandler
-  delete: PostHandler
+  post: WithBodyHandler
+  put: WithBodyHandler
+  patch: WithBodyHandler
+  delete: WithBodyHandler
   postMultipart: PostMultipartHandler
   fetch: FetchHandler
 }
@@ -160,7 +161,7 @@ async function get (
   }
 }
 
-const withBody = (method: 'POST' | 'DELETE' | 'PUT') =>
+const withBody = (method: 'POST' | 'DELETE' | 'PUT' | 'PATCH') =>
   async function <D = any> (
     this: HttpClientSupport,
     path: string,
@@ -270,9 +271,10 @@ async function _fetch (
 export function createFetchHttpClient (this: HttpClientSupport): HttpClientInstance {
   return {
     get: get.bind<GetHandler>(this),
-    post: withBody('POST').bind<PostHandler>(this),
-    delete: withBody('DELETE').bind<PostHandler>(this),
-    put: withBody('PUT').bind<PostHandler>(this),
+    post: withBody('POST').bind<WithBodyHandler>(this),
+    delete: withBody('DELETE').bind<WithBodyHandler>(this),
+    put: withBody('PUT').bind<WithBodyHandler>(this),
+    patch: withBody('PATCH').bind<WithBodyHandler>(this),
     postMultipart: postMultipart.bind<PostMultipartHandler>(this),
     fetch: _fetch.bind<FetchHandler>(this)
   }
