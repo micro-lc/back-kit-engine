@@ -17,6 +17,7 @@ export class BkHttpBase extends BkBase {
   _basePath?: string
 
   _headers?: HeadersInit
+  _credentials?: RequestCredentials
 
   @state() _httpClient: HttpClientInstance =
     createFetchHttpClient.call(this)
@@ -44,6 +45,19 @@ export class BkHttpBase extends BkBase {
 
   set headers (h: HeadersInit | undefined) {
     this._headers = h
+    this._httpClient = createFetchHttpClient.call(this)
+  }
+
+  /**
+   * @description http client custom credentials
+   */
+  @property({attribute: false})
+  get credentials (): RequestCredentials | undefined {
+    return this._credentials
+  }
+
+  set credentials (c: RequestCredentials | undefined) {
+    this._credentials = c
     this._httpClient = createFetchHttpClient.call(this)
   }
 }
