@@ -141,7 +141,9 @@ async function get (
       return await fetchPromise
         .then((response) => response.ok ? response : Promise.reject(response))
         .then(response => {
-          const filename = response.headers.get('Content-Disposition')?.match(/filename=([^;]+)/)?.[1]
+          const filename = response.headers.get('Content-Disposition')
+            ?.replace(/["']/g, '')
+            ?.match(/filename\*?=([^;]+)/)?.[1]
 
           return Promise.all([
             Promise.resolve(response),
@@ -190,7 +192,9 @@ const withBody = (method: 'POST' | 'DELETE' | 'PUT' | 'PATCH') =>
         return await fetchPromise
           .then((response) => response.ok ? response : Promise.reject(response))
           .then(response => {
-            const filename = response.headers.get('Content-Disposition')?.match(/filename=([^;]+)/)?.[1]
+            const filename = response.headers.get('Content-Disposition')
+              ?.replace(/["']/g, '')
+              ?.match(/filename\*?=([^;]+)/)?.[1]
   
             return Promise.all([
               Promise.resolve(response),
