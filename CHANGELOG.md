@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- quotation marks are removed filename in `Content-disposition` header when `downloadAsFile` is true to download file
+
 ## [1.0.5] - 2023-03-02
 
 - `http-client` supports `patch` method

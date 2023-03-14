@@ -199,6 +199,31 @@ describe('http-client tests', () => {
         body: 'text',
         headers: {
           'Content-Type': 'text/plain',
+          'Content-Disposition': 'attachment; filename="file.csv"'
+        }
+      })
+    })
+
+    const {
+      headers, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/', {
+      params: {_q: 'value'}, downloadAsFile: true
+    })
+
+    expect(downloadFile).toBeCalled()
+    expect(downloadFile).toBeCalledWith(expect.any(Object), 'file.csv')
+    expect(status).toBe(200)
+    expect(headers.get('Content-Type')).toStrictEqual('text/plain')
+    expect(headers.get('Content-Disposition')).toStrictEqual('attachment; filename="file.csv"')
+  })
+
+  it('should fetch a get method with file download - no quotes around filename', async () => {
+    fetchMock.mockOnceIf(/\/\?_q=value$/, () => {
+      return Promise.resolve({
+        status: 200,
+        body: 'text',
+        headers: {
+          'Content-Type': 'text/plain',
           'Content-Disposition': 'attachment; filename=file.csv'
         }
       })
@@ -211,6 +236,7 @@ describe('http-client tests', () => {
     })
 
     expect(downloadFile).toBeCalled()
+    expect(downloadFile).toBeCalledWith(expect.any(Object), 'file.csv')
     expect(status).toBe(200)
     expect(headers.get('Content-Type')).toStrictEqual('text/plain')
     expect(headers.get('Content-Disposition')).toStrictEqual('attachment; filename=file.csv')
@@ -498,6 +524,32 @@ describe('http-client tests', () => {
         body: 'text',
         headers: {
           'Content-Type': 'text/plain',
+          'Content-Disposition': 'attachment; filename="file.csv"'
+        }
+      })
+    })
+
+    const {
+      headers, status
+    } = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().post('/', body, {
+      downloadAsFile: true
+    })
+
+    expect(downloadFile).toBeCalled()
+    expect(downloadFile).toBeCalledWith(expect.any(Object), 'file.csv')
+    expect(status).toBe(200)
+    expect(headers.get('Content-Type')).toStrictEqual('text/plain')
+    expect(headers.get('Content-Disposition')).toStrictEqual('attachment; filename="file.csv"')
+  })
+
+  it('should fetch a post method with file download - no quotes in filename', async () => {
+    const body = {key: 'value'}
+    fetchMock.mockOnceIf(/\/$/, () => {
+      return Promise.resolve({
+        status: 200,
+        body: 'text',
+        headers: {
+          'Content-Type': 'text/plain',
           'Content-Disposition': 'attachment; filename=file.csv'
         }
       })
@@ -510,6 +562,7 @@ describe('http-client tests', () => {
     })
 
     expect(downloadFile).toBeCalled()
+    expect(downloadFile).toBeCalledWith(expect.any(Object), 'file.csv')
     expect(status).toBe(200)
     expect(headers.get('Content-Type')).toStrictEqual('text/plain')
     expect(headers.get('Content-Disposition')).toStrictEqual('attachment; filename=file.csv')
