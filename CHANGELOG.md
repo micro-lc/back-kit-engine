@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- new event `added-file` is available
 - `bk-http-base` has `credentials` property controlling homonymous fetch configuration
 
 ## [1.0.6] - 2023-03-14
