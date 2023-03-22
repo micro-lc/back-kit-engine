@@ -1,6 +1,15 @@
-import {factory, Payload, WithFilePropertyMeta} from '../factory'
+import {factory} from '../factory'
+import type {Payload, TransactionMeta, WithFilePropertyMeta} from '../factory'
 
 export type UpdateDataWithFilePayload = Payload
+
+
+type NestingPath = {selectedKey?: string, rowIndex?: number}[]
+export type UpdateDataWithFileMeta = WithFilePropertyMeta & TransactionMeta & {
+  indexes?: (number[] | undefined)[]
+  metaData?: (Record<string, unknown>[] | undefined)[]
+  nestingPath?: NestingPath | NestingPath[]
+}
 
 /**
  * @registeredEvent
@@ -14,6 +23,9 @@ export type UpdateDataWithFilePayload = Payload
  * }
  * @meta {
  *    property: string
+ *    indexes?: (number[] | undefined)[]
+ *    metaData?: {[x: string]?: string}[]
+ *    nestingPath?: {selectedKey: string, rowIndex: number}[] | {selectedKey: string, rowIndex: number}[][]
  * }
  */
-export const updateDataWithFile = factory<UpdateDataWithFilePayload, WithFilePropertyMeta>('update-data-with-file')
+export const updateDataWithFile = factory<UpdateDataWithFilePayload, UpdateDataWithFileMeta>('update-data-with-file')

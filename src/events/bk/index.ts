@@ -1,3 +1,4 @@
+export * from './addedFile'
 export * from './addFilter'
 export * from './addNew'
 export * from './addNewExternal'

@@ -29,6 +29,10 @@ export interface WithFilePropertyMeta extends Meta {
   property: string | string[]
 }
 
+export interface WithMetaDataMeta extends Meta {
+  metaData: Record<string, string>
+}
+
 export interface CustomActionIdMeta extends Meta {
   actionId: string
 }
