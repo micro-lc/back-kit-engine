@@ -31,6 +31,7 @@ export interface HttpClientSupport extends Element {
   proxyWindow?: Window
   basePath?: string
   headers?: HeadersInit
+  credentials?: RequestCredentials
 }
 
 export type HttpClientResponse<T = any> = Response & {
@@ -130,7 +131,8 @@ async function get (
     const fetchPromise = proxyWindow.fetch(url.toString(), {
       ...fetchConfig,
       method: 'GET',
-      headers: resolveHeaders(this.headers, fetchConfig.headers)
+      headers: resolveHeaders(this.headers, fetchConfig.headers),
+      credentials: fetchConfig.credentials ?? this.credentials,
     })
 
     if (fetchConfig.raw) {
@@ -181,7 +183,8 @@ const withBody = (method: 'POST' | 'DELETE' | 'PUT' | 'PATCH') =>
         ...fetchConfig,
         method,
         body: transform,
-        headers: resolveHeaders(this.headers, fetchConfig.headers)
+        headers: resolveHeaders(this.headers, fetchConfig.headers),
+        credentials: fetchConfig.credentials ?? this.credentials,
       })
 
       if (fetchConfig.raw) {
@@ -232,7 +235,8 @@ async function postMultipart (
       body: data,
       headers: {
         ...this.headers ?? {}, ...fetchConfig.headers ?? {}
-      }
+      },
+      credentials: fetchConfig.credentials ?? this.credentials,
     })
 
     if (fetchConfig.raw) {
@@ -263,7 +267,8 @@ async function _fetch (
       ...fetchConfig,
       method,
       body,
-      headers: resolveHeaders(this.headers, fetchConfig.headers)
+      headers: resolveHeaders(this.headers, fetchConfig.headers),
+      credentials: fetchConfig.credentials ?? this.credentials,
     })
 
     return await fetchPromise.then(res => res.ok ? res : Promise.reject(res))

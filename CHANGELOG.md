@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- `bk-http-base` has `credentials` property controlling homonymous fetch configuration
+
 ## [1.0.6] - 2023-03-14
 
 - quotation marks are removed filename in `Content-disposition` header when `downloadAsFile` is true to download file
