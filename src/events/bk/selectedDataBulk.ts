@@ -6,7 +6,7 @@ export type SelectedDataBulkPayload = {
 
 /**
  * @registeredEvent
- * @title Select Data Bulk
+ * @title Selected Data Bulk
  * @description notifies data selection in a dataset
  * @payload {
  *  data: Array<{

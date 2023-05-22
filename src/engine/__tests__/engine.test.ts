@@ -24,6 +24,8 @@ describe('reactRender tests', () => {
     jest.resetAllMocks()
   })
   it('should render a shadowed element', () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     reactRender.bind({
       Component: jest.fn(),
       renderRoot: document.body,
@@ -35,6 +37,8 @@ describe('reactRender tests', () => {
   })
 
   it('should not render when conditional rendering is false', () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     reactRender.bind({
       Component: jest.fn(),
       renderRoot: document.body,
@@ -45,7 +49,9 @@ describe('reactRender tests', () => {
     expect(ReactDOM.render).not.toBeCalled()
   })
 
-  it('should not render an element created without props mapping', () => {
+  it('should not render an element created without props mapping', () => {  
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     reactRender.bind({
       Component: jest.fn(),
       renderRoot: document.body

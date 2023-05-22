@@ -31,7 +31,7 @@ export type ChangeQueryPayload = Record<string, unknown> & {
  * @description requires a modification of the currently viewed dataset (filtering, sorting, paging)
  * @payload {
  *  characteristic?: string,
- *   pageNumber?: number,
+ *  pageNumber?: number,
  *  pageSize?: number,
  *  search?: string,
  *  sortDirection?: SortDirection,
@@ -56,9 +56,7 @@ export type ChangeQueryPayload = Record<string, unknown> & {
  *    value: string | number | boolean | any[];
  *    applied?: boolean;
  *    name: string;
- *  },
- *  date?: string,
- *  view?: string
+ *  }[]
  *}
  */
 export const changeQuery = factory<ChangeQueryPayload>('change-query')

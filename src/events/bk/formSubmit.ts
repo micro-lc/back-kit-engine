@@ -10,7 +10,7 @@ type SubmitFormMeta = {
 /**
  * @registeredEvent
  * @title Submit Form - Request
- * @description reqeusts submission of form
+ * @description requests submission of form
  * @payload {
  * }
  * @meta {
@@ -23,7 +23,7 @@ export const submitFormRequest = factory<EmptyPayload, SubmitFormMeta & Transact
 /**
  * @registeredEvent
  * @title Submit Form - Success
- * @description notifyes correct submission of form
+ * @description notifies correct submission of form
  * @payload {
  * }
  * @meta {

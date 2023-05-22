@@ -48,7 +48,7 @@ export const awaitingForExportConfiguration =
 /**
  * @registeredEvent
  * @title Export Data - User Config
- * @description sends user configurationt payload to perform export
+ * @description sends user configuration payload to perform export
  * @payload {
  *   exportType: 'json' | 'csv' | 'html' | 'xlsx'
  *   csvSeparator?: 'COMMA' | 'SEMICOLON'

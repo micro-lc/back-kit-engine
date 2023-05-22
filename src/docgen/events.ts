@@ -119,10 +119,10 @@ export const generateEventBuffer = (eventDocs: EventDocs, readme = ''): Buffer =
   )
 
   const alphabeth = bookmarks
-    .sort((a, b) => a.tag > b.tag ? 1 : -1)
+    .sort((a, b) => a.title > b.title ? 1 : -1)
     .reduce((acc, bookmark) => {
-      const {tag} = bookmark
-      const init = tag.charAt(0).toUpperCase()
+      const {title} = bookmark
+      const init = title.charAt(0).toUpperCase()
       if (acc[init]) {
         acc[init].push(bookmark)
       } else {
