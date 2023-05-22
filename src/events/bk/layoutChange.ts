@@ -6,7 +6,7 @@ export type LayoutChangePayload = {
 
 /**
  * @registeredEvent
- * @title Change Layout
+ * @title Layout Change
  * @description requires a layout change from `bk-layout-container`
  * @payload {
  *   layout: string

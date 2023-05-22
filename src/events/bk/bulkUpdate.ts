@@ -7,8 +7,8 @@ export type BulkUpdatePayload = {
 
 /**
  * @registeredEvent
- * @title Boolean and Enums bulk update
- * @description allows to modifies enums or boolean values from an array of items
+ * @title Bulk update - Boolean and Enums
+ * @description allows to modify enums or boolean values from an array of items
  * @payload {
  *   data: {
  *     [key: string]: any

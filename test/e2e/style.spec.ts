@@ -45,7 +45,13 @@ class StyledComponent extends BkComponent<Record<string, any>> {
     this.stylesheet = '.dynamic-css-class { color: rgb(0, 255, 0); }'
   }
 
+  
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   @query('#container') container!: HTMLDivElement
+  
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   @query('#inner') innerDiv!: HTMLDivElement
 
   @property({state: true, type: Boolean, reflect: true}) disabled?: boolean

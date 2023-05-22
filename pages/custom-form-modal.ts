@@ -63,6 +63,8 @@ function open(this: CustomModal, e: EventBus) {
 
 @customElement('custom-modal')
 export class CustomModal extends BkComponent<ModalProps> {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   @query('#modal-container') container!: HTMLDivElement
 
   @state() protected _visible?: boolean

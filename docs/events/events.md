@@ -99,6 +99,7 @@ delivers data to add a new filter
 {
   operator:
     | "equal"
+    | "exists"
     | "notEqual"
     | "greater"
     | "greaterEqual"
@@ -110,6 +111,7 @@ delivers data to add a new filter
     | "includeExactly"
     | "notIncludeAny"
     | "between"
+    | "notBetween"
     | "hasLengthEqual"
     | "hasLengthGreaterEqual"
     | "hasLengthLessEqual"
@@ -156,54 +158,13 @@ notifies adding a new item on an external collection
 }
 ```
 
-### Export Data - Request Config
-
-prompts for export configuration payload
-
-
-- Label: `awaiting-for-export-configuration`
-- Payload:
-
-```typescript
-{
-  total?: number
-  selected?: number
-  columns: {
-    label: string
-    value: T
-  }[]
-}
-```
-
-- Meta:
-
-```typescript
-{
-  transactionId?: string
-}
-```
-
 
 
 ## B
 
-### Nested Navigation State - Go Back
+### Bulk update - Boolean and Enums
 
-goes back an arbitrary number of levels of nesting
-
-
-- Label: `back-state`
-- Payload:
-
-```typescript
-{
-  steps?: number
-}
-```
-
-### Boolean and Enums bulk update
-
-allows to modifies enums or boolean values from an array of items
+allows to modify enums or boolean values from an array of items
 
 
 - Label: `bulk-update`
@@ -223,6 +184,26 @@ allows to modifies enums or boolean values from an array of items
 
 
 ## C
+
+### Cancel
+
+notifies operation abort via a given transactionId
+
+
+- Label: `event-bus-cancel`
+- Payload:
+
+```typescript
+{}
+```
+
+- Meta:
+
+```typescript
+{
+  transactionId: string
+}
+```
 
 ### Change Filter
 
@@ -294,9 +275,7 @@ requires a modification of the currently viewed dataset (filtering, sorting, pag
     value: string | number | boolean | any[]
     applied?: boolean
     name: string
-  }
-  date?: string
-  view?: string
+  }[]
 }
 ```
 
@@ -390,13 +369,12 @@ notifies the request for deletion of an item
 - Payload:
 
 ```typescript
-type A =
-  | {
-      [key: string]: any
-    }
-  | {
-      [key: string]: any
-    }[]
+{
+  [key: string]: any
+}
+| {
+  [key: string]: any
+}[]
 ```
 
 ### Delete File
@@ -454,30 +432,6 @@ carries a dataset
 ```typescript
 {
   data: any
-}
-```
-
-### Nested Navigation State - Display
-
-displays data or a slice of data
-
-
-- Label: `display-state`
-- Payload:
-
-```typescript
-Array<{
-  data: Record<string, any>[]
-  from?: number
-  to?: number
-}>
-```
-
-- Meta:
-
-```typescript
-{
-  keys?: string[]
 }
 ```
 
@@ -573,26 +527,6 @@ notifies a generic error event
 }
 ```
 
-### Cancel
-
-notifies operation abort via a given transactionId
-
-
-- Label: `event-bus-cancel`
-- Payload:
-
-```typescript
-{}
-```
-
-- Meta:
-
-```typescript
-{
-  transactionId: string
-}
-```
-
 ### Export Data
 
 raised when the export button is clicked
@@ -605,9 +539,36 @@ raised when the export button is clicked
 {}
 ```
 
+### Export Data - Request Config
+
+prompts for export configuration payload
+
+
+- Label: `awaiting-for-export-configuration`
+- Payload:
+
+```typescript
+{
+  total?: number
+  selected?: number
+  columns: {
+    label: string
+    value: T
+  }[]
+}
+```
+
+- Meta:
+
+```typescript
+{
+  transactionId?: string
+}
+```
+
 ### Export Data - User Config
 
-sends user configurationt payload to perform export
+sends user configuration payload to perform export
 
 
 - Label: `export-user-config`
@@ -648,9 +609,30 @@ notifies opening of UI component that handles form creation
 
 
 
+## H
+
+### Http Delete
+
+notifies the request for permanent deletion of an item
+
+
+- Label: `http-delete`
+- Payload:
+
+```typescript
+{
+  [key: string]: any
+}
+| {
+  [key: string]: any
+}[]
+```
+
+
+
 ## L
 
-### Change Layout
+### Layout Change
 
 requires a layout change from `bk-layout-container`
 
@@ -769,6 +751,64 @@ fired upon searching on a Select form input
 
 
 
+## N
+
+### Nested Navigation State - Display
+
+displays data or a slice of data
+
+
+- Label: `display-state`
+- Payload:
+
+```typescript
+Array<{
+  data: Record<string, any>[]
+  from?: number
+  to?: number
+}>
+```
+
+- Meta:
+
+```typescript
+{
+  keys?: string[]
+}
+```
+
+### Nested Navigation State - Go Back
+
+goes back an arbitrary number of levels of nesting
+
+
+- Label: `back-state`
+- Payload:
+
+```typescript
+{
+  steps?: number
+}
+```
+
+### Nested Navigation State - Push
+
+adds a new level of nesting
+
+
+- Label: `push-state`
+- Payload:
+
+```typescript
+{
+  data: Record<string, any>[]
+  origin: Record<string, any>
+  selectedKey?: string
+}
+```
+
+
+
 ## O
 
 ### Open Modal
@@ -790,26 +830,6 @@ opens a modal
 ```typescript
 {
   sessionId?: string
-}
-```
-
-
-
-## P
-
-### Nested Navigation State - Push
-
-adds a new level of nesting
-
-
-- Label: `push-state`
-- Payload:
-
-```typescript
-{
-  data: Record<string, any>[]
-  origin: Record<string, any>
-  selectedKey?: string
 }
 ```
 
@@ -910,7 +930,7 @@ notifies that a single datum has been selected from a dataset
 }
 ```
 
-### Select Data Bulk
+### Selected Data Bulk
 
 notifies data selection in a dataset
 
@@ -943,7 +963,7 @@ notifies the request for starting/updating the visualization of a PDF file
 
 ### Submit Form - Request
 
-reqeusts submission of form
+requests submission of form
 
 
 - Label: `submit-form-request`
@@ -964,7 +984,7 @@ reqeusts submission of form
 
 ### Submit Form - Success
 
-notifyes correct submission of form
+notifies correct submission of form
 
 
 - Label: `submit-form-success`
@@ -1016,13 +1036,12 @@ notifies the request for creation of a new item and carries its value
 - Payload:
 
 ```typescript
-type A =
-  | {
-      [key: string]: any
-    }
-  | {
-      [key: string]: any
-    }[]
+{
+  [key: string]: any
+}
+| {
+  [key: string]: any
+}[]
 ```
 
 - Meta:
