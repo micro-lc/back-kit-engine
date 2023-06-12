@@ -14,6 +14,7 @@ export type DisplayStatePayload = {
   data?: Record<string, any>[]
   from?: number
   to?: number
+  sort?: number[]
 }
 export type DisplayStateMeta = {
   keys?: string[]
@@ -48,6 +49,7 @@ export const backState = factory<BackStatePayload>('back', {scope: 'nested-navig
  *    data: Record<string, any>[]
  *    from?: number
  *    to?: number
+ *    sort?: number[]
  *}>
  * @meta {
  *    keys?: string[]
