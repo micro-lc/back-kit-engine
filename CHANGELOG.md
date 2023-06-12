@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.0.9] - 2023-06-12
+
+- `sort` key is available in payload of `nested-navigation-state/display` event
+
 ## [1.0.8] - 2023-05-22
 
 - new event `http-delete` is available

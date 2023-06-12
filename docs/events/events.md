@@ -766,6 +766,7 @@ Array<{
   data: Record<string, any>[]
   from?: number
   to?: number
+  sort?: number[]
 }>
 ```
 
