@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- new events `fetch-files`, `fetched-files` are available
+
 ## [1.0.9] - 2023-06-12
 
 - `sort` key is available in payload of `nested-navigation-state/display` event
