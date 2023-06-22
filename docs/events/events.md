@@ -595,6 +595,54 @@ sends user configuration payload to perform export
 
 ## F
 
+### Fetch Files
+
+notifies to requests to fetch files
+
+
+- Label: `fetch-files`
+- Payload:
+
+```typescript
+{
+  limit?: string | number
+  page?: string | number
+  dateFrom?: string
+}
+```
+
+- Meta:
+
+```typescript
+{
+  transactionId?: string
+}
+```
+
+### Fetched Files
+
+carries result of files fetching operation
+
+
+- Label: `fetched-files`
+- Payload:
+
+```typescript
+{
+  files: {
+    [key: string]: unknown
+  }[]
+}
+```
+
+- Meta:
+
+```typescript
+{
+  transactionId?: string
+}
+```
+
 ### Filter
 
 notifies opening of UI component that handles form creation
