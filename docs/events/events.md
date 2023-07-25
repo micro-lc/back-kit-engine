@@ -676,7 +676,21 @@ notifies the request for permanent deletion of an item
 }[]
 ```
 
+## I
 
+<!-- TODO: -->
+
+### Import Data
+
+raised when the import button is clicked
+
+
+- Label: `import-data`
+- Payload:
+
+```typescript
+{}
+```
 
 ## L
 
