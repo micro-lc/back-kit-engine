@@ -281,6 +281,7 @@ export declare type HttpClientInstance = {
     put: PostHandler
     delete: PostHandler
     postMultipart: PostMultipartHandler
+    patchMultipart: PatchMultipartHandler,
     fetch: FetchHandler
 }
 
