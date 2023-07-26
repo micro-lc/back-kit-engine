@@ -678,18 +678,32 @@ notifies the request for permanent deletion of an item
 
 ## I
 
-<!-- TODO: -->
-
 ### Import Data
 
 raised when the import button is clicked
-
 
 - Label: `import-data`
 - Payload:
 
 ```typescript
 {}
+```
+
+### Import Data - User Config
+
+sends user configuration payload to perform import
+
+- Label: `import-user-config`
+- Payload:
+
+```typescript
+{
+  file: File
+  upsert: boolean
+  encoding?: 'utf8' | 'ucs2' | 'utf16le' | 'latin1' | 'ascii' | 'base64' | 'hex'
+  delimiter?: string
+  escape?: string
+}
 ```
 
 ## L
