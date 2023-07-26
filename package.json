@@ -180,5 +180,6 @@
     "open@8.4.0": {
       "unplugged": true
     }
-  }
+  },
+  "stableVersion": "1.0.10"
 }
