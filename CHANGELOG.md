@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- new event `import-data` is available
+
 ## [1.0.10] - 2023-06-22
 
 - new events `fetch-files`, `fetched-files` are available

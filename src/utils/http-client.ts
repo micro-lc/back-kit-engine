@@ -25,6 +25,10 @@ type PostMultipartHandler =
   <T = any>(url: string, data: FormData, config?: HttpClientConfig) =>
     Promise<HttpClientResponse<T>>
 
+type PatchMultipartHandler =
+  <T = any>(url: string, data: FormData, config?: HttpClientConfig) =>
+    Promise<HttpClientResponse<T>>
+
 export type HttpMethods = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'
 
 export interface HttpClientSupport extends Element {
@@ -45,6 +49,7 @@ export type HttpClientInstance = {
   patch: WithBodyHandler
   delete: WithBodyHandler
   postMultipart: PostMultipartHandler
+  patchMultipart: PatchMultipartHandler
   fetch: FetchHandler
 }
 
@@ -217,26 +222,45 @@ const withBody = (method: 'POST' | 'DELETE' | 'PUT' | 'PATCH') =>
     }
   }
 
-async function postMultipart (
+async function postMultipart(
   this: HttpClientSupport,
   path: string,
   data: FormData,
   config?: HttpClientConfig
 ): Promise<HttpClientResponse<any>> {
+  return await executeMultipart(this, 'POST', path, data, config)
+}
+
+async function patchMultipart(
+  this: HttpClientSupport,
+  path: string,
+  data: FormData,
+  config?: HttpClientConfig
+): Promise<HttpClientResponse<any>> {
+  return await executeMultipart(this, 'PATCH', path, data, config)
+}
+
+async function executeMultipart (
+  httpClient: HttpClientSupport,
+  method: 'POST' | 'PATCH',
+  path: string,
+  data: FormData,
+  config?: HttpClientConfig
+): Promise<HttpClientResponse<any>> {
   try {
-    const {proxyWindow = window} = this
+    const {proxyWindow = window} = httpClient
     const [url, {
       outputTransform, ...fetchConfig
-    }] = initParams(path, this.basePath, config)
+    }] = initParams(path, httpClient.basePath, config)
 
     const fetchPromise = proxyWindow.fetch(url.toString(), {
       ...fetchConfig,
-      method: 'POST',
+      method,
       body: data,
       headers: {
-        ...this.headers ?? {}, ...fetchConfig.headers ?? {}
+        ...httpClient.headers ?? {}, ...fetchConfig.headers ?? {}
       },
-      credentials: fetchConfig.credentials ?? this.credentials,
+      credentials: fetchConfig.credentials ?? httpClient.credentials,
     })
 
     if (fetchConfig.raw) {
@@ -285,6 +309,7 @@ export function createFetchHttpClient (this: HttpClientSupport): HttpClientInsta
     put: withBody('PUT').bind<WithBodyHandler>(this),
     patch: withBody('PATCH').bind<WithBodyHandler>(this),
     postMultipart: postMultipart.bind<PostMultipartHandler>(this),
+    patchMultipart: patchMultipart.bind<PatchMultipartHandler>(this),
     fetch: _fetch.bind<FetchHandler>(this)
   }
 }
