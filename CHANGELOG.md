@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-- new event `import-data` is available
+- new events `import-data` and `import-data/user-config` are available
 
 ## [1.0.10] - 2023-06-22
 
