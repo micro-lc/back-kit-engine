@@ -2,7 +2,6 @@ import {factory} from '../factory'
 
 export type ImportUserConfig = {
   file: File
-  upsert: boolean
   encoding?: 'utf8' | 'ucs2' | 'utf16le' | 'latin1' | 'ascii' | 'base64' | 'hex'
   delimiter?: string
   escape?: string
@@ -14,7 +13,6 @@ export type ImportUserConfig = {
  * @description sends user configuration payload to perform import
  * @payload {
  *    file: File
- *    upsert: boolean
  *    encoding?: 'utf8' | 'ucs2' | 'utf16le' | 'latin1' | 'ascii' | 'base64' | 'hex'
  *    delimiter?: string
  *    escape?: string
