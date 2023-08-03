@@ -138,6 +138,30 @@ describe('http-client tests', () => {
     })
   })
 
+  it.each([500, 503, 400, 404])('patch multipart should handle error status codes', async (errorStatusCode) => {
+    const {console} = global
+    Object.defineProperty(global, 'console', {
+      writable: true, value: {error: jest.fn()}
+    })
+    fetchMock.mockOnceIf(/\/$/, () => {
+      return Promise.resolve({
+        status: errorStatusCode,
+        body: '{"error":"something went wrong"}'
+      })
+    })
+
+    await createFetchHttpClient.bind<() => HttpClientInstance>(support)().patchMultipart('/', new window.FormData())
+      .catch(async error => {
+        expect(error.status).toBe(errorStatusCode)
+        expect(await error.json()).toHaveProperty('error', 'something went wrong')
+        expect(global.console.error).toBeCalledTimes(1)
+      })
+
+    Object.defineProperty(global, 'console', {
+      writable: true, value: console
+    })
+  })
+
   it('should fetch a get method', async () => {
     fetchMock.mockOnceIf(/\/$/, () => {
       return Promise.resolve({
@@ -755,6 +779,26 @@ describe('http-client tests', () => {
     })
 
     const {data} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().postMultipart('/', body, {outputTransform: (body: Body) => body.json()})
+    expect(data).toHaveProperty('key', 'response')
+  })
+
+  it('should fetch patch method with multipart body and json response', async () => {
+    const body = new window.FormData()
+    body.append('stringField', 'stringValue')
+    body.append('blob', {size: 16} as Blob)
+
+    const returnBody = JSON.stringify({key: 'response'})
+    fetchMock.mockOnceIf(/\/$/, async (req) => {
+      if (req.body) {
+        return Promise.resolve({
+          status: 200,
+          body: returnBody
+        })
+      }
+      return Promise.reject(new Error('Not found'))
+    })
+
+    const {data} = await createFetchHttpClient.bind<() => HttpClientInstance>(support)().patchMultipart('/', body, {outputTransform: (body: Body) => body.json()})
     expect(data).toHaveProperty('key', 'response')
   })
 
