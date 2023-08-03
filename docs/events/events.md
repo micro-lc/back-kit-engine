@@ -677,10 +677,9 @@ notifies the request for permanent deletion of an item
 ```
 
 ## I
-
 ### Import Data
 
-raised when the import button is clicked
+notifies the request for an import of data from a file
 
 - Label: `import-data`
 - Payload:
@@ -691,15 +690,14 @@ raised when the import button is clicked
 
 ### Import Data - User Config
 
-sends user configuration payload to perform import
+send the configuration payload to perform an import
 
-- Label: `import-user-config`
+- Label: `import-data/user-config`
 - Payload:
 
 ```typescript
 {
   file: File
-  upsert: boolean
   encoding?: 'utf8' | 'ucs2' | 'utf16le' | 'latin1' | 'ascii' | 'base64' | 'hex'
   delimiter?: string
   escape?: string
