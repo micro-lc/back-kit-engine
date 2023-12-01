@@ -19,6 +19,10 @@ export function getLocalizedText (
     return localizedText[lang.substring(0, 2)]
   }
 
+  if (localizedText[DEFAULT_LANGUAGE]) {
+    return localizedText[DEFAULT_LANGUAGE]
+  }
+
   return localizedText.toString()
 }
 
