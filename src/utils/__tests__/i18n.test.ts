@@ -16,6 +16,9 @@ describe('i18n tests', () => {
     }],
     ['abc', 'it', {
       en: 'str', it: 'abc'
+    }],
+    ['str', 'es', {
+      en: 'str', it: 'abc'
     }]
   ])('should select %s from language %s in object %s', (expected, language, localizedString) => {
     expect(getLocalizedText(localizedString, language)).toStrictEqual(expected)
@@ -44,6 +47,17 @@ describe('i18n tests', () => {
     const {navigator} = window
     Object.defineProperty(window, 'navigator', {
       writable: true, value: {language: undefined}
+    })
+    expect(getLocalizedText({en: 'hi'})).toStrictEqual('hi')
+    Object.defineProperty(window, 'navigator', {
+      writable: true, value: navigator
+    })
+  })
+
+  it('should return fallback translation according to `DEFAULT_LANGUANGE`', () => {
+    const {navigator} = window
+    Object.defineProperty(window, 'navigator', {
+      writable: true, value: {language: 'es'}
     })
     expect(getLocalizedText({en: 'hi'})).toStrictEqual('hi')
     Object.defineProperty(window, 'navigator', {
