@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- `geopointFormat` option is available inside data-schema `formOptions`
+- empty string is supported in i18n label resolution
+
 ## [1.0.12] - 2023-12-04
 
 - i18n objects are resolved to strings using english as fallback language
