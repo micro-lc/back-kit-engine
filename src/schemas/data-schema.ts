@@ -72,6 +72,7 @@ export interface FormOptions {
   placeholder?: LocalizedText
   readOnly?: boolean
   showFileInViewer?: boolean
+  geopointFormat?: ['lat', 'lon'] | ['lon', 'lat']
 }
 
 export interface ExtendedJSONSchema7Definition extends Omit<JSONSchema7, 'type' | 'properties' | 'items' | 'description'> {

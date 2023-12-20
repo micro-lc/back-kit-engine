@@ -19,7 +19,7 @@ export function getLocalizedText (
     return localizedText[lang.substring(0, 2)]
   }
 
-  if (localizedText[DEFAULT_LANGUAGE]) {
+  if (typeof localizedText[DEFAULT_LANGUAGE] === 'string') {
     return localizedText[DEFAULT_LANGUAGE]
   }
 

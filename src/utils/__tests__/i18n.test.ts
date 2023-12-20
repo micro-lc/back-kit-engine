@@ -19,6 +19,9 @@ describe('i18n tests', () => {
     }],
     ['str', 'es', {
       en: 'str', it: 'abc'
+    }],
+    ['', 'es', {
+      en: '', it: 'abc'
     }]
   ])('should select %s from language %s in object %s', (expected, language, localizedString) => {
     expect(getLocalizedText(localizedString, language)).toStrictEqual(expected)
