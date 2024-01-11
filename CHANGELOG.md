@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.0.14] - 2024-01-11
+
 - `columnName` key is available in payload of `export-data/user-config` event
 
 ## [1.0.13] - 2023-12-20
