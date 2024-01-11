@@ -13,6 +13,8 @@ export type ExportType = 'json' | 'csv' | 'html' | 'xlsx'
 
 export type ExportFiltering = 'all' | 'filtered' | 'selected'
 
+export type ExportColumnName = 'id' | 'label'
+
 export type AwaitUserConfig = {
   total?: number
   selected?: number
@@ -24,6 +26,7 @@ export type ExportUserConfig = {
   csvSeparator?: CSVSeparator
   filters: ExportFiltering
   columns: string[]
+  columnName: ExportColumnName
 }
 
 /**
@@ -54,6 +57,7 @@ export const awaitingForExportConfiguration =
  *   csvSeparator?: 'COMMA' | 'SEMICOLON'
  *   filters: 'all' | 'filtered' | 'selected'
  *   columns: string[]
+ *   columnName: 'id' | 'label'
  * }
  * @meta {
  *   transactionId?: string

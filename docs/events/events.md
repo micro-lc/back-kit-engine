@@ -580,6 +580,7 @@ sends user configuration payload to perform export
   csvSeparator?: "COMMA" | "SEMICOLON"
   filters: "all" | "filtered" | "selected"
   columns: string[]
+  columnName: "id" | "label"
 }
 ```
 
@@ -676,10 +677,14 @@ notifies the request for permanent deletion of an item
 }[]
 ```
 
+
+
 ## I
+
 ### Import Data
 
-notifies the request for an import of data from a file
+raised when the import button is clicked
+
 
 - Label: `import-data`
 - Payload:
@@ -690,19 +695,22 @@ notifies the request for an import of data from a file
 
 ### Import Data - User Config
 
-send the configuration payload to perform an import
+sends user configuration payload to perform import
 
-- Label: `import-data/user-config`
+
+- Label: `import-user-config`
 - Payload:
 
 ```typescript
 {
   file: File
-  encoding?: 'utf8' | 'ucs2' | 'utf16le' | 'latin1' | 'ascii' | 'base64' | 'hex'
+  encoding?: "utf8" | "ucs2" | "utf16le" | "latin1" | "ascii" | "base64" | "hex"
   delimiter?: string
   escape?: string
 }
 ```
+
+
 
 ## L
 
