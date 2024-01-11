@@ -57,6 +57,7 @@ export const awaitingForExportConfiguration =
  *   csvSeparator?: 'COMMA' | 'SEMICOLON'
  *   filters: 'all' | 'filtered' | 'selected'
  *   columns: string[]
+ *   columnName: 'id' | 'label'
  * }
  * @meta {
  *   transactionId?: string

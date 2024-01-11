@@ -17,8 +17,6 @@ export type ImportUserConfig = {
  *    delimiter?: string
  *    escape?: string
  * }
- * @meta {
- * }
  */
 export const importUserConfig =
   factory<ImportUserConfig>('user-config', {scope: 'import-data'})
