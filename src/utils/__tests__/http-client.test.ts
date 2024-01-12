@@ -888,10 +888,11 @@ describe('Rerouting', () => {
     const customSupport = {
       ...support,
       reroutingRules: [
+        {from: '^/unk$', to: '/reroute-unk'},
         {from: '^/$', to: '/reroute'},
         {from: '^/orig$', to: '/reroute-1'},
-        {from: {method: 'GET', url: '^/orig-2$'}, to: '/path/reroute-2'},
-        {from: '^/path/orig$', to: '/reroute-3'},
+        {from: {method: 'GET', url: new RegExp('^/orig-2$')}, to: '/path/reroute-2'},
+        {from: {method: 'GET', url: '^/path/orig$'}, to: '/reroute-3'},
         {from : '^(?<base>.*)/add/(.*)', to: '$base/add/orders/$1'}
       ]
     }    
@@ -1037,6 +1038,8 @@ describe('Rerouting', () => {
         params: {_id: '1'},
         raw: true,
         downloadAsFile: true,
+        // @ts-expect-error include unkown field
+        unk: 'unk'
       }
     )
 
@@ -1048,6 +1051,7 @@ describe('Rerouting', () => {
       },
       method: 'GET',
       raw: true,
+      unk: 'unk'
     })
   })
 
@@ -1101,5 +1105,39 @@ describe('Rerouting', () => {
     expect(fetchMock).toHaveBeenNthCalledWith(3, `${origin}/path/reroute-2?_id=1`, expect.any(Object))
     expect(fetchMock).toHaveBeenNthCalledWith(4, `${origin}/orig-3`, expect.any(Object))
     expect(fetchMock).toHaveBeenNthCalledWith(5, `${origin}/orig-3?_id=1`, expect.any(Object))
+  })
+
+  it('should be robust to incorrect rerouting rules', async () => {
+    const empty = {...support, reroutingRules: []}
+    const incomplete = {...support, reroutingRules: [{}]}
+    const incomplete2 = {...support, reroutingRules: [{from: '^/$'}]}
+    const unkMethod = {...support, reroutingRules: [{from: {url: '^/$', method: 'unk'}, to: '/reroute'}]}
+    const valid = {...support, reroutingRules: [{from: '^/$', to: '/reroute'}]}
+    
+    const clientEmpty = createFetchHttpClient.bind<() => HttpClientInstance>(empty)()
+    const clientIncomplete = createFetchHttpClient.bind<() => HttpClientInstance>(incomplete)()
+    const clientIncomplete2 = createFetchHttpClient.bind<() => HttpClientInstance>(incomplete2)()
+    const clientUnkMethod = createFetchHttpClient.bind<() => HttpClientInstance>(unkMethod)()
+    const clientValid = createFetchHttpClient.bind<() => HttpClientInstance>(valid)()
+    
+    const {origin} = window.location
+
+    await clientEmpty.get('/')
+    await clientIncomplete.get('/')
+    await clientIncomplete2.get('/')
+    // @ts-expect-error invalid config
+    await clientUnkMethod.fetch('/', {method: 'unk'})
+    // @ts-expect-error invalid config
+    await clientValid.fetch('/', {method: false})
+    // @ts-expect-error invalid config
+    await clientValid.fetch('/', {method: 'unk'})
+
+    expect(fetchMock).toBeCalledTimes(6)
+    expect(fetchMock).toHaveBeenNthCalledWith(1, `${origin}/`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(2, `${origin}/`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(3, `${origin}/`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(4, `${origin}/`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(5, `${origin}/`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(6, `${origin}/`, expect.any(Object))
   })
 })

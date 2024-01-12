@@ -17,7 +17,7 @@ export class BkHttpBase extends BkBase {
 
   _headers?: HeadersInit
   _credentials?: RequestCredentials
-  _routingRules?: RerouteRule[]
+  _reroutingRules?: RerouteRule[]
 
   @state() _httpClient: HttpClientInstance = createFetchHttpClient.call(this)
 
@@ -64,12 +64,12 @@ export class BkHttpBase extends BkBase {
  * @description http client custom rerouting rules
  */
   @property({attribute: false})
-  get rerouting (): RerouteRule[] | undefined {
-    return this._routingRules
+  get reroutingRules (): RerouteRule[] | undefined {
+    return this._reroutingRules
   }
 
-  set rerouting (r: RerouteRule[] | undefined) {
-    this._routingRules = r
+  set reroutingRules (r: RerouteRule[] | undefined) {
+    this._reroutingRules = r
     this._httpClient = createFetchHttpClient.call(this)
   }
 }

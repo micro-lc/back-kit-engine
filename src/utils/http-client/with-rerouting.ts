@@ -33,24 +33,24 @@ function isValidRerouteRule (input: unknown): input is ValidRerouteRule {
     && typeof to === 'string'
 }
 
+const getRegexGroups = (input: string, regex: RegExp) => {
+  const match = input.match(regex)
+  if (!match) {
+    return {}
+  }
+  const namedGroups = {...match.groups}
+  const positionalGroups = match.slice(1)?.filter((g) => !Object.values(namedGroups).includes(g)) ?? []
+  return positionalGroups.reduce((acc, group, idx) => ({...acc, [`${idx+1}`]: group}), namedGroups)
+}
+
 const getRouter: (rules: ValidRerouteRule[]) => ReroutingFunction  = (rules) => {
   return (inputUrl, inputMethod) => {
     const ruleToApply = rules.find(({from: {method, url: urlRegex}}) =>
       inputMethod === method && inputUrl.match(urlRegex)
     )
-    
     if (ruleToApply) {
       const tagetUrl = ruleToApply.to
-      
-      const match = inputUrl.match(ruleToApply.from.url)
-      const namedGroups = {...match?.groups}
-      const positionalGroups = match?.slice(1)?.filter((g) => !Object.values(namedGroups).includes(g)) ?? []
-      
-      const groups = positionalGroups.reduce((acc, group, idx) => {
-        acc[`${idx+1}`] = group
-        return acc
-      }, namedGroups)
-      
+      const groups = getRegexGroups(inputUrl, ruleToApply.from.url)
       return Object
         .entries(groups)
         .reduce((acc, [toReplace, replaceWith]) => acc.replaceAll(`$${toReplace}`, replaceWith), tagetUrl)
@@ -65,14 +65,15 @@ const completeRules = (rules: RerouteRule[]): ValidRerouteRule[] => {
     if (isValidRerouteRule(rule)) {
       acc.push(rule)
     }
-    else if (typeof rule.from === 'string') {
+    else if (typeof rule.from === 'string' && typeof rule.to === 'string') {
       const url = new RegExp(rule.from)
       acc.push(...methods.map(method => ({from: {method, url}, to: rule.to})))
     }
     else if (isValidObject(rule.from) && typeof rule.from.url === 'string') {
-      const {method, url: url_} = rule.from
-      const url = new RegExp(url_)
-      acc.push({from: {method, url}, to: rule.to})
+      rule.from.url = new RegExp(rule.from.url)
+      if (isValidRerouteRule(rule)) {
+        acc.push(rule)
+      }
     }
     return acc
   }, [])
@@ -90,22 +91,21 @@ export function withRerouting (this: HttpClientSupport): void | (() => void) {
 
   const router = getRouter(completeRules(reroutingRules))
   const reroutedFetch: Fetch = (input, init, ...rest) => {
-    const method = init?.method
-    if (isHttpMethod(method)) {
+    if (init && isHttpMethod(init.method)) {
       if (typeof input === 'string') {
         const url = new URL(input)
-        url.pathname = router(url.pathname, method)
+        url.pathname = router(url.pathname, init.method)
         return fetch(url.toString(), init, ...rest)
       }
       else if (input instanceof URL) {
         const url = new URL(input)
-        url.pathname = router(url.pathname, method)
+        url.pathname = router(url.pathname, init.method)
         return fetch(url, init, ...rest)
       }
       else if (input instanceof Request) {
         const {url: reqUrl, ...reqRest} = input
         const url = new URL(reqUrl)
-        url.pathname = router(url.pathname, method)
+        url.pathname = router(url.pathname, init.method)
         const reroutedReq = {url: url.toString(), ...reqRest}
         return fetch(reroutedReq, init, ...rest)
       }
@@ -116,55 +116,3 @@ export function withRerouting (this: HttpClientSupport): void | (() => void) {
   
   this.proxyWindow = {...proxyWindow, fetch: reroutedFetch}
 }
-
-
-// export function withRerouting (this: HttpClientSupport): void | (() => void) {
-//   type Fetch = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
-  
-//   const {proxyWindow = window, reroutingRules} = this
-//   if (!reroutingRules) {
-//     return
-//   }
-  
-//   const {fetch} = proxyWindow
-//   const rerouteMap = completeRules(reroutingRules)
-//     .reduce<Record<string, string>>((acc, {from, to}) => ({...acc, [ruleId(from)]: to}), {})
-  
-//   const reroutedFetch: Fetch = (input, init, ...rest) => {
-//     const method = init?.method
-//     if (isHttpMethod(method)) {
-//       if (typeof input === 'string') {
-//         const url = new URL(input)
-//         const id = ruleId({method, url: url.pathname})
-//         if (id in rerouteMap) {
-//           url.pathname = rerouteMap[id]
-//           return fetch(url.toString(), init, ...rest)
-//         }
-//       }
-      
-//       else if (input instanceof URL) {
-//         const url = new URL(input)
-//         const id = ruleId({method, url: url.pathname})
-//         if (id in rerouteMap) {
-//           url.pathname = rerouteMap[id]
-//           return fetch(url, init, ...rest)
-//         }
-//       }
-
-//       else if (input instanceof Request) {
-//         const {url: reqUrl, ...reqRest} = input
-//         const url = new URL(reqUrl)
-//         const id = ruleId({method, url: url.pathname})
-//         if (id in rerouteMap) {
-//           url.pathname = rerouteMap[id]
-//           const reroutedReq = {url: url.toString(), ...reqRest}
-//           return fetch(reroutedReq, init, ...rest)
-//         }
-//       }
-//     }
-
-//     return fetch(input, init, ...rest)
-//   }
-  
-//   this.proxyWindow = {...proxyWindow, fetch: reroutedFetch}
-// }
