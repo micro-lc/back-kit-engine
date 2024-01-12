@@ -92,15 +92,10 @@ export function withRerouting (this: HttpClientSupport): void | (() => void) {
   const router = getRouter(completeRules(reroutingRules))
   const reroutedFetch: Fetch = (input, init, ...rest) => {
     if (init && isHttpMethod(init.method)) {
-      if (typeof input === 'string') {
+      if (typeof input === 'string' || input instanceof URL) {
         const url = new URL(input)
         url.pathname = router(url.pathname, init.method)
-        return fetch(url.toString(), init, ...rest)
-      }
-      else if (input instanceof URL) {
-        const url = new URL(input)
-        url.pathname = router(url.pathname, init.method)
-        return fetch(url, init, ...rest)
+        return fetch(typeof input === 'string' ? url.toString() : url, init, ...rest)
       }
       else if (input instanceof Request) {
         const {url: reqUrl, ...reqRest} = input
