@@ -882,3 +882,36 @@ describe('http-client tests', () => {
     expect(data).toBeDefined()
   })
 })
+
+describe.only('Rerouting', () => {
+  
+  it('should fetch a get method', async () => {
+    // fetchMock.mockOnceIf(/\/rerouted-path$/, () => {
+    //   return Promise.resolve({
+    //     status: 200,
+    //     body: '{"key":"value"}',
+    //     headers: {'Content-Type': 'application/json'}
+    //   })
+    // })
+
+    const customSupport = {
+      ...support,
+      reroutingRules: [
+        {from: '/', to: '/rerout'},
+        {from: '/orig', to: '/rerout-1'},
+        {from: {method: 'GET', url: '/orig-2'}, to: '/path/rerout-2'}
+      ]
+    }
+    await createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)().get('/')
+    // await createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)().get('/orig')
+    // await createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)().get('/orig-2')
+    // await createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)().get('/orig-3')
+
+    expect(fetchMock).toBeCalledTimes(1)
+    expect(fetchMock).toHaveBeenNthCalledWith(1, 'http://localhost/rerout', expect.any(Object))
+    // expect(fetchMock).toHaveBeenNthCalledWith(2, 'http://localhost/rerout-1', expect.any(Object))
+    // expect(fetchMock).toHaveBeenNthCalledWith(3, 'http://localhost/path/rerout-2', expect.any(Object))
+    // expect(fetchMock).toHaveBeenNthCalledWith(4, 'http://localhost/orig-3', expect.any(Object))
+  })
+
+})
