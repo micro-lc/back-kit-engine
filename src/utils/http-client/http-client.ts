@@ -1,7 +1,6 @@
 import {downloadFile} from '../url'
 
-import {RerouteRule, withRerouting_} from './with-rerouting'
-import {withRerouting} from './with-rerouting'
+import {RerouteRule, withRerouting} from './with-rerouting'
 
 export type HttpClientConfig = Omit<RequestInit, 'method'> & {
   params?: string | Record<string, string> | string[][] | URLSearchParams
@@ -305,26 +304,11 @@ async function _fetch (
   }
 }
 
-export function createFetchHttpClient_ (this: HttpClientSupport): HttpClientInstance {
-  const client = {
-    get: get.bind<GetHandler>(this),
-    post: withBody('POST').bind<WithBodyHandler>(this),
-    delete: withBody('DELETE').bind<WithBodyHandler>(this),
-    put: withBody('PUT').bind<WithBodyHandler>(this),
-    patch: withBody('PATCH').bind<WithBodyHandler>(this),
-    postMultipart: postMultipart.bind<PostMultipartHandler>(this),
-    patchMultipart: patchMultipart.bind<PatchMultipartHandler>(this),
-    fetch: _fetch.bind<FetchHandler>(this)
-  }
-
-  return this.reroutingRules ? withRerouting(client, this.reroutingRules) : client
-}
-
 export function createFetchHttpClient (this: HttpClientSupport): HttpClientInstance {
   if (this.reroutingRules) {
-    withRerouting_.call(this)
+    withRerouting.call(this)
   }
-  //this.reroutingRules ? withRerouting(client, this.reroutingRules) : client
+  
   return {
     get: get.bind<GetHandler>(this),
     post: withBody('POST').bind<WithBodyHandler>(this),

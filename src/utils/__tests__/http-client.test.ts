@@ -883,35 +883,223 @@ describe('http-client tests', () => {
   })
 })
 
-describe.only('Rerouting', () => {
-  
-  it('should fetch a get method', async () => {
-    // fetchMock.mockOnceIf(/\/rerouted-path$/, () => {
-    //   return Promise.resolve({
-    //     status: 200,
-    //     body: '{"key":"value"}',
-    //     headers: {'Content-Type': 'application/json'}
-    //   })
-    // })
-
+describe('Rerouting', () => {
+  it('should fetch rerouted get methods', async () => {
     const customSupport = {
       ...support,
       reroutingRules: [
-        {from: '/', to: '/rerout'},
-        {from: '/orig', to: '/rerout-1'},
-        {from: {method: 'GET', url: '/orig-2'}, to: '/path/rerout-2'}
+        {from: '^/$', to: '/reroute'},
+        {from: '^/orig$', to: '/reroute-1'},
+        {from: {method: 'GET', url: '^/orig-2$'}, to: '/path/reroute-2'},
+        {from: '^/path/orig$', to: '/reroute-3'},
+        {from : '^(?<base>.*)/add/(.*)', to: '$base/add/orders/$1'}
       ]
-    }
-    await createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)().get('/')
-    // await createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)().get('/orig')
-    // await createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)().get('/orig-2')
-    // await createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)().get('/orig-3')
+    }    
+    const client = createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)()
 
-    expect(fetchMock).toBeCalledTimes(1)
-    expect(fetchMock).toHaveBeenNthCalledWith(1, 'http://localhost/rerout', expect.any(Object))
-    // expect(fetchMock).toHaveBeenNthCalledWith(2, 'http://localhost/rerout-1', expect.any(Object))
-    // expect(fetchMock).toHaveBeenNthCalledWith(3, 'http://localhost/path/rerout-2', expect.any(Object))
-    // expect(fetchMock).toHaveBeenNthCalledWith(4, 'http://localhost/orig-3', expect.any(Object))
+    const {origin} = window.location
+
+    await client.get('/')
+    await client.get('/orig')
+    await client.get('/orig-2?_id=1')
+    await client.get('/path/orig')
+    await client.get('/service-path/add/id-1')
+    await client.get('/keep')
+    await client.get('/keep?_id=1')
+
+    expect(fetchMock).toBeCalledTimes(7)
+    const defaultConfig = {method: 'GET', headers: {'Content-Type': 'application/json'}}
+    expect(fetchMock).toHaveBeenNthCalledWith(1, `${origin}/reroute`, defaultConfig)
+    expect(fetchMock).toHaveBeenNthCalledWith(2, `${origin}/reroute-1`, defaultConfig)
+    expect(fetchMock).toHaveBeenNthCalledWith(3, `${origin}/path/reroute-2?_id=1`, defaultConfig)
+    expect(fetchMock).toHaveBeenNthCalledWith(4, `${origin}/reroute-3`, defaultConfig)
+    expect(fetchMock).toHaveBeenNthCalledWith(5, `${origin}/service-path/add/orders/id-1`, defaultConfig)
+    expect(fetchMock).toHaveBeenNthCalledWith(6, `${origin}/keep`, defaultConfig)
+    expect(fetchMock).toHaveBeenNthCalledWith(7, `${origin}/keep?_id=1`, defaultConfig)
   })
 
+  it('should fetch rerouted post methods', async () => {
+    const body = {key: 'value'}
+    
+    const customSupport = {
+      ...support,
+      reroutingRules: [
+        {from: '^/$', to: '/reroute'},
+        {from: {method: 'POST', url: '^/orig-1$'}, to: '/path/reroute-1'}
+      ]
+    }
+    
+    const client = createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)()
+    
+    const {origin} = window.location
+    
+    await client.post('/', body)
+    await client.post('/orig-1', body)
+    await client.post('/orig-2', body)
+    
+    expect(fetchMock).toBeCalledTimes(3)
+    const defaultConfig = {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body)
+    }
+    expect(fetchMock).toHaveBeenNthCalledWith(1, `${origin}/reroute`, defaultConfig)
+    expect(fetchMock).toHaveBeenNthCalledWith(2, `${origin}/path/reroute-1`, defaultConfig)
+    expect(fetchMock).toHaveBeenNthCalledWith(3, `${origin}/orig-2`, defaultConfig)
+  })
+
+  it('should fetch a rerouted patch methods, with parametric urls', async () => {
+    const body = {key: 'value'}
+    
+    const customSupport = {
+      ...support,
+      reroutingRules: [
+        {from: '^/orig/(?<id>[^/?]+)$', to: '/reroute/$id/append'},
+        {from: '^/orig-2/([^/?]+)$', to: '/reroute-2/$1'},
+        {from: {url: '^/orig-3/([^/?]+)/([^/?]+)$', method: 'PATCH'}, to: '/reroute-3/$1/$2'},
+      ]
+    }
+    
+    const client = createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)()
+    
+    const {origin} = window.location
+
+    await client.patch('/orig/id-1', body)
+    await client.patch('/orig-2/id-1', body)
+    await client.patch('/orig-3/id-1/id-2', body)
+    
+    expect(fetchMock).toBeCalledTimes(3)
+    const defaultConfig = {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body)
+    }
+    expect(fetchMock).toHaveBeenNthCalledWith(1, `${origin}/reroute/id-1/append`, defaultConfig)
+    expect(fetchMock).toHaveBeenNthCalledWith(2, `${origin}/reroute-2/id-1`, defaultConfig)
+    expect(fetchMock).toHaveBeenNthCalledWith(3, `${origin}/reroute-3/id-1/id-2`, defaultConfig)
+  })
+
+  it('should fetch rerouted methods', async () => {
+    const body = {key: 'value'}
+    
+    const customSupport = {
+      ...support,
+      reroutingRules: [
+        {from: {method: 'GET', url: '^/orig$'}, to: '/reroute-get'},
+        {from: {method: 'POST', url: '^/orig$'}, to: '/reroute-post'},
+        {from: {method: 'PATCH', url: '^/orig$'}, to: '/reroute-patch'},
+        {from: {method: 'DELETE', url: '^/orig$'}, to: '/reroute-delete'},
+      ]
+    }
+    
+    const client = createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)()
+    
+    const {origin} = window.location
+    
+    client.get('/orig')
+    client.post('/orig', body)
+    client.patch('/orig', body)
+    client.delete('/orig', body)
+    client.postMultipart('/orig', new FormData())
+    client.patchMultipart('/orig', new FormData())
+    client.fetch('/orig', {method: 'GET'})
+    client.fetch('/orig', {method: 'POST'})
+    client.fetch('/orig', {method: 'PATCH'})
+    client.fetch('/orig', {method: 'DELETE'})
+
+    expect(fetchMock).toBeCalledTimes(10)
+    expect(fetchMock).toHaveBeenNthCalledWith(1, `${origin}/reroute-get`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(2, `${origin}/reroute-post`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(3, `${origin}/reroute-patch`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(4, `${origin}/reroute-delete`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(5, `${origin}/reroute-post`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(6, `${origin}/reroute-patch`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(7, `${origin}/reroute-get`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(8, `${origin}/reroute-post`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(9, `${origin}/reroute-patch`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(10, `${origin}/reroute-delete`, expect.any(Object))
+  })
+  
+  it('should fetch a rerouted get method keeping config untampered', async () => {
+    const customSupport = {
+      ...support,
+      reroutingRules: [{from: '/orig', to: '/reroute'}]
+    }
+    
+    const client = createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)()
+
+    const {origin} = window.location
+
+    await client.get(
+      '/orig',
+      {
+        headers: {'Content-Type': 'application/json'},
+        params: {_id: '1'},
+        raw: true,
+        downloadAsFile: true,
+      }
+    )
+
+    expect(fetchMock).toBeCalledTimes(1)
+    expect(fetchMock).toHaveBeenNthCalledWith(1, `${origin}/reroute?_id=1`, {
+      downloadAsFile: true,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'GET',
+      raw: true,
+    })
+  })
+
+  it('should fetch a rerouted get method without tampering with other clients', async () => {
+    const customSupport = {
+      ...support,
+      reroutingRules: [
+        {from: '/orig', to: '/reroute'}
+      ]
+    }
+    
+    const {origin} = window.location
+    
+    const client = createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)()
+    const client2 = createFetchHttpClient.bind<() => HttpClientInstance>(support)()
+    await client.get('/orig')
+    await client2.get('/orig')
+    expect(fetchMock).toBeCalledTimes(2)
+    expect(fetchMock).toHaveBeenNthCalledWith(1, `${origin}/reroute`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(2, `${origin}/orig`, expect.any(Object))
+
+  })
+
+  it('should fetch a get method', async () => {
+    const customSupport = {
+      ...support,
+      reroutingRules: [
+        {from: '^/$', to: '/reroute'},
+        {from: '^/orig$', to: '/reroute-1'},
+        {from: {method: 'GET', url: '^/orig-2$'}, to: '/path/reroute-2'}
+      ]
+    }
+    const client = createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)()
+    
+    const {origin} = window.location
+    
+    // @ts-expect-error Testing URL class
+    await client.fetch(new URL('/', origin))
+    // @ts-expect-error Testing URL class
+    await client.get(new URL('/orig', origin))
+    // @ts-expect-error Testing URL class
+    await client.get(new URL('/orig-2?_id=1', origin))
+    // @ts-expect-error Testing URL class
+    await client.get(new URL('/orig-3', origin))
+    // @ts-expect-error Testing URL class
+    await client.get(new URL('/orig-3?_id=1', origin))
+
+    expect(fetchMock).toBeCalledTimes(5)
+    expect(fetchMock).toHaveBeenNthCalledWith(1, `${origin}/reroute`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(2, `${origin}/reroute-1`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(3, `${origin}/path/reroute-2?_id=1`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(4, `${origin}/orig-3`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(5, `${origin}/orig-3?_id=1`, expect.any(Object))
+  })
 })
