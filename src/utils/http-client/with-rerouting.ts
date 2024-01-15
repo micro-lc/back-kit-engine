@@ -33,11 +33,7 @@ function isValidRerouteRule (input: unknown): input is ValidRerouteRule {
     && typeof to === 'string'
 }
 
-const getRegexGroups = (input: string, regex: RegExp) => {
-  const match = input.match(regex)
-  if (!match) {
-    return {}
-  }
+const getRegexGroups = (match: RegExpMatchArray) => {
   const namedGroups = {...match.groups}
   const positionalGroups = match.slice(1)?.filter((g) => !Object.values(namedGroups).includes(g)) ?? []
   return positionalGroups.reduce((acc, group, idx) => ({...acc, [`${idx+1}`]: group}), namedGroups)
@@ -45,15 +41,18 @@ const getRegexGroups = (input: string, regex: RegExp) => {
 
 const getRouter: (rules: ValidRerouteRule[]) => ReroutingFunction  = (rules) => {
   return (inputUrl, inputMethod) => {
-    const ruleToApply = rules.find(({from: {method, url: urlRegex}}) =>
-      inputMethod === method && inputUrl.match(urlRegex)
-    )
-    if (ruleToApply) {
-      const tagetUrl = ruleToApply.to
-      const groups = getRegexGroups(inputUrl, ruleToApply.from.url)
-      return Object
-        .entries(groups)
-        .reduce((acc, [toReplace, replaceWith]) => acc.replaceAll(`$${toReplace}`, replaceWith), tagetUrl)
+    let match: RegExpMatchArray | null = null
+    for (const {to: targetUrl, from: {method, url: urlRegex}} of rules) {
+      match = inputUrl.match(urlRegex)
+      if (inputMethod === method && match) {
+        const groups = getRegexGroups(match)
+        if (Object.keys(groups).length > 0) {
+          return Object
+            .entries(groups)
+            .reduce((acc, [toReplace, replaceWith]) => acc.replaceAll(`$${toReplace}`, replaceWith), targetUrl)
+        }
+        return targetUrl
+      }
     }
     return inputUrl
   }
@@ -97,13 +96,13 @@ export function withRerouting (this: HttpClientSupport): void | (() => void) {
         url.pathname = router(url.pathname, init.method)
         return fetch(typeof input === 'string' ? url.toString() : url, init, ...rest)
       }
-      // else if (input instanceof Request) {
-      //   const {url: reqUrl, ...reqRest} = input
-      //   const url = new URL(reqUrl)
-      //   url.pathname = router(url.pathname, init.method)
-      //   const reroutedReq = {url: url.toString(), ...reqRest}
-      //   return fetch(reroutedReq, init, ...rest)
-      // }
+      else if (input instanceof Request) {
+        const {url: reqUrl, ...reqRest} = input
+        const url = new URL(reqUrl)
+        url.pathname = router(url.pathname, init.method)
+        const reroutedReq = {url: url.toString(), ...reqRest}
+        return fetch(reroutedReq, init, ...rest)
+      }
     }
 
     return fetch(input, init, ...rest)

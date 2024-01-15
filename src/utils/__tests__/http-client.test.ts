@@ -1075,38 +1075,6 @@ describe('Rerouting', () => {
 
   })
 
-  it('should fetch a get method', async () => {
-    const customSupport = {
-      ...support,
-      reroutingRules: [
-        {from: '^/$', to: '/reroute'},
-        {from: '^/orig$', to: '/reroute-1'},
-        {from: {method: 'GET', url: '^/orig-2$'}, to: '/path/reroute-2'}
-      ]
-    }
-    const client = createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)()
-    
-    const {origin} = window.location
-    
-    // @ts-expect-error Testing URL class
-    await client.fetch(new URL('/', origin))
-    // @ts-expect-error Testing URL class
-    await client.get(new URL('/orig', origin))
-    // @ts-expect-error Testing URL class
-    await client.get(new URL('/orig-2?_id=1', origin))
-    // @ts-expect-error Testing URL class
-    await client.get(new URL('/orig-3', origin))
-    // @ts-expect-error Testing URL class
-    await client.get(new URL('/orig-3?_id=1', origin))
-
-    expect(fetchMock).toBeCalledTimes(5)
-    expect(fetchMock).toHaveBeenNthCalledWith(1, `${origin}/reroute`, expect.any(Object))
-    expect(fetchMock).toHaveBeenNthCalledWith(2, `${origin}/reroute-1`, expect.any(Object))
-    expect(fetchMock).toHaveBeenNthCalledWith(3, `${origin}/path/reroute-2?_id=1`, expect.any(Object))
-    expect(fetchMock).toHaveBeenNthCalledWith(4, `${origin}/orig-3`, expect.any(Object))
-    expect(fetchMock).toHaveBeenNthCalledWith(5, `${origin}/orig-3?_id=1`, expect.any(Object))
-  })
-
   it('should be robust to incorrect rerouting rules', async () => {
     const empty = {...support, reroutingRules: []}
     const incomplete = {...support, reroutingRules: [{}]}
@@ -1125,11 +1093,11 @@ describe('Rerouting', () => {
     await clientEmpty.get('/')
     await clientIncomplete.get('/')
     await clientIncomplete2.get('/')
-    // @ts-expect-error invalid config
+    // @ts-expect-error force invalid config
     await clientUnkMethod.fetch('/', {method: 'unk'})
-    // @ts-expect-error invalid config
+    // @ts-expect-error force invalid config
     await clientValid.fetch('/', {method: false})
-    // @ts-expect-error invalid config
+    // @ts-expect-error force invalid config
     await clientValid.fetch('/', {method: 'unk'})
 
     expect(fetchMock).toBeCalledTimes(6)
@@ -1139,5 +1107,37 @@ describe('Rerouting', () => {
     expect(fetchMock).toHaveBeenNthCalledWith(4, `${origin}/`, expect.any(Object))
     expect(fetchMock).toHaveBeenNthCalledWith(5, `${origin}/`, expect.any(Object))
     expect(fetchMock).toHaveBeenNthCalledWith(6, `${origin}/`, expect.any(Object))
+  })
+
+  it('should fetch a get method', async () => {
+    const customSupport = {
+      ...support,
+      reroutingRules: [
+        {from: '^/$', to: '/reroute'},
+        {from: '^/orig$', to: '/reroute-1'},
+        {from: {method: 'GET', url: '^/orig-2$'}, to: '/path/reroute-2'}
+      ]
+    }
+    const client = createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)()
+    
+    const {origin} = window.location
+    
+    // @ts-expect-error force URL instance input
+    await client.fetch(new URL('/', origin))
+    // @ts-expect-error force URL instance input
+    await client.get(new URL('/orig', origin))
+    // @ts-expect-error force URL instance input
+    await client.get(new URL('/orig-2?_id=1', origin))
+    // @ts-expect-error force URL instance input
+    await client.get(new URL('/orig-3', origin))
+    // @ts-expect-error force URL instance input
+    await client.get(new URL('/orig-3?_id=1', origin))
+
+    expect(fetchMock).toBeCalledTimes(5)
+    expect(fetchMock).toHaveBeenNthCalledWith(1, `${origin}/reroute`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(2, `${origin}/reroute-1`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(3, `${origin}/path/reroute-2?_id=1`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(4, `${origin}/orig-3`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(5, `${origin}/orig-3?_id=1`, expect.any(Object))
   })
 })
