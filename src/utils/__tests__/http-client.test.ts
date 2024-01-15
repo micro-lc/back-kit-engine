@@ -890,12 +890,12 @@ describe('Rerouting', () => {
       reroutingRules: [
         {from: '^/unk$', to: '/reroute-unk'},
         {from: '^/$', to: '/reroute'},
-        {from: '^/orig$', to: '/reroute-1'},
+        {from: new RegExp('^/orig$'), to: '/reroute-1'},
         {from: {method: 'GET', url: new RegExp('^/orig-2$')}, to: '/path/reroute-2'},
         {from: {method: 'GET', url: '^/path/orig$'}, to: '/reroute-3'},
         {from : '^(?<base>.*)/add/(.*)', to: '$base/add/orders/$1'}
       ]
-    }    
+    }
     const client = createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)()
 
     const {origin} = window.location
@@ -1109,7 +1109,7 @@ describe('Rerouting', () => {
     expect(fetchMock).toHaveBeenNthCalledWith(6, `${origin}/`, expect.any(Object))
   })
 
-  it('should fetch a get method', async () => {
+  it('should fetch a get method with URL input', async () => {
     const customSupport = {
       ...support,
       reroutingRules: [

@@ -1,11 +1,11 @@
 import {HttpClientSupport, HttpMethods} from './http-client'
 
 export type RerouteRule = {
-  from: string | {url: string | RegExp, method: HttpMethods}
+  from: string | RegExp | {url: string | RegExp, method: HttpMethods}
   to: string
 }
 type ValidRerouteRule = {
-  from: {method: HttpMethods, url: RegExp}
+  from: {url: RegExp, method: HttpMethods}
   to: string
 }
 
@@ -64,15 +64,19 @@ const completeRules = (rules: RerouteRule[]): ValidRerouteRule[] => {
     if (isValidRerouteRule(rule)) {
       acc.push(rule)
     }
-    else if (typeof rule.from === 'string' && typeof rule.to === 'string') {
-      const url = new RegExp(rule.from)
-      acc.push(...methods.map(method => ({from: {method, url}, to: rule.to})))
-    }
     else if (isValidObject(rule.from) && typeof rule.from.url === 'string') {
       rule.from.url = new RegExp(rule.from.url)
       if (isValidRerouteRule(rule)) {
         acc.push(rule)
       }
+    }
+    else if (typeof rule.from === 'string' || rule.from instanceof RegExp) {
+      const url = typeof rule.from === 'string' ? new RegExp(rule.from) : rule.from
+      acc.push(
+        ...methods
+          .map(method => ({from: {method, url}, to: rule.to}))
+          .filter(isValidRerouteRule)
+      )
     }
     return acc
   }, [])
@@ -82,7 +86,6 @@ export function withRerouting (this: HttpClientSupport): void | (() => void) {
   type Fetch = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
   
   const {proxyWindow = window, reroutingRules} = this
-  
   const {fetch} = proxyWindow
   if (!Array.isArray(reroutingRules) || reroutingRules.length === 0) {
     return
