@@ -1055,24 +1055,40 @@ describe('Rerouting', () => {
     })
   })
 
-  it('should fetch a rerouted get method without tampering with other clients', async () => {
+  it('should fetch rerouted methods without leakage to other clients', async () => {
+    const {origin} = window.location
+    
+    const support2 = {...support, reroutingRules: [{from: '/orig', to: '/foo'}]}
+    const support3 = {...support, reroutingRules: [{from: '/orig', to: '/asd'}]}
+    
+    await createFetchHttpClient.bind<() => HttpClientInstance>(support2)().get('/orig')
+    await createFetchHttpClient.bind<() => HttpClientInstance>(support3)().get('/orig')
+    await createFetchHttpClient.bind<() => HttpClientInstance>(support)().get('/orig')
+    expect(fetchMock).toBeCalledTimes(3)
+    expect(fetchMock).toHaveBeenNthCalledWith(1, `${origin}/foo`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(2, `${origin}/asd`, expect.any(Object))
+    expect(fetchMock).toHaveBeenNthCalledWith(3, `${origin}/orig`, expect.any(Object))
+
+  })
+
+  it('sould support escaping in rerouting rules', async () => {
     const customSupport = {
       ...support,
       reroutingRules: [
-        {from: '/orig', to: '/reroute'}
+        {from: '^/or\\.ig$', to: '/reroute$1'}
       ]
     }
-    
-    const {origin} = window.location
-    
     const client = createFetchHttpClient.bind<() => HttpClientInstance>(customSupport)()
-    const client2 = createFetchHttpClient.bind<() => HttpClientInstance>(support)()
-    await client.get('/orig')
-    await client2.get('/orig')
-    expect(fetchMock).toBeCalledTimes(2)
-    expect(fetchMock).toHaveBeenNthCalledWith(1, `${origin}/reroute`, expect.any(Object))
-    expect(fetchMock).toHaveBeenNthCalledWith(2, `${origin}/orig`, expect.any(Object))
 
+    const {origin} = window.location
+
+    await client.get('/orrig')
+    await client.get('/or.ig')
+    
+    expect(fetchMock).toBeCalledTimes(2)
+    const defaultConfig = {method: 'GET', headers: {'Content-Type': 'application/json'}}
+    expect(fetchMock).toHaveBeenNthCalledWith(1, `${origin}/orrig`, defaultConfig)
+    expect(fetchMock).toHaveBeenNthCalledWith(2, `${origin}/reroute$1`, defaultConfig)
   })
 
   it('should be robust to incorrect rerouting rules', async () => {
