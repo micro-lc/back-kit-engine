@@ -1,6 +1,6 @@
 {
   "name": "@micro-lc/back-kit-engine",
-  "version": "1.0.14",
+  "version": "1.0.15-rc2",
   "description": "engine to sync react over webcomponents scaffolding + backoffice utils and types/interfaces",
   "license": "SEE LICENSE IN LICENSE",
   "author": "Mia Platform Core Team <core@mia-platform.eu>",
@@ -180,5 +180,6 @@
     "open@8.4.0": {
       "unplugged": true
     }
-  }
+  },
+  "stableVersion": "1.0.14"
 }

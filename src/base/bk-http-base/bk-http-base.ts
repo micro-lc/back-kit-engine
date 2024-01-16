@@ -2,9 +2,8 @@ import {
   property, state
 } from 'lit/decorators.js'
 
-import {
-  createFetchHttpClient, HttpClientInstance
-} from '../../utils'
+import type {HttpClientInstance, RerouteRule} from '../../utils'
+import {createFetchHttpClient} from '../../utils'
 import {BkBase} from '../bk-base'
 
 /**
@@ -18,9 +17,9 @@ export class BkHttpBase extends BkBase {
 
   _headers?: HeadersInit
   _credentials?: RequestCredentials
+  _reroutingRules?: RerouteRule[]
 
-  @state() _httpClient: HttpClientInstance =
-    createFetchHttpClient.call(this)
+  @state() _httpClient: HttpClientInstance = createFetchHttpClient.call(this)
 
   /**
    * @description http client base path
@@ -58,6 +57,19 @@ export class BkHttpBase extends BkBase {
 
   set credentials (c: RequestCredentials | undefined) {
     this._credentials = c
+    this._httpClient = createFetchHttpClient.call(this)
+  }
+
+  /**
+ * @description http client custom rerouting rules
+ */
+  @property({attribute: false})
+  get reroutingRules (): RerouteRule[] | undefined {
+    return this._reroutingRules
+  }
+
+  set reroutingRules (r: RerouteRule[] | undefined) {
+    this._reroutingRules = r
     this._httpClient = createFetchHttpClient.call(this)
   }
 }

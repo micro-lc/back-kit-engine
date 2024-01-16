@@ -1,4 +1,6 @@
-import {downloadFile} from './url'
+import {downloadFile} from '../url'
+
+import {RerouteRule, withRerouting} from './with-rerouting'
 
 export type HttpClientConfig = Omit<RequestInit, 'method'> & {
   params?: string | Record<string, string> | string[][] | URLSearchParams
@@ -36,6 +38,7 @@ export interface HttpClientSupport extends Element {
   basePath?: string
   headers?: HeadersInit
   credentials?: RequestCredentials
+  reroutingRules?: RerouteRule[]
 }
 
 export type HttpClientResponse<T = any> = Response & {
@@ -302,6 +305,10 @@ async function _fetch (
 }
 
 export function createFetchHttpClient (this: HttpClientSupport): HttpClientInstance {
+  if (this.reroutingRules) {
+    withRerouting.call(this)
+  }
+  
   return {
     get: get.bind<GetHandler>(this),
     post: withBody('POST').bind<WithBodyHandler>(this),
@@ -313,3 +320,5 @@ export function createFetchHttpClient (this: HttpClientSupport): HttpClientInsta
     fetch: _fetch.bind<FetchHandler>(this)
   }
 }
+
+export type {RerouteRule}

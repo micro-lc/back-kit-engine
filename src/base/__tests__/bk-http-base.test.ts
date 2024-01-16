@@ -37,7 +37,8 @@ describe('bk-base tests', () => {
     const base = new BkHttpBase()
     base.basePath = ''
     base.headers = {key: 'value'}
-    expect(createFetchHttpClient).toBeCalledTimes(3)
+    base.credentials = 'include'
+    expect(createFetchHttpClient).toBeCalledTimes(4)
 
     const {_httpClient} = base
     const returnedData = 'ok'
@@ -54,6 +55,22 @@ describe('bk-base tests', () => {
     })
 
     const {data} = await _httpClient.get('/', {outputTransform: (body: Body) => body.text()})
+    expect(data).toStrictEqual(returnedData)
+  })
+
+  it('should spawn bk-http-base without binding rerouting', async () => {
+    const base = new BkHttpBase()
+    base.basePath = ''
+    base.reroutingRules = [{from: {url: '/app', method: 'GET'}, to: '/v2/app'}]
+    expect(createFetchHttpClient).toBeCalledTimes(3)
+
+    const {_httpClient} = base
+    const returnedData = 'ok'
+    fetchMock.mockOnceIf(/\/v2\/app$/, () => {
+      return Promise.resolve(returnedData)
+    })
+
+    const {data} = await _httpClient.get('/app', {outputTransform: (body: Body) => body.text()})
     expect(data).toStrictEqual(returnedData)
   })
 
