@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.0.15] - 2024-01-16
+
 - `reroutingRules` property is available in `bk-http-base` component
 
 ## [1.0.14] - 2024-01-11
