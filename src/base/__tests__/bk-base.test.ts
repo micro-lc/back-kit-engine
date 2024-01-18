@@ -53,4 +53,41 @@ describe('bk-base tests', () => {
     el.remove()
     expect(document.body.outerHTML).toEqual('<body><div><!----></div></body>')
   })
+  
+  describe('localized-component tests', () => {
+    it('', () => {
+      const base = new BkBase()
+      expect(base.defaultLocale).toBeUndefined()
+      expect(base.locale).toBeUndefined()
+      expect(base._locale).toBeUndefined()
+    })
+
+    it('', () => {
+      const base = new BkBase()
+      base.locale = {
+        en: {title: 'title'},
+        it: {title: 'titolo', subtitle: 'sottotitolo'}
+      }
+      expect(base._locale).toStrictEqual({title: 'title'})
+    })
+
+    it('', () => {
+      const base = new BkBase()
+      base.defaultLocale = {en: {title: 'title'}}
+      expect(base._locale).toStrictEqual({title: 'title'})
+    })
+    
+    it('', () => {
+      const base = new BkBase()
+      base.defaultLocale = {
+        en: {title: 'title', subtitle: 'subtitle'}
+      }
+      base.locale = {
+        en: {title: 'title2'},
+        it: {title: 'titolo'}
+      }
+      expect(base._locale).toStrictEqual({title: 'title2', subtitle: 'subtitle'})
+    })
+    
+  })
 })

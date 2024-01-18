@@ -15,6 +15,7 @@ import type {
   Bootstrapper, Listener
 } from '../bk-base'
 import {BkHttpBase} from '../bk-http-base'
+import {Labels} from '../localized-component'
 import {
   adoptStylesheet,
   adoptStylesOnShadowRoot,
@@ -26,8 +27,8 @@ import {
  * @description embeds an http client instance in a webcomponent
  * which renders a React component
  */
-export class BkHttpComponent<P = Record<string, never>>
-  extends BkHttpBase implements LitCreatable<P>, StyledComponent {
+export class BkHttpComponent<P = Record<string, never>, L extends Labels = Labels>
+  extends BkHttpBase<L> implements LitCreatable<P>, StyledComponent {
   protected dynamicStyleSheet?: string
   _adoptedStyleSheets: CSSResultOrNative[] = []
 
