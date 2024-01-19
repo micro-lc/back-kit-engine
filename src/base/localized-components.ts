@@ -1,3 +1,5 @@
+import {getNavigatorLanguage, DEFAULT_LANGUAGE} from '../utils/i18n'
+
 export type Locale <L extends Labels> = {
   [lang: Lang]: L
 }
@@ -46,6 +48,10 @@ function mergeLabels <L extends Labels> (labels: L, defaultLabels: L): L {
 
     return acc
   }, {}) as L
+}
+
+export function localizeObj <L extends Labels>(locale?: Locale<L>) : L | undefined {
+  return locale?.[getNavigatorLanguage()] ?? locale?.[DEFAULT_LANGUAGE]
 }
 
 export function mergeLocales<L extends Labels> (locale: Locale<L> = {}, defaultLocale: Locale<L> = {}) {

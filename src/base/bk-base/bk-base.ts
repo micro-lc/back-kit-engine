@@ -4,8 +4,7 @@ import {Subscription,ReplaySubject} from 'rxjs'
 import type {Observable} from 'rxjs'
 
 import type {EventBus} from '../../events'
-import {DEFAULT_LANGUAGE, getNavigatorLanguage} from '../../utils/i18n'
-import {Labels, Locale, LocalizedComponent, mergeLocales} from '../localized-components'
+import {Labels, Locale, LocalizedComponent, localizeObj, mergeLocales} from '../localized-components'
 
 export type Listener = (eventBus: EventBus, kickoff: Observable<0>) => Subscription
 export type Bootstrapper = (eventBus: EventBus) => void
@@ -81,13 +80,11 @@ export class BkBase<L extends Labels = Labels> extends LitElement implements Loc
     this._eventBus = e
   }
 
-
   defaultLocale?: Locale<L> | undefined
-  
   @property({attribute: false})
   set customLocale(l: Locale<L>) {
     const merged = mergeLocales(l, this.defaultLocale)
-    this._locale = merged[getNavigatorLanguage()] ?? merged[DEFAULT_LANGUAGE]
+    this.locale = localizeObj(merged)
   }
   
   private _currentBusSubscriptions: Subscription[] = []
@@ -125,11 +122,11 @@ export class BkBase<L extends Labels = Labels> extends LitElement implements Loc
   }
 
   _locale?: L
-
+  set locale (l: L | undefined) {
+    this._locale  = l
+  }
   get locale (): L | undefined {
-    return this._locale
-      ?? this.defaultLocale?.[getNavigatorLanguage()]
-      ?? this.defaultLocale?.[DEFAULT_LANGUAGE]
+    return this._locale ?? localizeObj(this.defaultLocale)
   }
 
   constructor (

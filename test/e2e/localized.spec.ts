@@ -66,14 +66,26 @@ class DefaultedLocalComponent extends LocalComponent {
 }
 
 describe('style tests', () => {
-  it('should use default locale', async () => {
+  it('should apply custom locale', async () => {
     const el = await fixture(html`
-      <defaulted-localized-component></defaulted-localized-component>
-    `) as DefaultedLocalComponent
+      <localized-component
+        .customLocale=${
+          {
+            en: {
+              name: 'custom-name',
+              body: {
+                text: 'custom-text',
+                badge: 'custom-badge'
+              }
+            }
+          }
+        }
+      ></localized-component>
+    `) as LocalComponent
 
-    expect(el.name).to.be.to.have.text('default-name')
-    expect(el.text).to.be.to.have.text('default-text')
-    expect(el.badge).to.be.to.have.text('default-badge')
+    expect(el.name).to.be.to.have.text('custom-name')
+    expect(el.text).to.be.to.have.text('custom-text')
+    expect(el.badge).to.be.to.have.text('custom-badge')
   })
   
   it('should apply custom locale to default', async () => {
@@ -103,28 +115,47 @@ describe('style tests', () => {
     expect(el.text).to.be.to.have.text('default-text')
     expect(el.badge).to.be.to.have.text('custom-badge')
   })
-
-  it('should apply custom locale', async () => {
+  
+  it('should use default locale', async () => {
     const el = await fixture(html`
-      <localized-component
+      <defaulted-localized-component></defaulted-localized-component>
+    `) as DefaultedLocalComponent
+
+    expect(el.name).to.be.to.have.text('default-name')
+    expect(el.text).to.be.to.have.text('default-text')
+    expect(el.badge).to.be.to.have.text('default-badge')
+  })
+
+  it('should apply custom locale to default', async () => {
+    const {navigator} = window
+    Object.defineProperty(window, 'navigator', {writable: true, value: {language: 'it'}})
+
+    const el = await fixture(html`
+      <defaulted-localized-component
         .customLocale=${
           {
             en: {
               name: 'custom-name',
               body: {
-                text: 'custom-text',
                 badge: 'custom-badge'
+              }
+            },
+            it: {
+              name: 'name-it',
+              body: {
+                text: 'text-it',
+                badge: 'badge-it'
               }
             }
           }
         }
-      ></localized-component>
-    `) as LocalComponent
+      ></defaulted-localized-component>
+    `) as DefaultedLocalComponent
 
-    expect(el.name).to.be.to.have.text('custom-name')
-    expect(el.text).to.be.to.have.text('custom-text')
-    expect(el.badge).to.be.to.have.text('custom-badge')
+    expect(el.name).to.be.to.have.text('name-it')
+    expect(el.text).to.be.to.have.text('text-it')
+    expect(el.badge).to.be.to.have.text('badge-it')
+
+    Object.defineProperty(window, 'navigator', {writable: true, value: navigator})
   })
-
-  
 })
