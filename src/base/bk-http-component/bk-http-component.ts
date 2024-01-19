@@ -15,7 +15,7 @@ import type {
   Bootstrapper, Listener
 } from '../bk-base'
 import {BkHttpBase} from '../bk-http-base'
-import {Labels} from '../localized-component'
+import {Labels} from '../localized-components'
 import {
   adoptStylesheet,
   adoptStylesOnShadowRoot,

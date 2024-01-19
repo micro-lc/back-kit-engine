@@ -4,8 +4,8 @@ import {Subscription,ReplaySubject} from 'rxjs'
 import type {Observable} from 'rxjs'
 
 import type {EventBus} from '../../events'
-import {getNavigatorLanguage} from '../../utils/i18n'
-import {Labels, Locale, LocalizedComponent, mergeLocales} from '../localized-component'
+import {DEFAULT_LANGUAGE, getNavigatorLanguage} from '../../utils/i18n'
+import {Labels, Locale, LocalizedComponent, mergeLocales} from '../localized-components'
 
 export type Listener = (eventBus: EventBus, kickoff: Observable<0>) => Subscription
 export type Bootstrapper = (eventBus: EventBus) => void
@@ -81,20 +81,13 @@ export class BkBase<L extends Labels = Labels> extends LitElement implements Loc
     this._eventBus = e
   }
 
-  @property({attribute: false})
-  set defaultLocale(l: Locale<L>) {
-    this._defaultLocale = l
-    if (!this._locale) {
-      this._locale = this._defaultLocale?.[getNavigatorLanguage()]
-    }
-  }
 
-  // TODO check eng default language
+  defaultLocale?: Locale<L> | undefined
+  
   @property({attribute: false})
-  set locale (l: Locale<L>) {
-    const locale = mergeLocales(l, this._defaultLocale ?? {}) as Locale<L>
-    const lang = getNavigatorLanguage()
-    this._locale = locale[lang] ?? this._defaultLocale?.[lang] ?? {}
+  set customLocale(l: Locale<L>) {
+    const merged = mergeLocales(l, this.defaultLocale)
+    this._locale = merged[getNavigatorLanguage()] ?? merged[DEFAULT_LANGUAGE]
   }
   
   private _currentBusSubscriptions: Subscription[] = []
@@ -131,8 +124,13 @@ export class BkBase<L extends Labels = Labels> extends LitElement implements Loc
     this._subscription = s
   }
 
-  _defaultLocale?: Locale<L>
   _locale?: L
+
+  get locale (): L | undefined {
+    return this._locale
+      ?? this.defaultLocale?.[getNavigatorLanguage()]
+      ?? this.defaultLocale?.[DEFAULT_LANGUAGE]
+  }
 
   constructor (
     listeners?: Listener | Listener[],

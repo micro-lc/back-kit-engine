@@ -8,6 +8,15 @@
       "runtimeArgs": ["jest", "--runInBand", "${relativeFile}"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "e2e: current test file",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["wtr", "${relativeFile}", "--node-resolve", "--playwright", "--browsers", "firefox", "chromium"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
     }
   ]
 }

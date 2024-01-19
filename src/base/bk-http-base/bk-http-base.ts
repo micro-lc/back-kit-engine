@@ -5,7 +5,7 @@ import {
 import type {HttpClientInstance, RerouteRule} from '../../utils'
 import {createFetchHttpClient} from '../../utils'
 import {BkBase} from '../bk-base'
-import {Labels} from '../localized-component'
+import {Labels} from '../localized-components'
 
 /**
  * @superclass

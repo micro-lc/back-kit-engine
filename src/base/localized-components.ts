@@ -48,7 +48,7 @@ function mergeLabels <L extends Labels> (labels: L, defaultLabels: L): L {
   }, {}) as L
 }
 
-export function mergeLocales<L extends Labels> (locale: Locale<L>, defaultLocale: Locale<L> = {}) {
+export function mergeLocales<L extends Labels> (locale: Locale<L> = {}, defaultLocale: Locale<L> = {}) {
   const langs = unique(
     Object.keys(locale).concat(Object.keys(defaultLocale))
   )
