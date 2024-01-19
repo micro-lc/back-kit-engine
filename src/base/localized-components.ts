@@ -21,18 +21,12 @@ function mergeLabels <L extends Labels> (labels: L, defaultLabels: L): L {
   const keys = unique(
     Object.keys(labels).concat(Object.keys(defaultLabels))
   )
-  
   return keys.reduce<Labels>((acc, key) => {
     const value = labels[key]
     const defaultValue = defaultLabels[key]
 
     if (typeof value === 'string') {
       acc[key] = value
-      return acc
-    }
-    
-    if (typeof value === 'undefined') {
-      acc[key] = defaultValue
       return acc
     }
     
@@ -43,6 +37,14 @@ function mergeLabels <L extends Labels> (labels: L, defaultLabels: L): L {
 
     if (typeof value === 'object') {
       acc[key] = mergeLabels(value, {})
+      return acc
+    }
+
+    if (typeof value !== 'string'
+      && typeof value !== 'object'
+      && (typeof defaultValue === 'string' || typeof defaultValue === 'object')
+    ) {
+      acc[key] = defaultValue
       return acc
     }
 

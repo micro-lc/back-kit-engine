@@ -1,4 +1,4 @@
-import {mergeLocales} from '../localized-components'
+import {localizeObj, mergeLocales} from '../localized-components'
 
 describe('localized-components tests', () => {
   const defaultLocale = {
@@ -68,9 +68,35 @@ describe('localized-components tests', () => {
   
     expect(merged).toStrictEqual(expected)
   })
+
+  it('should localize object', () => {
+    expect(localizeObj(defaultLocale)).toStrictEqual({
+      title: 'title-en',
+      subtitle: {
+        subtitle: 'subtitle-en',
+        badge: 'badge-en'
+      }
+    })
+    expect(localizeObj({es: {}})).toBeUndefined()
+    expect(localizeObj({})).toBeUndefined()
+    expect(localizeObj(undefined)).toBeUndefined()
+  })
+  it('should localize object', () => {
+    const {navigator} = window
+    Object.defineProperty(window, 'navigator', {writable: true, value: {language: 'it'}})
+    
+    expect(localizeObj(defaultLocale)).toStrictEqual({
+      title: 'title-it',
+      subtitle: {
+        subtitle: 'subtitle-it',
+        badge: 'badge-it'
+      }
+    })
+    
+    Object.defineProperty(window, 'navigator', {writable: true, value: navigator})
+  })
   
   it('should be robust to wrong config', () => {
-
     const wrongLocale = {
       ...locale,
       en: {
@@ -84,8 +110,46 @@ describe('localized-components tests', () => {
     }
     
     // @ts-expect-error force wrong config
-    const merged = mergeLocales(wrongLocale, defaultLocale)
+    expect(mergeLocales(wrongLocale, defaultLocale)).toStrictEqual(merged)
+  })
   
-    expect(merged).toStrictEqual(merged)
+  it('should be robust to wrong config', () => {
+    const wrongLocale = {
+      ...locale,
+      en: {
+        title: 0,
+        subtitle: {
+          subtitle: 'subtitle-en-2',
+        },
+        footer: 'footer-en-2'
+      }
+    }
+    
+    // @ts-expect-error force wrong config
+    expect(mergeLocales(wrongLocale, defaultLocale)).toStrictEqual(
+      {
+        es: {
+          title: 'title-es',
+          subtitle: {
+            subtitle: 'subtitle-es',
+            badge: 'badge-es'
+          }
+        },
+        en: {
+          title: 'title-en',
+          subtitle: {
+            subtitle: 'subtitle-en-2',
+            badge: 'badge-en'
+          },
+          footer: 'footer-en-2'
+        },
+        it: {
+          title: 'title-it',
+          subtitle: {
+            subtitle: 'subtitle-it',
+            badge: 'badge-it'
+          }
+        },
+      })
   })
 })
