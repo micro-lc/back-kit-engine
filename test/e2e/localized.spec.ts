@@ -1,3 +1,4 @@
+
 import {
   fixture,
   html,
@@ -7,13 +8,15 @@ import {customElement, query} from 'lit/decorators.js'
 import React from 'react'
 
 import {BkComponent} from '../../src/base/bk-component'
+import {Locale} from '../../src/base/localized-components'
 
 type ComponentLabels = {
   name: string
   body: {
     text: string
     badge: string
-  }
+  },
+  range: [string, string]
 }
 
 @customElement('localized-component')
@@ -27,6 +30,9 @@ class LocalComponent extends BkComponent<Record<string, any>, ComponentLabels> {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   @query('#badge') badge!: HTMLDivElement
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  @query('#range') range!: HTMLDivElement
   
   constructor() {
     super(
@@ -37,6 +43,7 @@ class LocalComponent extends BkComponent<Record<string, any>, ComponentLabels> {
             React.createElement('div', {id: 'name', key: 'name', ...props}, props.locale?.name ?? ''),
             React.createElement('div', {id: 'text', key: 'text', ...props}, props.locale?.body.text ?? ''),
             React.createElement('div', {id: 'badge', key: 'badge', ...props}, props.locale?.body.badge ?? ''),
+            React.createElement('div', {id: 'range', key: 'range', ...props}, `${props.locale?.range?.[0] ?? ''} ${props.locale?.range?.[1] ?? ''}`),
           ]
         )
       },
@@ -53,13 +60,14 @@ class LocalComponent extends BkComponent<Record<string, any>, ComponentLabels> {
 
 @customElement('defaulted-localized-component')
 class WithDefaultLocalComponent extends LocalComponent {
-  defaultLocale = {
+  defaultLocale: Locale<ComponentLabels> = {
     en: {
       name: 'default-name',
       body: {
         text: 'default-text',
         badge: 'default-badge'
-      }
+      },
+      range: ['default-range-0', 'default-range-1']
     }
   }
 }
@@ -75,7 +83,8 @@ describe('localization tests', () => {
               body: {
                 text: 'custom-text',
                 badge: 'custom-badge'
-              }
+              },
+              range: ['range-0', 'range-1']
             }
           }
         }
@@ -85,6 +94,7 @@ describe('localization tests', () => {
     expect(el.name).to.be.to.have.text('custom-name')
     expect(el.text).to.be.to.have.text('custom-text')
     expect(el.badge).to.be.to.have.text('custom-badge')
+    expect(el.range).to.be.to.have.text('range-0 range-1')
   })
 
   it('should apply no locale', async () => {
@@ -95,6 +105,7 @@ describe('localization tests', () => {
     expect(el.name).to.be.to.have.text('')
     expect(el.text).to.be.to.have.text('')
     expect(el.badge).to.be.to.have.text('')
+    expect(el.range).to.be.to.have.text(' ')
   })
 
   it('should use default locale', async () => {
@@ -105,6 +116,8 @@ describe('localization tests', () => {
     expect(el.name).to.be.to.have.text('default-name')
     expect(el.text).to.be.to.have.text('default-text')
     expect(el.badge).to.be.to.have.text('default-badge')
+    expect(el.range).to.be.to.have.text('default-range-0 default-range-1')
+
   })
 
   it('should apply custom locale to default', async () => {
@@ -116,14 +129,16 @@ describe('localization tests', () => {
               name: 'custom-name',
               body: {
                 badge: 'custom-badge'
-              }
+              },
+              range: ['range-0', 'range-1']
             },
             it: {
               name: 'name-it',
               body: {
                 text: 'text-it',
                 badge: 'badge-it'
-              }
+              },
+              range: ['range-0-it', 'range-1-it']
             }
           }
         }
@@ -133,6 +148,7 @@ describe('localization tests', () => {
     expect(el.name).to.be.to.have.text('custom-name')
     expect(el.text).to.be.to.have.text('default-text')
     expect(el.badge).to.be.to.have.text('custom-badge')
+    expect(el.range).to.be.to.have.text('range-0 range-1')
   })
 
   it('should apply custom locale to default (it)', async () => {
@@ -148,7 +164,8 @@ describe('localization tests', () => {
               body: {
                 text: 'text-it',
                 badge: 'badge-it'
-              }
+              },
+              range: ['range-0-it', 'range-1-it']
             }
           }
         }
@@ -158,6 +175,7 @@ describe('localization tests', () => {
     expect(el.name).to.be.to.have.text('name-it')
     expect(el.text).to.be.to.have.text('text-it')
     expect(el.badge).to.be.to.have.text('badge-it')
+    expect(el.range).to.be.to.have.text('range-0-it range-1-it')
 
     Object.defineProperty(window, 'navigator', {writable: true, value: navigator})
   })
@@ -176,25 +194,18 @@ describe('localization tests', () => {
     expect(el.name).to.be.to.have.text('custom-name')
     expect(el.text).to.be.to.have.text('default-text')
     expect(el.badge).to.be.to.have.text('default-badge')
+    expect(el.range).to.be.to.have.text('default-range-0 default-range-1')
   })
 
-  it('should be robust to wrong custom locale', async () => {
+  it('should apply custom locale to default with non-stirng primitive types', async () => {
     const el = await fixture(html`
       <defaulted-localized-component
         .customLocale=${
           {
             en: {
-              name: 0, // should use default
+              name: 0,
               body: {
                 badge: 'custom-badge'
-              },
-              wrong: 0 // should be ignored
-            },
-            it: {
-              name: 'name-it',
-              body: {
-                text: 'text-it',
-                badge: 'badge-it'
               }
             }
           }
@@ -202,10 +213,31 @@ describe('localization tests', () => {
       ></defaulted-localized-component>
     `) as WithDefaultLocalComponent
 
-    expect(el.name).to.be.to.have.text('default-name')
+    expect(el.name).to.be.to.have.text('0')
     expect(el.text).to.be.to.have.text('default-text')
     expect(el.badge).to.be.to.have.text('custom-badge')
-    // @ts-expect-error wrong conifg should not be applied
-    expect(el.locale?.wrong).to.be.undefined
+    expect(el.range).to.be.to.have.text('default-range-0 default-range-1')
+  })
+
+  it('should apply solved locale', async () => {
+    const el = await fixture(html`
+      <defaulted-localized-component
+        ._locale=${
+          {
+            name: 'custom-name',
+            body: {
+              text: 'custom-text',
+              badge: 'custom-badge'
+            },
+            range: ['custom-range-0', 'custom-range-1']
+          }
+        }
+      ></defaulted-localized-component>
+    `) as WithDefaultLocalComponent
+
+    expect(el.name).to.be.to.have.text('custom-name')
+    expect(el.text).to.be.to.have.text('custom-text')
+    expect(el.badge).to.be.to.have.text('custom-badge')
+    expect(el.range).to.be.to.have.text('custom-range-0 custom-range-1')
   })
 })

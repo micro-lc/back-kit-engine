@@ -25,6 +25,12 @@ describe('localized-components tests', () => {
         badge: 'badge-es'
       }
     },
+    fr: {
+      title: 'title-fr',
+      subtitle: {
+        subtitle: 'subtitle-fr'
+      }
+    },
     en: {
       title: 'title-en-2',
       subtitle: {
@@ -39,6 +45,12 @@ describe('localized-components tests', () => {
       subtitle: {
         subtitle: 'subtitle-es',
         badge: 'badge-es'
+      }
+    },
+    fr: {
+      title: 'title-fr',
+      subtitle: {
+        subtitle: 'subtitle-fr'
       }
     },
     en: {
@@ -62,10 +74,62 @@ describe('localized-components tests', () => {
     [defaultLocale, locale, merged],
     [defaultLocale, undefined, defaultLocale],
     [undefined, locale, locale],
-    [undefined,undefined, {}]
+    [undefined,undefined, {}],
   ])('should merge labels', (defaultLocale, locale, expected) => {
     const merged = mergeLocales(locale, defaultLocale)
   
+    expect(merged).toStrictEqual(expected)
+  })
+
+
+  it('should merge labels with non-string primitive types', () => {
+    
+    const defaultLocale = {
+      en: {
+        today: 'Today-default',
+        yesterday: 'Yesterday',
+        monthBeforeYear: true,
+        decimals: 2
+      }
+    }
+    
+    const locale = {
+      en: {
+        today: 'Today',
+        tomorrow: 'Tomorrow',
+        rangePlaceholder: ['Start date', 'End date'],
+        monthBeforeYear: false,
+        decimals: 'None'
+      },
+      it: {
+        today: 'Oggi',
+        tomorrow: 'Domani',
+        rangePlaceholder: ['Inizio', 'Fine'],
+        monthBeforeYear: true,
+        decimals: 1
+      }
+    }
+    
+    const expected = {
+      en: {
+        today: 'Today',
+        yesterday: 'Yesterday',
+        tomorrow: 'Tomorrow',
+        monthBeforeYear: false,
+        rangePlaceholder: ['Start date', 'End date'],
+        decimals: 'None'
+      },
+      it: {
+        today: 'Oggi',
+        tomorrow: 'Domani',
+        rangePlaceholder: ['Inizio', 'Fine'],
+        monthBeforeYear: true,
+        decimals: 1
+      }
+    }
+
+
+    const merged = mergeLocales<Record<string, unknown>>(locale, defaultLocale)
     expect(merged).toStrictEqual(expected)
   })
 
@@ -81,6 +145,7 @@ describe('localized-components tests', () => {
     expect(localizeObj({})).toBeUndefined()
     expect(localizeObj(undefined)).toBeUndefined()
   })
+  
   it('should localize object', () => {
     const {navigator} = window
     Object.defineProperty(window, 'navigator', {writable: true, value: {language: 'it'}})
@@ -104,52 +169,10 @@ describe('localized-components tests', () => {
         subtitle: {
           subtitle: 'subtitle-en-2',
         },
-        footer: 'footer-en-2',
-        wrong: 0
-      }
-    }
-    
-    // @ts-expect-error force wrong config
-    expect(mergeLocales(wrongLocale, defaultLocale)).toStrictEqual(merged)
-  })
-  
-  it('should be robust to wrong config', () => {
-    const wrongLocale = {
-      ...locale,
-      en: {
-        title: 0,
-        subtitle: {
-          subtitle: 'subtitle-en-2',
-        },
         footer: 'footer-en-2'
       }
     }
     
-    // @ts-expect-error force wrong config
-    expect(mergeLocales(wrongLocale, defaultLocale)).toStrictEqual(
-      {
-        es: {
-          title: 'title-es',
-          subtitle: {
-            subtitle: 'subtitle-es',
-            badge: 'badge-es'
-          }
-        },
-        en: {
-          title: 'title-en',
-          subtitle: {
-            subtitle: 'subtitle-en-2',
-            badge: 'badge-en'
-          },
-          footer: 'footer-en-2'
-        },
-        it: {
-          title: 'title-it',
-          subtitle: {
-            subtitle: 'subtitle-it',
-            badge: 'badge-it'
-          }
-        },
-      })
+    expect(mergeLocales(wrongLocale, defaultLocale)).toStrictEqual(merged)
   })
 })

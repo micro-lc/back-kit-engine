@@ -5,7 +5,7 @@ export type Locale <L extends Labels> = {
 }
 
 export type Labels = Record<string, never> | {
-  [key: string]: string | Labels | undefined
+  [key: string]: string | unknown | Labels | undefined
 }
 
 type Lang = string
@@ -17,36 +17,29 @@ export interface LocalizedComponent<L extends Labels = Labels> {
 
 const unique = <T>(l: T[]) => [...new Set(l)]
 
+function isValidObject (input: unknown): input is Record<string, unknown> {
+  return Boolean(input) && typeof input === 'object' && !Array.isArray(input)
+}
+
 function mergeLabels <L extends Labels> (labels: L, defaultLabels: L): L {
-  const keys = unique(
-    Object.keys(labels).concat(Object.keys(defaultLabels))
-  )
+  const keys = []
+  if (isValidObject(labels)) {
+    keys.push(...Object.keys(labels))
+  }
+  if (isValidObject(defaultLabels)) {
+    keys.push(...Object.keys(defaultLabels))
+  }
+  
   return keys.reduce<Labels>((acc, key) => {
     const value = labels[key]
     const defaultValue = defaultLabels[key]
 
-    if (typeof value === 'string') {
-      acc[key] = value
-      return acc
-    }
-    
-    if (typeof value === 'object' && typeof defaultValue === 'object') {
-      acc[key] = mergeLabels(value, defaultValue)
+    if (isValidObject(value)) {
+      acc[key] = mergeLabels(value, isValidObject(defaultValue) ? defaultValue : {})
       return acc
     }
 
-    if (typeof value === 'object') {
-      acc[key] = mergeLabels(value, {})
-      return acc
-    }
-
-    if (typeof value !== 'string'
-      && typeof value !== 'object'
-      && (typeof defaultValue === 'string' || typeof defaultValue === 'object')
-    ) {
-      acc[key] = defaultValue
-      return acc
-    }
+    acc[key] = typeof value !== 'undefined' ? value : defaultValue
 
     return acc
   }, {}) as L
