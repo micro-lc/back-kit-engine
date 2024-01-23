@@ -12,7 +12,7 @@ type Lang = string
 
 export interface LocalizedComponent<L extends Labels = Labels> {
   defaultLocale?: Locale<L>
-  _locale?: L
+  locale?: L
 }
 
 const unique = <T>(l: T[]) => [...new Set(l)]

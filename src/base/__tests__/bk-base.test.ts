@@ -60,6 +60,7 @@ describe('bk-base tests', () => {
       expect(base.defaultLocale).toBeUndefined()
       expect(base.customLocale).toBeUndefined()
       expect(base._locale).toBeUndefined()
+      expect(base.locale).toBeUndefined()
     })
 
     it('should localize', async () => {
@@ -69,6 +70,7 @@ describe('bk-base tests', () => {
         it: {title: 'titolo', subtitle: 'sottotitolo'}
       }
       expect(base._locale).toStrictEqual({title: 'title'})
+      expect(base.locale).toStrictEqual({title: 'title'})
     })
     
     it('should localize with default', () => {
@@ -81,7 +83,17 @@ describe('bk-base tests', () => {
         it: {title: 'titolo'}
       }
       expect(base._locale).toStrictEqual({title: 'title2', subtitle: 'subtitle'})
+      expect(base.locale).toStrictEqual({title: 'title2', subtitle: 'subtitle'})
     })
     
+    it('should initialize localize', () => {
+      const base = new BkBase()
+      base.defaultLocale = {
+        en: {title: 'title', subtitle: 'subtitle'}
+      }
+      base.locale = {title: 'title2'}
+      expect(base._locale).toStrictEqual({title: 'title2'})
+      expect(base.locale).toStrictEqual({title: 'title2'})
+    })
   })
 })
