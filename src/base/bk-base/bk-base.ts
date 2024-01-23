@@ -83,8 +83,7 @@ export class BkBase<L extends Labels = Labels> extends LitElement implements Loc
   defaultLocale?: Locale<L> | undefined
   @property({attribute: false})
   set customLocale(l: Locale<L>) {
-    const merged = mergeLocales(l, this.defaultLocale)
-    this.locale = localizeObj(merged)
+    this._locale = localizeObj(mergeLocales(l, this.defaultLocale))
   }
   
   private _currentBusSubscriptions: Subscription[] = []
@@ -123,7 +122,7 @@ export class BkBase<L extends Labels = Labels> extends LitElement implements Loc
 
   _locale?: L
   set locale (l: L | undefined) {
-    this._locale  = l
+    this._locale = l
   }
   get locale (): L | undefined {
     return this._locale ?? localizeObj(this.defaultLocale)
