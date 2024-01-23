@@ -4,7 +4,7 @@ import {Subscription,ReplaySubject} from 'rxjs'
 import type {Observable} from 'rxjs'
 
 import type {EventBus} from '../../events'
-import {Labels, Locale, LocalizedComponent, localizeObj, mergeLocales} from '../localized-components'
+import {Labels, Locale, LocalizedComponent, localizeObj, mergeLocale} from '../localized-components'
 
 export type Listener = (eventBus: EventBus, kickoff: Observable<0>) => Subscription
 export type Bootstrapper = (eventBus: EventBus) => void
@@ -80,10 +80,10 @@ export class BkBase<L extends Labels = Labels> extends LitElement implements Loc
     this._eventBus = e
   }
 
-  defaultLocale?: Locale<L> | undefined
+  defaultLocale?: L | undefined
   @property({attribute: false})
   set customLocale(l: Locale<L>) {
-    this._locale = localizeObj(mergeLocales(l, this.defaultLocale))
+    this._locale = mergeLocale(localizeObj(l), this.defaultLocale)
   }
   
   private _currentBusSubscriptions: Subscription[] = []
@@ -125,7 +125,7 @@ export class BkBase<L extends Labels = Labels> extends LitElement implements Loc
     this._locale = l
   }
   get locale (): L | undefined {
-    return this._locale ?? localizeObj(this.defaultLocale)
+    return this._locale ?? this.defaultLocale
   }
 
   constructor (

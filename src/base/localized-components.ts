@@ -11,7 +11,7 @@ export type Labels = Record<string, never> | {
 type Lang = string
 
 export interface LocalizedComponent<L extends Labels = Labels> {
-  defaultLocale?: Locale<L>
+  defaultLocale?: L
   locale?: L
 }
 
@@ -21,39 +21,27 @@ function isValidObject (input: unknown): input is Record<string, unknown> {
   return Boolean(input) && typeof input === 'object' && !Array.isArray(input)
 }
 
-function mergeLabels <L extends Labels> (labels: L, defaultLabels: L): L {
-  const keys = []
-  if (isValidObject(labels)) {
-    keys.push(...Object.keys(labels))
-  }
-  if (isValidObject(defaultLabels)) {
-    keys.push(...Object.keys(defaultLabels))
-  }
-  
-  return keys.reduce<Labels>((acc, key) => {
-    const value = labels[key]
-    const defaultValue = defaultLabels[key]
-
-    if (isValidObject(value)) {
-      acc[key] = mergeLabels(value, isValidObject(defaultValue) ? defaultValue : {})
-      return acc
-    }
-
-    acc[key] = typeof value !== 'undefined' ? value : defaultValue
-
-    return acc
-  }, {}) as L
-}
-
 export function localizeObj <L extends Labels>(locale?: Locale<L>) : L | undefined {
   return locale?.[getNavigatorLanguage()] ?? locale?.[DEFAULT_LANGUAGE]
 }
 
-export function mergeLocales<L extends Labels> (locale: Locale<L> = {}, defaultLocale: Locale<L> = {}) {
-  const langs = unique(
-    Object.keys(locale).concat(Object.keys(defaultLocale))
-  )
-  return langs.reduce<Locale<L>>((acc, lang) =>
-    ({...acc, [lang]: mergeLabels(locale[lang] ?? {}, defaultLocale[lang] ?? {})}),
-  {})
+function merge<T = unknown> (values: T, defaultValues: T): T {  
+  if (typeof values === 'undefined') {
+    return defaultValues
+  }
+
+  if (!isValidObject(values)) {
+    return values
+  }
+
+  if (!isValidObject(defaultValues)) {
+    return values
+  }
+  
+  return unique(Object.keys(defaultValues).concat(Object.keys(values)))
+    .reduce((acc, key) => ({...acc, [key]: merge(values?.[key], defaultValues?.[key])}), {}) as T
+}
+
+export function mergeLocale <L extends Labels> (labels: L | undefined, defaultLabels: L | undefined): L | undefined {
+  return merge(labels, defaultLabels)
 }
