@@ -171,7 +171,7 @@ describe('localization tests', () => {
     Object.defineProperty(window, 'navigator', {writable: true, value: navigator})
   })
 
-  it('should use default locale (fallbacks to english)', async () => {
+  it('should apply custom locale to partially override default (fallbacks to english)', async () => {
     const {navigator} = window
     Object.defineProperty(window, 'navigator', {writable: true, value: {language: 'it'}})
 
