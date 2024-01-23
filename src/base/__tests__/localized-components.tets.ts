@@ -148,24 +148,54 @@ describe('localized-components tests - mergeLocale edge cases', () => {
       {footer: {name: 'Footer', badge: 'Badge'}}
     ],
     [
-      {footer: {name: undefined}},
-      {footer: {name: undefined}},
-      {footer: {name: undefined}}
+      {footer: {}},
+      {footer: {name: 'Footer'}},
+      {footer: {name: 'Footer'}}
     ],
     [
-      {footer: {name: null}},
-      {footer: {name: undefined}},
-      {footer: {name: null}}
-    ],
-    [
-      {footer: {name: undefined}},
-      {footer: {name: null}},
-      {footer: {name: null}}
+      {footer: {name: 'Footer'}},
+      {footer: {}},
+      {footer: {name: 'Footer'}}
     ],
     [
       {footer: {}},
       {footer: {}},
       {footer: {}}
+    ],
+    [
+      {footer: undefined},
+      {footer: {name: 'Footer'}},
+      {footer: {name: 'Footer'}}
+    ],
+    [
+      {footer: {name: 'Footer'}},
+      {footer: undefined},
+      {footer: {name: 'Footer'}}
+    ],
+    [
+      {footer: {name: undefined}},
+      {footer: {name: undefined}},
+      {footer: {name: undefined}}
+    ],
+    [
+      {footer: null},
+      {footer: {name: 'Footer'}},
+      {footer: {name: 'Footer'}}
+    ],
+    [
+      {footer: {name: 'Footer'}},
+      {footer: null},
+      {footer: null}
+    ],
+    [
+      {footer: {name: null}},
+      {footer: {name: undefined}},
+      {footer: {name: null}}
+    ],
+    [
+      {footer: {name: undefined}},
+      {footer: {name: null}},
+      {footer: {name: null}}
     ],
     [
       {footer: {name: 'Name'}},
@@ -178,7 +208,6 @@ describe('localized-components tests - mergeLocale edge cases', () => {
     expect(merged).toStrictEqual(expected)
   })
 })
-
 
 describe('localized-components tests - localizeObject', () => {
   it.each([
