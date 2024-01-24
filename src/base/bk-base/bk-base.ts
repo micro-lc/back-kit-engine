@@ -120,7 +120,7 @@ export class BkBase<L extends Labels = Labels> extends LitElement implements Loc
     this._subscription = s
   }
 
-  _locale?: L
+  private _locale?: L
   set locale (l: L | undefined) {
     this._locale = l
   }
