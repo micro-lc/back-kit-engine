@@ -1,8 +1,4 @@
-import {
-  fixture,
-  html,
-  expect
-} from '@open-wc/testing'
+import {fixture, html, expect} from '@open-wc/testing'
 import {customElement, property, query} from 'lit/decorators.js'
 import React from 'react'
 
@@ -15,8 +11,7 @@ type ComponentLabels = {
   body: {
     text: string
     badge: string
-  },
-  range: [string, string]
+  }
 }
 
 @customElement('localized-component')
@@ -32,9 +27,6 @@ class LocalComponent extends BkComponent<Record<string, any>, ComponentLabels> {
   @query('#badge') badge!: HTMLDivElement
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  @query('#range') range!: HTMLDivElement
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   @query('#button') button!: HTMLDivElement
   
   @property({attribute: 'button-label'}) buttonlabel?: LocalizedText
@@ -48,9 +40,7 @@ class LocalComponent extends BkComponent<Record<string, any>, ComponentLabels> {
             React.createElement('div', {id: 'name', key: 'name', ...props}, props.locale?.name ?? ''),
             React.createElement('div', {id: 'text', key: 'text', ...props}, props.locale?.body.text ?? ''),
             React.createElement('div', {id: 'badge', key: 'badge', ...props}, props.locale?.body.badge ?? ''),
-            React.createElement('div', {id: 'range', key: 'range', ...props}, `${props.locale?.range?.[0] ?? ''} ${props.locale?.range?.[1] ?? ''}`),
             React.createElement('button', {id: 'button', key: 'button', ...props}, props.buttonlabel ?? ''),
-            
           ]
         )
       },
@@ -75,8 +65,7 @@ class WithDefaultLocalComponent extends LocalComponent {
     body: {
       text: 'default-text',
       badge: 'default-badge'
-    },
-    range: ['default-range-0', 'default-range-1']
+    }
   }
 }
 
@@ -86,13 +75,10 @@ describe('localization tests', () => {
       <localized-component
         .customLocale=${
           {
-            en: {
-              name: 'custom-name',
-              body: {
-                text: 'custom-text',
-                badge: 'custom-badge'
-              },
-              range: ['range-0', 'range-1']
+            name: {en: 'custom-name'},
+            body: {
+              text: {en: 'custom-text'},
+              badge: 'custom-badge',
             }
           }
         }
@@ -103,19 +89,15 @@ describe('localization tests', () => {
     expect(el.name).to.have.text('custom-name')
     expect(el.text).to.have.text('custom-text')
     expect(el.badge).to.have.text('custom-badge')
-    expect(el.range).to.have.text('range-0 range-1')
     expect(el.button).to.have.text('Button')
   })
 
   it('should apply no locale', async () => {
-    const el = await fixture(html`
-      <localized-component></localized-component>
-    `) as LocalComponent
+    const el = await fixture(html`<localized-component></localized-component>`) as LocalComponent
 
     expect(el.name).to.have.text('')
     expect(el.text).to.have.text('')
     expect(el.badge).to.have.text('')
-    expect(el.range).to.have.text(' ')
     expect(el.button).to.have.text('')
   })
 
@@ -127,8 +109,7 @@ describe('localization tests', () => {
           body: {
             text: 'custom-text',
             badge: 'custom-badge'
-          },
-          range: ['custom-range-0', 'custom-range-1'] as [string, string]
+          }
         } as ComponentLabels
       }
       .buttonlabel=${'Button'}
@@ -138,7 +119,6 @@ describe('localization tests', () => {
     expect(el.name).to.have.text('custom-name')
     expect(el.text).to.have.text('custom-text')
     expect(el.badge).to.have.text('custom-badge')
-    expect(el.range).to.have.text('custom-range-0 custom-range-1')
     expect(el.button).to.have.text('Button')
   })
 
@@ -150,7 +130,6 @@ describe('localization tests', () => {
     expect(el.name).to.have.text('default-name')
     expect(el.text).to.have.text('default-text')
     expect(el.badge).to.have.text('default-badge')
-    expect(el.range).to.have.text('default-range-0 default-range-1')
     expect(el.button).to.have.text('')
   })
 
@@ -165,7 +144,6 @@ describe('localization tests', () => {
     expect(el.name).to.have.text('default-name')
     expect(el.text).to.have.text('default-text')
     expect(el.badge).to.have.text('default-badge')
-    expect(el.range).to.have.text('default-range-0 default-range-1')
     expect(el.button).to.have.text('Button')
     
     Object.defineProperty(window, 'navigator', {writable: true, value: navigator})
@@ -177,7 +155,7 @@ describe('localization tests', () => {
 
     const el = await fixture(html`
       <defaulted-localized-component
-        .customLocale=${{en: {name: 'custom-name'}}}
+        .customLocale=${{name: {en: 'custom-name'}}}
         .buttonlabel=${{en: 'Button'}}
       ></defaulted-localized-component>
     `) as WithDefaultLocalComponent
@@ -185,7 +163,6 @@ describe('localization tests', () => {
     expect(el.name).to.have.text('custom-name')
     expect(el.text).to.have.text('default-text')
     expect(el.badge).to.have.text('default-badge')
-    expect(el.range).to.have.text('default-range-0 default-range-1')
     expect(el.button).to.have.text('Button')
     
     Object.defineProperty(window, 'navigator', {writable: true, value: navigator})
@@ -196,20 +173,9 @@ describe('localization tests', () => {
       <defaulted-localized-component
         .customLocale=${
           {
-            en: {
-              name: 'custom-name',
-              body: {
-                badge: 'custom-badge'
-              },
-              range: ['range-0', 'range-1']
-            },
-            it: {
-              name: 'name-it',
-              body: {
-                text: 'text-it',
-                badge: 'badge-it'
-              },
-              range: ['range-0-it', 'range-1-it']
+            name: {en: 'custom-name', it: 'custom-it'},
+            body: {
+              badge: {en: 'custom-badge', it: 'custom-it'},
             }
           }
         }
@@ -219,7 +185,6 @@ describe('localization tests', () => {
     expect(el.name).to.have.text('custom-name')
     expect(el.text).to.have.text('default-text')
     expect(el.badge).to.have.text('custom-badge')
-    expect(el.range).to.have.text('range-0 range-1')
     expect(el.button).to.have.text('')
   })
 
@@ -231,13 +196,10 @@ describe('localization tests', () => {
       <defaulted-localized-component
         .customLocale=${
           {
-            it: {
-              name: 'name-it',
-              body: {
-                text: 'text-it',
-                badge: 'badge-it'
-              },
-              range: ['range-0-it', 'range-1-it']
+            name: {it: 'name-it'},
+            body: {
+              text: {it: 'text-it'},
+              badge: 'badge-it',
             }
           }
         }
@@ -248,7 +210,6 @@ describe('localization tests', () => {
     expect(el.name).to.have.text('name-it')
     expect(el.text).to.have.text('text-it')
     expect(el.badge).to.have.text('badge-it')
-    expect(el.range).to.have.text('range-0-it range-1-it')
     expect(el.button).to.have.text('Bottone')
 
     Object.defineProperty(window, 'navigator', {writable: true, value: navigator})
@@ -262,13 +223,10 @@ describe('localization tests', () => {
       <defaulted-localized-component
         .customLocale=${
           {
-            it: {
-              name: 'name-it',
-              body: {
-                text: 'text-it',
-                badge: 'badge-it'
-              },
-              range: ['range-0-it', 'range-1-it']
+            name: {it: 'name-it'},
+            body: {
+              text: {it: 'text-it'},
+              badge: {it: 'badge-it'},
             }
           }
         }
@@ -279,7 +237,6 @@ describe('localization tests', () => {
     expect(el.name).to.have.text('name-it')
     expect(el.text).to.have.text('text-it')
     expect(el.badge).to.have.text('badge-it')
-    expect(el.range).to.have.text('range-0-it range-1-it')
     expect(el.button).to.have.text('Bottone')
 
     Object.defineProperty(window, 'navigator', {writable: true, value: navigator})
@@ -293,12 +250,9 @@ describe('localization tests', () => {
       <defaulted-localized-component
         .customLocale=${
           {
-            it: {
-              name: 'name-it',
-              body: {
-                text: 'text-it'
-              },
-              range: ['range-0-it', 'range-1-it']
+            name: {it: 'name-it'},
+            body: {
+              text: {it: 'text-it'}
             }
           }
         }
@@ -309,7 +263,6 @@ describe('localization tests', () => {
     expect(el.name).to.have.text('name-it')
     expect(el.text).to.have.text('text-it')
     expect(el.badge).to.have.text('default-badge')
-    expect(el.range).to.have.text('range-0-it range-1-it')
     expect(el.button).to.have.text('Bottone')
 
     Object.defineProperty(window, 'navigator', {writable: true, value: navigator})
@@ -317,43 +270,28 @@ describe('localization tests', () => {
 
   it('should apply custom locale to override default (partial locale)', async () => {
     const el = await fixture(html`
-      <defaulted-localized-component
-        .customLocale=${
-          {
-            en: {name: 'custom-name'}
-          }
-        }
-      ></defaulted-localized-component>
+      <defaulted-localized-component .customLocale=${{name: {en: 'custom-name'}}}></defaulted-localized-component>
     `) as WithDefaultLocalComponent
 
     expect(el.name).to.have.text('custom-name')
     expect(el.text).to.have.text('default-text')
     expect(el.badge).to.have.text('default-badge')
-    expect(el.range).to.have.text('default-range-0 default-range-1')
     expect(el.button).to.have.text('')
   })
 
-  it('should apply custom locale to override default with non-stirng primitive types', async () => {
+  it('should apply custom locale to override default (default language kicks in)', async () => {
+    const {navigator} = window
+    Object.defineProperty(window, 'navigator', {writable: true, value: {language: undefined}})
+    
     const el = await fixture(html`
-      <defaulted-localized-component
-        .customLocale=${
-          {
-            en: {
-              name: 0,
-              body: {
-                badge: 'custom-badge'
-              }
-            }
-          }
-        }
-      ></defaulted-localized-component>
+      <defaulted-localized-component .customLocale=${{name: {en: 'custom-name'}}}></defaulted-localized-component>
     `) as WithDefaultLocalComponent
 
-    expect(el.name).to.have.text('0')
+    expect(el.name).to.have.text('custom-name')
     expect(el.text).to.have.text('default-text')
-    expect(el.badge).to.have.text('custom-badge')
-    expect(el.range).to.have.text('default-range-0 default-range-1')
+    expect(el.badge).to.have.text('default-badge')
     expect(el.button).to.have.text('')
+    Object.defineProperty(window, 'navigator', {writable: true, value: navigator})
   })
 
   it('should apply solved locale to override default', async () => {
@@ -364,16 +302,14 @@ describe('localization tests', () => {
           body: {
             text: 'custom-text',
             badge: 'custom-badge'
-          },
-          range: ['custom-range-0', 'custom-range-1'] as [string, string]
-        } as ComponentLabels
+          }
+        }
       }></defaulted-localized-component>`
     ) as WithDefaultLocalComponent
     
     expect(el.name).to.have.text('custom-name')
     expect(el.text).to.have.text('custom-text')
     expect(el.badge).to.have.text('custom-badge')
-    expect(el.range).to.have.text('custom-range-0 custom-range-1')
     expect(el.button).to.have.text('')
   })
 })

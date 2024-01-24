@@ -1,29 +1,28 @@
-import {type LocalizedText, getNavigatorLanguage, DEFAULT_LANGUAGE, getLocalizedText} from '../utils/i18n'
+import {type LocalizedText, DEFAULT_LANGUAGE, getLocalizedText} from '../utils/i18n'
 
-export type Locale = {
-  [key: string]: LocalizedText | Locale
-}
-type Solved<L extends Locale, K extends keyof L> = L[K] extends LocalizedText ? string : (L[K] extends Locale ? Labels<L[K]> : L[K])
-export type Labels<L extends Locale> = {
-  [K in keyof L]: Solved<L, K>
+export type Labels = {
+  [key: string]: string | Labels
 }
 
-// type FormLocale = {
-//   firstname: LocalizedText,
-//   lastname: {
-//     first: LocalizedText,
-//     second: string
-//   }
-// }
-// const l: Labels<FormLocale>
-// const fn = l.firstname
-// const ln = l.lastname
-// const f = l.lastname.first
-// const s = l.lastname.second
+/**
+ * Turns string feilds of objects into `LocalizedText`
+ * 
+ * For instance:
+ * 
+ *    `Localized<{name: string; address: {street: string, nr: number}}>`
+ * 
+ * is equivalent to
+ * 
+ *   `{name: LocalizedText; address: {street: LocalizedText, nr: number}}`
+ */
+export type Localized<L extends Labels> = {
+  [K in keyof L]: L[K] extends string
+    ? LocalizedText
+    : (L[K] extends Labels ? Localized<L[K]> : L[K])
+}
 
-export interface LocalizedComponent<L extends Locale = Locale> {
-  defaultLocale?: Labels<L>
-  locale?: Labels<L>
+export interface LocalizedComponent<L extends Labels = Labels> {
+  locale?: L
 }
 
 const unique = <T>(l: T[]) => [...new Set(l)]
@@ -38,19 +37,6 @@ function isLocaliedText (input: unknown): input is LocalizedText {
       .entries(input)
       .every(([key, value]) =>
         typeof key === 'string' && key.length === 2 && typeof value === 'string')
-}
-
-export function solveLocale<L extends Locale> (
-  locale: L,
-  lang: string = getNavigatorLanguage() || DEFAULT_LANGUAGE
-): Labels<L> {
-  if (!isValidObject(locale)) {
-    return locale
-  }
-  return Object.entries(locale).reduce((acc, [key, entry]) => {
-    acc[key as keyof L] = (isLocaliedText(entry) ? getLocalizedText(entry, lang) : solveLocale(entry)) as Solved<L, keyof L>
-    return acc
-  }, {} as Labels<L>)
 }
 
 function merge<T = unknown> (values: T, defaultValues: T): T {  
@@ -70,6 +56,19 @@ function merge<T = unknown> (values: T, defaultValues: T): T {
     .reduce((acc, key) => ({...acc, [key]: merge(values?.[key], defaultValues?.[key])}), {}) as T
 }
 
-export function mergeLocale <L extends Locale> (labels?: Labels<L>, defaultLabels?: Labels<L>): Labels<L> | undefined {
+export function solveLocale<L extends Labels> (
+  locale: Localized<L>,
+  lang: string = navigator.language || DEFAULT_LANGUAGE
+): L {
+  if (!isValidObject(locale)) {
+    return locale
+  }
+  return Object.entries(locale).reduce((acc, [key, entry]) => {
+    acc[key as keyof L] = (isLocaliedText(entry) ? getLocalizedText(entry, lang) : solveLocale(entry, lang)) as L[keyof L]
+    return acc
+  }, {} as L)
+}
+
+export function mergeLabels <L extends Labels> (labels?: L, defaultLabels?: L): L | undefined {
   return merge(labels, defaultLabels)
 }

@@ -5,7 +5,7 @@ export const DEFAULT_LANGUAGE = 'en'
 export function getLocalizedText (
   localizedText: LocalizedText,
   lang: string = navigator.language || DEFAULT_LANGUAGE
-): string {
+): string | undefined {
   if (typeof localizedText === 'string') {
     return localizedText
   }
@@ -22,8 +22,6 @@ export function getLocalizedText (
   if (typeof localizedText[DEFAULT_LANGUAGE] === 'string') {
     return localizedText[DEFAULT_LANGUAGE]
   }
-
-  return localizedText.toString()
 }
 
 export function getNavigatorLanguage (): string {
@@ -32,7 +30,7 @@ export function getNavigatorLanguage (): string {
 
 export function localize(input?: LocalizedText | undefined): string {
   if(input) {
-    return getLocalizedText(input, getNavigatorLanguage())
+    return getLocalizedText(input, getNavigatorLanguage()) ?? input.toString()
   }
 
   return ''

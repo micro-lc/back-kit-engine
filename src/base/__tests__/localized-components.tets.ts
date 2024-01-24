@@ -1,238 +1,105 @@
-import {Labels, localizeObj, mergeLocale} from '../localized-components'
+import {mergeLabels, solveLocale} from '../localized-components'
 
-describe('localized-components tests - mergeLocale', () => {
-  const defaultLocale = {
+describe('localized-components tests - solveLocale', () => {
+  const locale = {
+    title: {
+      en: 'title-en',
+      it: 'title-it',
+      es: 'title-es',
+    },
+    subtitle: {
+      subtitle: {
+        en: 'subtitle-en',
+        it: 'subtitle-it',
+        es: 'subtitle-es',
+      },
+      badge: {
+        en: 'badge-en',
+        it: 'badge-it',
+        es: 'badge-es',
+      },
+    }
+  }
+  const en = {
     title: 'title-en',
     subtitle: {
       subtitle: 'subtitle-en',
-      badge: 'badge-en'
+      badge: 'badge-en',
     }
   }
-  const locale = {
-    es: {
-      title: 'title-es',
-      subtitle: {
-        subtitle: 'subtitle-es',
-        badge: 'badge-es'
-      }
-    },
-    it: {
-      title: 'title-it',
-      subtitle: {
-        subtitle: 'subtitle-it'
-      }
-    },
-    en: {
-      title: 'title-en-2',
-      subtitle: {
-        subtitle: 'subtitle-en-2',
-      },
-      footer: {
-        name: 'footer-en-2'
-      }
+  const it_ = {
+    title: 'title-it',
+    subtitle: {
+      subtitle: 'subtitle-it',
+      badge: 'badge-it',
     }
   }
-  const merged = {
-    es: {
-      title: 'title-es',
-      subtitle: {
-        subtitle: 'subtitle-es',
-        badge: 'badge-es'
-      }
-    },
-    it: {
-      title: 'title-it',
-      subtitle: {
-        subtitle: 'subtitle-it',
-        badge: 'badge-en'
-      }
-    },
-    en: {
-      title: 'title-en-2',
-      subtitle: {
-        subtitle: 'subtitle-en-2',
-        badge: 'badge-en'
-      },
-      footer: {
-        name: 'footer-en-2'
-      }
+  const es = {
+    title: 'title-es',
+    subtitle: {
+      subtitle: 'subtitle-es',
+      badge: 'badge-es',
     }
   }
   
   it.each([
-    [defaultLocale, locale.en, merged.en],
-    [defaultLocale, locale.it, merged.it],
-    [defaultLocale, locale.es, merged.es],
-    [defaultLocale, undefined, defaultLocale],
-    [undefined, locale.en, locale.en],
-    [undefined, locale.it, locale.it],
-    [undefined, locale.es, locale.es],
-    [undefined,undefined, undefined],
-  ])('should merge labels', (defaultLocale, locale, expected) => {
-    const merged = mergeLocale<Labels>(locale, defaultLocale)
-    expect(merged).toStrictEqual(expected)
-  })
-
-})
-
-describe('localized-components tests - mergeLocale with non primitive types', () => {
-  const defaultLocale = {
-    today: 'Today-default',
-    yesterday: 'Yesterday',
-    monthBeforeYear: true,
-    decimals: 2
-  }
-  const locale = {
-    en: {
-      today: 'Today',
-      tomorrow: 'Tomorrow',
-      rangePlaceholder: ['Start date', 'End date'],
-      monthBeforeYear: false,
-      decimals: 'None'
-    },
-    it: {
-      today: 'Oggi',
-      tomorrow: 'Domani',
-      rangePlaceholder: ['Inizio', 'Fine'],
-      monthBeforeYear: true,
-      decimals: 1
-    }
-  }
-  const expected = {
-    en: {
-      today: 'Today',
-      yesterday: 'Yesterday',
-      tomorrow: 'Tomorrow',
-      monthBeforeYear: false,
-      rangePlaceholder: ['Start date', 'End date'],
-      decimals: 'None'
-    },
-    it: {
-      today: 'Oggi',
-      tomorrow: 'Domani',
-      yesterday: 'Yesterday',
-      rangePlaceholder: ['Inizio', 'Fine'],
-      monthBeforeYear: true,
-      decimals: 1
-    }
-  }
-  it.each([
-    [defaultLocale, locale.en, expected.en],
-    [defaultLocale, locale.it, expected.it],
-  ])('should merge labels with non-string primitive types', (defaultLocale, locale, expected) => {  
-    const merged = mergeLocale<Record<string, unknown>>(locale, defaultLocale)
-    expect(merged).toStrictEqual(expected)
+    [locale, 'en', en],
+    [locale, 'it', it_],
+    [locale, 'es', es],
+    [locale, 'fr', en],
+    [locale, undefined, en],
+  ])('should solve localized texts', (locale, lang, expected) => {
+    expect(solveLocale(locale, lang)).toStrictEqual(expected)
   })
 })
 
-describe('localized-components tests - mergeLocale edge cases', () => {
-  it.each([
-    [
-      {title: 'Default'},
-      {footer: 'Footer'},
-      {title: 'Default', footer: 'Footer'}
-    ],
-    [
-      {footer: 'Footer'},
-      {footer: {name: 'Footer'}},
-      {footer: {name: 'Footer'}}
-    ],
-    [
-      {footer: {name: 'Default'}},
-      {footer: {name: 'Footer'}},
-      {footer: {name: 'Footer'}}
-    ],
-    [
-      {footer: {name: 'Footer'}},
-      {footer: {badge: 'Badge'}},
-      {footer: {name: 'Footer', badge: 'Badge'}}
-    ],
-    [
-      {footer: {}},
-      {footer: {name: 'Footer'}},
-      {footer: {name: 'Footer'}}
-    ],
-    [
-      {footer: {name: 'Footer'}},
-      {footer: {}},
-      {footer: {name: 'Footer'}}
-    ],
-    [
-      {footer: {}},
-      {footer: {}},
-      {footer: {}}
-    ],
-    [
-      {footer: undefined},
-      {footer: {name: 'Footer'}},
-      {footer: {name: 'Footer'}}
-    ],
-    [
-      {footer: {name: 'Footer'}},
-      {footer: undefined},
-      {footer: {name: 'Footer'}}
-    ],
-    [
-      {footer: {name: undefined}},
-      {footer: {name: undefined}},
-      {footer: {name: undefined}}
-    ],
-    [
-      {footer: null},
-      {footer: {name: 'Footer'}},
-      {footer: {name: 'Footer'}}
-    ],
-    [
-      {footer: {name: 'Footer'}},
-      {footer: null},
-      {footer: null}
-    ],
-    [
-      {footer: {name: null}},
-      {footer: {name: undefined}},
-      {footer: {name: null}}
-    ],
-    [
-      {footer: {name: undefined}},
-      {footer: {name: null}},
-      {footer: {name: null}}
-    ],
-    [
-      {footer: {name: 'Name'}},
-      {footer: {name: false}},
-      {footer: {name: false}}
-    ]
+describe('localized-components tests - solveLocale edge cases', () => {
+  it('should solve localized texts', () => {
+    const locale = {name: {en: 'Name'}, badge: {id: 0, monthBefore: true, range: ['start', 'end'], text: {en: 'Text'}}}
+    const expected = {name: 'Name', badge: {id: 0, monthBefore: true, range: ['start', 'end'], text: 'Text'}}
     
-  ])('should merge labels with non-string primitive types', (defaultLocale, locale, expected) => {  
-    const merged = mergeLocale<Record<string, unknown>>(locale, defaultLocale)
-    expect(merged).toStrictEqual(expected)
+    // @ts-expect-error force unorthodox locale
+    expect(solveLocale(locale)).toStrictEqual(expected)
   })
-})
-
-describe('localized-components tests - localizeObject', () => {
-  it.each([
-    [{en: {title: 'Title'}}, {title: 'Title'}],
-    [{en: {title: 'Title'}, it: {title: 'Titolo'}}, {title: 'Title'}],
-    [{it: {title: 'Titolo'}}, undefined],
-    [{}, undefined],
-    [undefined, undefined],
-  ])('should localize object', (object, expected) => {
-    expect(localizeObj(object)).toStrictEqual(expected)
-  })
-
-  it.each([
-    [{en: {title: 'Title'}}, {title: 'Title'}],
-    [{en: {title: 'Title'}, it: {title: 'Titolo'}}, {title: 'Titolo'}],
-    [{it: {title: 'Titolo'}}, {title: 'Titolo'}],
-    [{es: {title: 'Titulo'}}, undefined],
-    [{}, undefined],
-    [undefined, undefined],
-  ])('should localize object (it)', (object, expected) => {
+  
+  it('localized-components tests - solveLocale default language kicks in', () => {
     const {navigator} = window
-    Object.defineProperty(window, 'navigator', {writable: true, value: {language: 'it'}})
-  
-    expect(localizeObj(object)).toStrictEqual(expected)
-    
+    Object.defineProperty(window, 'navigator', {writable: true, value: {language: undefined}})
+    expect(solveLocale({name: {en: 'Name', it: 'Nome'}})).toStrictEqual({name: 'Name'})
     Object.defineProperty(window, 'navigator', {writable: true, value: navigator})
-  })  
+  })
+})
+
+describe('localized-components tests - mergeLables', () => {
+  it.each([
+    [
+      {title: 'Title', subtitle: {name: 'Subtitle-new'}},
+      {subtitle: {name: 'Subtitle'}},
+      {title: 'Title', subtitle: {name: 'Subtitle-new'}}
+    ],
+    [
+      {subtitle: {name: 'Subtitle-new'}},
+      {title: 'Title', subtitle: {name: 'Subtitle'}},
+      {title: 'Title', subtitle: {name: 'Subtitle-new'}}
+    ],
+    [
+      {title: 'Title', subtitle: {name: 'Subtitle-new'}},
+      {subtitle: 'Subtitle'},
+      {title: 'Title', subtitle: {name: 'Subtitle-new'}}
+    ],
+    [
+      {title: 'Title', subtitle: {name: 'Subtitle-new'}},
+      {title: 'Title', subtitle: {badge: 'Badge'}},
+      {title: 'Title', subtitle: {name: 'Subtitle-new', badge: 'Badge'}}
+    ],
+    [{title: 'Title', subtitle: 'Subtitle-new'}, {subtitle: 'Subtitle'}, {title: 'Title', subtitle: 'Subtitle-new'}],
+    [{title: 'Title'}, {subtitle: 'Subtitle'}, {title: 'Title', subtitle: 'Subtitle'}],
+    [{}, {title: 'Title'}, {title: 'Title'}],
+    [{title: 'Title'}, {}, {title: 'Title'}],
+    [{title: 'Title'}, undefined, {title: 'Title'}],
+    [undefined, {title: 'Title'}, {title: 'Title'}],
+    [undefined, undefined, undefined],
+  ])('should merge labels', (labels, defaultLabels, expected) => {
+    expect(mergeLabels(labels, defaultLabels)).toStrictEqual(expected)
+  })
 })

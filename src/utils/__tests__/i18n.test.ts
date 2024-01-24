@@ -7,7 +7,7 @@ describe('i18n tests', () => {
     ['str', undefined, 'str'],
     ['str', 'en', 'str'],
     ['str', '123456789', 'str'],
-    [{}.toString(), undefined, {}],
+    [undefined, undefined, {}],
     ['str', 'en', {
       en: 'str', it: 'abc'
     }],
