@@ -4,7 +4,8 @@ import {Subscription,ReplaySubject} from 'rxjs'
 import type {Observable} from 'rxjs'
 
 import type {EventBus} from '../../events'
-import {Labels, Localized, LocalizedComponent, mergeLabels, solveLocale} from '../localized-components'
+import {Localized} from '../../utils/i18n'
+import {Labels, LocalizedComponent, mergeLabels, solveLocale} from '../localized-components'
 
 export type Listener = (eventBus: EventBus, kickoff: Observable<0>) => Subscription
 export type Bootstrapper = (eventBus: EventBus) => void

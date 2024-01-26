@@ -1,38 +1,7 @@
-import {type LocalizedText, DEFAULT_LANGUAGE, getLocalizedText} from '../utils/i18n'
+import {type LocalizedText, DEFAULT_LANGUAGE, getLocalizedText, Localized} from '../utils/i18n'
 
 export type Labels = {
   [key: string]: string | undefined | Labels
-}
-
-/**
- * Turns string feilds of objects into `LocalizedText`
- * 
- * For instance:
- * 
- * ```
- * Localized<{
- *   name: string
- *   nick?: string
- *   avatar: {file: string, size: number}
- *   permissions: string[]
- * }>
- * ```
- * 
- * is equivalent to
- * 
- * ```
- * {
- *   name: LocalizedText
- *   nick?: LocalizedText
- *   avatar: {file: LocalizedText, size: number}
- *   permissions: string[]
- * }
- * ```
- */
-export type Localized<L extends Record<string, unknown> | undefined> = {
-  [K in keyof L]: L[K] extends (string | undefined)
-    ? LocalizedText
-    : (L[K] extends (Record<string, unknown> | undefined) ? Localized<L[K]> : L[K])
 }
 
 export interface LocalizedComponent<L extends Labels = Labels> {
