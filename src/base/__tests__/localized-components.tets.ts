@@ -27,7 +27,7 @@ describe('localized-components tests - solveLocale', () => {
       badge: 'badge-en',
     }
   }
-  const it_ = {
+  const ita = {
     title: 'title-it',
     subtitle: {
       subtitle: 'subtitle-it',
@@ -44,7 +44,7 @@ describe('localized-components tests - solveLocale', () => {
   
   it.each([
     [locale, 'en', en],
-    [locale, 'it', it_],
+    [locale, 'it', ita],
     [locale, 'es', es],
     [locale, 'fr', en],
     [locale, undefined, en],

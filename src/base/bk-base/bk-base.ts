@@ -80,7 +80,6 @@ export class BkBase<L extends Labels = Labels> extends LitElement implements Loc
     this._eventBus = e
   }
 
-  defaultLocale?: L | undefined
   @property({attribute: false})
   set customLocale(l: Localized<L>) {
     this._locale = mergeLabels(solveLocale(l), this.defaultLocale)
@@ -120,7 +119,8 @@ export class BkBase<L extends Labels = Labels> extends LitElement implements Loc
     this._subscription = s
   }
 
-  private _locale?: L
+  protected defaultLocale?: L | undefined
+  protected _locale?: L
   set locale (l: L | undefined) {
     this._locale = l
   }

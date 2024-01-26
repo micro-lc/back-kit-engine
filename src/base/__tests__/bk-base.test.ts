@@ -57,6 +57,7 @@ describe('bk-base tests', () => {
   describe('localized-component tests', () => {
     it('should not localize', () => {
       const base = new BkBase()
+      // @ts-expect-error access private field
       expect(base.defaultLocale).toBeUndefined()
       expect(base.customLocale).toBeUndefined()
       expect(base.locale).toBeUndefined()
@@ -73,6 +74,7 @@ describe('bk-base tests', () => {
     
     it('should localize with default', () => {
       const base = new BkBase()
+      // @ts-expect-error access private field
       base.defaultLocale = {title: 'Title', subtitle: 'Subtitle'}
       base.customLocale = {
         title: {en: 'Title-custom', it: 'Titolo-custom'},
@@ -83,6 +85,7 @@ describe('bk-base tests', () => {
     
     it('should initialize localize', () => {
       const base = new BkBase()
+      // @ts-expect-error access private field
       base.defaultLocale = {title: 'Title', subtitle: 'Subtitle'}
       base.locale = {title: 'Title2'}
       expect(base.locale).toStrictEqual({title: 'Title2'})
@@ -107,6 +110,7 @@ describe('bk-base tests', () => {
       Object.defineProperty(window, 'navigator', {writable: true, value: {language: 'it'}})
       
       const base = new BkBase()
+      // @ts-expect-error access private field
       base.defaultLocale = {title: 'Title', subtitle: 'Subtitle'}
       base.customLocale = {
         title: {en: 'Title-custom'},

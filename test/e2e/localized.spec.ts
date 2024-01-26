@@ -60,7 +60,7 @@ class LocalComponent extends BkComponent<Record<string, any>, ComponentLabels> {
 
 @customElement('defaulted-localized-component')
 class WithDefaultLocalComponent extends LocalComponent {
-  defaultLocale: ComponentLabels = {
+  protected defaultLocale: ComponentLabels = {
     name: 'default-name',
     body: {
       text: 'default-text',
@@ -110,7 +110,7 @@ describe('localization tests', () => {
             text: 'custom-text',
             badge: 'custom-badge'
           }
-        } as ComponentLabels
+        }
       }
       .buttonlabel=${'Button'}
       ></localized-component>`
