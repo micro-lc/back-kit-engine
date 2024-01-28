@@ -4,6 +4,8 @@ import {Subscription,ReplaySubject} from 'rxjs'
 import type {Observable} from 'rxjs'
 
 import type {EventBus} from '../../events'
+import {Localized} from '../../utils/i18n'
+import {Labels, LocalizedComponent, mergeLabels, solveLocale} from '../localized-components'
 
 export type Listener = (eventBus: EventBus, kickoff: Observable<0>) => Subscription
 export type Bootstrapper = (eventBus: EventBus) => void
@@ -35,7 +37,7 @@ function bootstrap<T extends BkBase> (
  * @superclass
  * @description BackOffice library base superclass for Lit-based webcomponents
  */
-export class BkBase extends LitElement {
+export class BkBase<L extends Labels = Labels> extends LitElement implements LocalizedComponent<L> {
   /**
    * @description a window that might support sandboxed logic/methods
    */
@@ -79,6 +81,11 @@ export class BkBase extends LitElement {
     this._eventBus = e
   }
 
+  @property({attribute: false})
+  set customLocale(l: Localized<L>) {
+    this._locale = mergeLabels(solveLocale(l), this.defaultLocale)
+  }
+  
   private _currentBusSubscriptions: Subscription[] = []
 
   private _eventBus?: EventBus
@@ -111,6 +118,15 @@ export class BkBase extends LitElement {
     }
 
     this._subscription = s
+  }
+
+  protected defaultLocale?: L | undefined
+  protected _locale?: L
+  set locale (l: L | undefined) {
+    this._locale = l
+  }
+  get locale (): L | undefined {
+    return this._locale ?? this.defaultLocale
   }
 
   constructor (

@@ -15,6 +15,7 @@ import {BkBase} from '../bk-base'
 import type {
   Bootstrapper, Listener
 } from '../bk-base'
+import {Labels} from '../localized-components'
 import {
   adoptStylesheet,
   adoptStylesOnShadowRoot,
@@ -26,8 +27,8 @@ import {
  * @description BackOffice library react-rendering component superclass
  * for Lit-based webcomponents. Extends `BkBase` and its properties
  */
-export class BkComponent<P = {children?: React.ReactNode}>
-  extends BkBase implements LitCreatable<P>, StyledComponent {
+export class BkComponent<P = {children?: React.ReactNode}, L extends Labels = Labels>
+  extends BkBase<L> implements LitCreatable<P>, StyledComponent {
   protected dynamicStyleSheet?: string
   _adoptedStyleSheets: CSSResultOrNative[] = []
 

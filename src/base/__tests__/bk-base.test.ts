@@ -53,4 +53,72 @@ describe('bk-base tests', () => {
     el.remove()
     expect(document.body.outerHTML).toEqual('<body><div><!----></div></body>')
   })
+  
+  describe('localized-component tests', () => {
+    it('should not localize', () => {
+      const base = new BkBase()
+      // @ts-expect-error access private field
+      expect(base.defaultLocale).toBeUndefined()
+      expect(base.customLocale).toBeUndefined()
+      expect(base.locale).toBeUndefined()
+    })
+
+    it('should localize', async () => {
+      const base = new BkBase()
+      base.customLocale = {
+        title: {en: 'Title', it: 'Titolo'},
+        subtitle: {en: 'Subtitle'}
+      }
+      expect(base.locale).toStrictEqual({title: 'Title', subtitle: 'Subtitle'})
+    })
+    
+    it('should localize with default', () => {
+      const base = new BkBase()
+      // @ts-expect-error access private field
+      base.defaultLocale = {title: 'Title', subtitle: 'Subtitle'}
+      base.customLocale = {
+        title: {en: 'Title-custom', it: 'Titolo-custom'},
+        subtitle: {it: 'Sottotitolo-custom'}
+      }
+      expect(base.locale).toStrictEqual({title: 'Title-custom', subtitle: 'Subtitle'})
+    })
+    
+    it('should initialize localize', () => {
+      const base = new BkBase()
+      // @ts-expect-error access private field
+      base.defaultLocale = {title: 'Title', subtitle: 'Subtitle'}
+      base.locale = {title: 'Title2'}
+      expect(base.locale).toStrictEqual({title: 'Title2'})
+    })
+
+    it('should localize (it)', async () => {
+      const {navigator} = window
+      Object.defineProperty(window, 'navigator', {writable: true, value: {language: 'it'}})
+
+      const base = new BkBase()
+      base.customLocale = {
+        title: {en: 'Title', it: 'Titolo'},
+        subtitle: {en: 'Subtitle'}
+      }
+      expect(base.locale).toStrictEqual({title: 'Titolo', subtitle: 'Subtitle'})
+
+      Object.defineProperty(window, 'navigator', {writable: true, value: navigator})
+    })
+    
+    it('should localize with default (it)', () => {
+      const {navigator} = window
+      Object.defineProperty(window, 'navigator', {writable: true, value: {language: 'it'}})
+      
+      const base = new BkBase()
+      // @ts-expect-error access private field
+      base.defaultLocale = {title: 'Title', subtitle: 'Subtitle'}
+      base.customLocale = {
+        title: {en: 'Title-custom'},
+        subtitle: {it: 'Sottotitolo-custom'}
+      }
+      expect(base.locale).toStrictEqual({title: 'Title-custom', subtitle: 'Sottotitolo-custom'})
+      
+      Object.defineProperty(window, 'navigator', {writable: true, value: navigator})
+    })
+  })
 })

@@ -5,6 +5,7 @@ import {
 import type {HttpClientInstance, RerouteRule} from '../../utils'
 import {createFetchHttpClient} from '../../utils'
 import {BkBase} from '../bk-base'
+import {Labels} from '../localized-components'
 
 /**
  * @superclass
@@ -12,7 +13,7 @@ import {BkBase} from '../bk-base'
  * http client which wraps browser's `fetch` API. It provides an axios-like
  * API on fetch GET and POST method
  */
-export class BkHttpBase extends BkBase {
+export class BkHttpBase<L extends Labels = Labels> extends BkBase<L> {
   _basePath?: string
 
   _headers?: HeadersInit

@@ -1,11 +1,42 @@
 export type LocalizedText = string | Record<string, string>
 
+/**
+ * Turns string feilds of objects into `LocalizedText`
+ * 
+ * For instance:
+ * 
+ * ```
+ * Localized<{
+ *   name: string
+ *   nick?: string
+ *   avatar: {file: string, size: number}
+ *   permissions: string[]
+ * }>
+ * ```
+ * 
+ * is equivalent to
+ * 
+ * ```
+ * {
+ *   name: LocalizedText
+ *   nick?: LocalizedText
+ *   avatar: {file: LocalizedText, size: number}
+ *   permissions: string[]
+ * }
+ * ```
+ */
+export type Localized<L extends Record<string, unknown> | undefined> = {
+  [K in keyof L]: L[K] extends (string | undefined)
+    ? LocalizedText
+    : (L[K] extends (Record<string, unknown> | undefined) ? Localized<L[K]> : L[K])
+}
+
 export const DEFAULT_LANGUAGE = 'en'
 
 export function getLocalizedText (
   localizedText: LocalizedText,
   lang: string = navigator.language || DEFAULT_LANGUAGE
-): string {
+): string | undefined {
   if (typeof localizedText === 'string') {
     return localizedText
   }
@@ -22,8 +53,6 @@ export function getLocalizedText (
   if (typeof localizedText[DEFAULT_LANGUAGE] === 'string') {
     return localizedText[DEFAULT_LANGUAGE]
   }
-
-  return localizedText.toString()
 }
 
 export function getNavigatorLanguage (): string {
@@ -32,7 +61,7 @@ export function getNavigatorLanguage (): string {
 
 export function localize(input?: LocalizedText | undefined): string {
   if(input) {
-    return getLocalizedText(input, getNavigatorLanguage())
+    return getLocalizedText(input, getNavigatorLanguage()) ?? input.toString()
   }
 
   return ''
