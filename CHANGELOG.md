@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- `dataschema`: format `html-editor` is now available
+
 ## [1.0.16] - 2024-01-28
 
 - `customLocale` property is available in `bk-base` component
@@ -60,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.4] - 2023-01-31
 
 - `dataschema` `description` field is now of type `LocalizedText`
+
 ## [1.0.3] - 2023-01-30
 
 - `http-client` `get` and `post` methods reject the promise on `downloadAsFile` when response is not ok
