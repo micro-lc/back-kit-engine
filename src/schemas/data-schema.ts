@@ -35,7 +35,9 @@ export type DateFormat = 'date-time' | 'time' | 'date'
 
 export type TextFormat = 'email' | 'uri' | 'regex' | 'password' | 'text'
 
-export type StringFormat = DateFormat | TextFormat | 'text-area' | 'lookup'
+export type EditorFormat = 'editor' | 'html-editor'
+
+export type StringFormat = DateFormat | TextFormat | EditorFormat | 'text-area' | 'lookup'
 
 export type ObjectFormat = 'file' | 'localized-text'
 
