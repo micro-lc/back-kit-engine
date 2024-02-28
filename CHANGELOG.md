@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.0.17] - 2024-02-28
+
 - `dataschema`: format `html-editor` is now available
 
 ## [1.0.16] - 2024-01-28
