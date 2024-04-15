@@ -27,6 +27,8 @@ export type ExportUserConfig = {
   filters: ExportFiltering
   columns: string[]
   columnName: ExportColumnName
+  dateFormat?: string
+  timezone?: string
 }
 
 /**
