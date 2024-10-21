@@ -75,6 +75,7 @@ export interface FormOptions {
   readOnly?: boolean
   showFileInViewer?: boolean
   geopointFormat?: ['lat', 'lon'] | ['lon', 'lat']
+  isPartialFormat: boolean
 }
 
 export interface ExtendedJSONSchema7Definition extends Omit<JSONSchema7, 'type' | 'properties' | 'items' | 'description'> {
