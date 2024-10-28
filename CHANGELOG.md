@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.0.19] - 2024-10-28
+
 - `isPartialFormat` option is available inside data-schema `formOptions`
 
 ## [1.0.18] - 2024-04-16
