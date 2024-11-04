@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.0.20] - 2024-11-04
+
 - `ConfigurableFilter`: add `LookupValue` type to value
 
 ## [1.0.19] - 2024-10-28
