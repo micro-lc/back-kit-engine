@@ -23,10 +23,12 @@ export type FilterOperator = |
   'hasLengthGreaterEqual' |
   'hasLengthLessEqual'
 
+export type LookupValue = Record<'label' | 'value', string | number>
+
 export interface ConfigurableFilter {
   operator: FilterOperator
   property: string
-  value: string | number | boolean | any[]
+  value: string | number | boolean | LookupValue | any[]
 }
 
 export interface Filter extends ConfigurableFilter {
