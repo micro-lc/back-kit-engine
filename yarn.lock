@@ -1998,7 +1998,7 @@ __metadata:
     open@8.4.0:
       unplugged: true
   bin:
-    docgen: ./dist/bin/docgen/index.js
+    docgen: dist/bin/docgen/index.js
   languageName: unknown
   linkType: soft
 

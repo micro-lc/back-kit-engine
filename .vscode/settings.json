@@ -8,6 +8,6 @@
   "eslint.nodePath": ".yarn/sdks",
   "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
 }
